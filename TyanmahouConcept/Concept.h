@@ -1044,6 +1044,7 @@ namespace tc
 			return ref_make_tuple((concept_mapping_impl<Concept, Type>() = value)...);
 		}
 	}
+
 	template<class Concept, class Type>
 	auto concept_mapping(Type&& value)->decltype(detail::concept_mapping_impl<Concept, Type>() = value)
 	{
