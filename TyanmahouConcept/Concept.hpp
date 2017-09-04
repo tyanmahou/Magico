@@ -63,12 +63,20 @@ namespace tc
 {
 	namespace detail
 	{
+		template<class...>
+		struct void_t_impl
+		{
+			typedef void type;
+		};
+		template<class... Test>
+		using void_t = typename void_t_impl<Test...>::type;
+
 		template<class = void, template<class...>class Constraint, class ...Args>
 		struct is_detected_impl :std::false_type
 		{};
 
 		template<template<class...>class Constraint, class ...Args>
-		struct is_detected_impl<std::void_t<Constraint<Args...>>, Constraint, Args...> :std::true_type
+		struct is_detected_impl<void_t<Constraint<Args...>>, Constraint, Args...> :std::true_type
 		{};
 
 		//-- TODO std::experimental::is_detected
@@ -80,9 +88,9 @@ namespace tc
 		struct constraint_if_impl
 		{};
 		template<template<class...>class Constraint, class...Args>
-		struct constraint_if_impl<true, std::void_t<Constraint<Args...>>, Constraint, Args...>
+		struct constraint_if_impl<true, void_t<Constraint<Args...>>, Constraint, Args...>
 		{
-			using type = std::void_t<Constraint<Args...>>;
+			using type = void_t<Constraint<Args...>>;
 		};
 		template<template<class...>class Constraint, class...Args>
 		struct constraint_if_impl<false, void, Constraint, Args...>
@@ -101,7 +109,7 @@ namespace tc
 	///制約
 	///</summary>
 	template<class ...Args>
-	using constraint = std::void_t<Args...>;
+	using constraint = detail::void_t<Args...>;
 
 	///<summary>
 	///Testが成功した場合 Constraintを制約とみなす
@@ -121,6 +129,9 @@ namespace tc
 	template <template<class...>class Constraint, class ...Args>
 	using requires_c = requires<detail::is_detected<Constraint, Args...>>;
 
+	///<summary>
+	///ConstraintをConcept形式に変換
+	///</summary>
 	template<template<class...>class Constraint>
 	struct to_concept
 	{
@@ -131,6 +142,9 @@ namespace tc
 	template<template<class...>class Constraint, class... Args>
 	using to_concept_t = typename to_concept<Constraint>::template type<Args...>;
 
+	///<summary>
+	///ConceptをConstraint形式に変換
+	///</summary>
 	template<template<class...>class Concept>
 	struct to_constraint
 	{
@@ -559,7 +573,7 @@ namespace tc
 			>;
 
 			template<class Type>
-			using Clock_c = std::void_t<
+			using Clock_c = constraint<
 				typename Type::rep,
 				typename Type::period,
 				typename Type::duration,
@@ -1012,6 +1026,7 @@ namespace tc
 
 namespace tc
 {
+
 	template<class Concept>
 	struct concept_map
 	{
@@ -1032,7 +1047,7 @@ namespace tc
 			using concept_map<void>::operator=;
 		};
 		template<class Concept, class Type>
-		struct concept_mapping_impl<Concept, Type, std::void_t<decltype(concept_map<Concept>() = tc::val<Type&>)>> :concept_map<Concept>
+		struct concept_mapping_impl<Concept, Type, void_t<decltype(concept_map<Concept>() = tc::val<Type&>)>> :concept_map<Concept>
 		{
 			using concept_map<Concept>::operator=;
 		};
@@ -1050,6 +1065,10 @@ namespace tc
 		}
 	}//namespace detail
 
+
+	 ///<summary>
+	 ///インスタンスにコンセプトマップを適応させる
+	 ///</summary>
 	template<class Concept, class Type>
 	auto concept_mapping(Type&& value)->decltype(detail::concept_mapping_impl<Concept, Type>() = value)
 	{
