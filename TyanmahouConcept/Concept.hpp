@@ -89,7 +89,7 @@ namespace tc
 		{
 			using type = void;
 		};
-	}
+	}//namespace detail
 
 	///<summary>
 	///仮のインスタンス作成(declvalのヘルパ)
@@ -140,7 +140,7 @@ namespace tc
 	template<template<class...>class Concept, class... Args>
 	using to_constraint_t = typename to_constraint<Concept>::template type<Args...>;
 
-}
+}//namespace tc
 
 namespace tc
 {
@@ -564,7 +564,7 @@ namespace tc
 					std::declval<Type>().now()
 					)
 			>;
-		}
+		}//namespace detail
 
 		///<summary>
 		///アロケーターか
@@ -752,7 +752,7 @@ namespace tc
 				requires<Swappable<typename std::iterator_traits<It>::value_type>>
 			>;
 
-		}
+		}//namespace detail
 
 		///<summary>
 		///イテレーターをもつか
@@ -911,7 +911,7 @@ namespace tc
 					)
 			>;
 
-		}
+		}//namespace detail
 
 		///<summary>
 		///コンテナかどうか
@@ -993,10 +993,10 @@ namespace tc
 		struct Condition : std::bool_constant<conditional>
 		{};
 
-	}
+	}//namespace Concept
 
 
-}
+}//namespace tc
 
 
 //************************************************************************************************
@@ -1043,7 +1043,7 @@ namespace tc
 		{
 			return ref_make_tuple((concept_mapping_impl<Concept, Type>() = value)...);
 		}
-	}
+	}//namespace detail
 
 	template<class Concept, class Type>
 	auto concept_mapping(Type&& value)->decltype(detail::concept_mapping_impl<Concept, Type>() = value)
@@ -1059,7 +1059,7 @@ namespace tc
 	}
 
 
-}
+}//namespace tc
 
 ///<summary>
 ///whereマクロ
