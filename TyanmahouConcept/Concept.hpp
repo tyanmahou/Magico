@@ -514,12 +514,10 @@ namespace tc
 				requires<MoveConstructible<Type>>,
 				typename Type::value_type,
 				decltype(
-					*std::declval<typename std::allocator_traits<Type>::pointer&>(),
-					*std::declval<typename std::allocator_traits<Type>::const_pointer&>(),
-					std::declval<Type&>().allocate(std::declval<typename std::allocator_traits<Type>::size_type&>()),
-					std::declval<Type&>().deallocate(
-						std::declval<typename std::allocator_traits<Type>::pointer&>(),
-						std::declval<typename std::allocator_traits<Type>::size_type&>())
+					*std::declval<typename Type::value_type*&>(),
+					*std::declval<const typename Type::value_type*&>(),
+					std::declval<Type&>().allocate(std::declval<size_t&>()),
+					std::declval<Type&>().deallocate(std::declval<typename Type::value_type*&>(), std::declval<size_t&>())
 					)
 			>;
 

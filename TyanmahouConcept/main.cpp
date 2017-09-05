@@ -15,4 +15,6 @@ void main()
 	Test(0, 0);
 
 	static_assert(tc::Concept::LessThanComparable<A>::value==false,"A has not operator <");
+
+	tc::Concept::Container<int>::value;
 }
