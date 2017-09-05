@@ -344,22 +344,22 @@ namespace tc
 		TC_HAS_BINARY_OPERATOR(LogicalOrPossible, || );
 
 		///<summary>
-		/// operator < ‚ð‚à‚Â‚©
+		/// ¬‚È‚è”äŠr‰‰ŽZ ‚ð‚à‚Â‚©
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(LessThanComparable, <);
 
 		///<summary>
-		/// operator <= ‚ð‚à‚Â‚©
+		/// ¬‚È‚è=”äŠr‰‰ŽZ ‚ð‚à‚Â‚©
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(LessEqualComparable, <= );
 
 		///<summary>
-		/// operator > ‚ð‚à‚Â‚©
+		/// ‘å‚È‚è”äŠr‰‰ŽZ‚ð‚à‚Â‚©
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(GreaterThanComparable, >);
 
 		///<summary>
-		/// operator >= ‚ð‚à‚Â‚©
+		/// ‘å‚È‚è=”äŠr‰‰ŽZ‚ð‚à‚Â‚©
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(GreaterEqualComparable, >= );
 
