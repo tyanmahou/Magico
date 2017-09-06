@@ -3,6 +3,14 @@
 #include<tuple>
 
 //----------------------------------------------------------------------------------
+//コンセプトに変換
+//----------------------------------------------------------------------------------
+#define TC_TO_CONCEPT(className,constraint,...)\
+struct className : tc::detail::concept_mapped< className ,typename tc::to_meta_func< constraint >::template type,__VA_ARGS__>\
+{}
+
+
+//----------------------------------------------------------------------------------
 //memNameのメンバをもつかどうか
 //----------------------------------------------------------------------------------
 
@@ -13,8 +21,8 @@ template<class Type>\
 using className##_c = tc::constraint<decltype(&Type::memName)>;\
 }\
 template<class Type>\
-struct className : tc::to_concept<detail::className##_c>::type<Type>\
-{}
+TC_TO_CONCEPT(className, detail::className##_c, Type)
+
 
 //----------------------------------------------------------------------------------
 //typeNameのメンバ型名をもつかどうか
@@ -27,8 +35,7 @@ template<class Type>\
 using className##_c = tc::constraint<typename Type::typeName>;\
 }\
 template<class Type>\
-struct className : tc::to_concept<detail::className##_c>::type<Type>\
-{}
+TC_TO_CONCEPT(className, detail::className##_c, Type)
 
 //----------------------------------------------------------------------------------
 //symbol単項演算が可能か
@@ -41,8 +48,7 @@ namespace detail\
 	using className##_c = tc::constraint<decltype(symbol std::declval<Type&>())>;\
 }\
 template<class Type>\
-struct className: tc::to_concept<detail::className##_c>::type<Type>\
-{}
+TC_TO_CONCEPT(className, detail::className##_c, Type)
 
 //----------------------------------------------------------------------------------
 //symbol2項演算が可能か
@@ -55,12 +61,36 @@ template<class Left,class Right=Left>\
 using className##_c = tc::constraint<decltype(std::declval<Left&>() symbol std::declval<Right&>())>; \
 }\
 template<class Left,class Right=Left>\
-struct className: tc::to_concept<detail::className##_c>::type<Left,Right>\
-{}
+TC_TO_CONCEPT(className, detail::className##_c, Left,Right)
 
-//----------------------------------------------------------------------------------
+
+//************************************************************************************************
+//
+//concept_map
+//
+//************************************************************************************************
+
 namespace tc
 {
+
+	///<summary>
+	///仮のインスタンス作成(declvalのヘルパ)
+	///</summary>
+	template<class Type>
+	Type&& val = std::declval<Type>();
+
+	template<class Concept>
+	struct concept_map
+	{
+		using is_default = void;
+
+		template<class T>
+		T&& operator =(T&& other)
+		{
+			return std::forward<T>(other);
+		}
+	};
+
 	namespace detail
 	{
 		template<class...>
@@ -71,6 +101,55 @@ namespace tc
 		template<class... Test>
 		using void_t = typename void_t_impl<Test...>::type;
 
+		template<class Concept, class Type, class = void>
+		struct concept_mapping_impl : concept_map<void>
+		{
+			using concept_map<void>::operator=;
+		};
+		template<class Concept, class Type>
+		struct concept_mapping_impl<Concept, Type, void_t<decltype(concept_map<Concept>() = tc::val<Type&>)>> :concept_map<Concept>
+		{
+			using concept_map<Concept>::operator=;
+		};
+
+		template<class... Type>
+		auto ref_make_tuple(Type&&... arg)->decltype(std::tuple<Type&&...>(std::forward<Type>(arg)...))
+		{
+			return std::tuple<Type&&...>(std::forward<Type>(arg)...);
+		}
+
+		template<class Concept, class ...Type>
+		auto make_mapping_tuple(Type&&... value)->decltype(ref_make_tuple((concept_mapping_impl<Concept, Type>() = value)...))
+		{
+			return ref_make_tuple((concept_mapping_impl<Concept, Type>() = value)...);
+		}
+	}//namespace detail
+
+
+	 ///<summary>
+	 ///インスタンスにコンセプトマップを適応させる
+	 ///</summary>
+	template<class Concept, class Type>
+	auto concept_mapping(Type&& value)->decltype(detail::concept_mapping_impl<Concept, Type>() = value)
+	{
+
+		return detail::concept_mapping_impl<Concept, Type>() = value;
+	}
+	template<template<class...>class Concept, class ...Type>
+	auto concept_mapping(Type&&... value)->decltype(detail::make_mapping_tuple<Concept<std::remove_reference_t<Type>...>>(value...))
+	{
+		using C = Concept<std::remove_reference_t<Type>...>;
+		return detail::make_mapping_tuple<C>(value...);
+	}
+
+}//namespace tc
+
+ //----------------------------------------------------------------------------------
+namespace tc
+{
+
+	namespace detail
+	{
 		template<class = void, template<class...>class Constraint, class ...Args>
 		struct is_detected_impl :std::false_type
 		{};
@@ -79,10 +158,18 @@ namespace tc
 		struct is_detected_impl<void_t<Constraint<Args...>>, Constraint, Args...> :std::true_type
 		{};
 
-		//-- TODO std::experimental::is_detected
+		//-- TODO std::is_detected
 		template<template<class...>class Constraint, class ...Args>
 		using is_detected = is_detected_impl <void, Constraint, Args...>;
 
+		template<class Concept, class Arg>
+		struct mapped_type
+		{
+			using type = std::remove_reference_t<decltype(tc::concept_mapping<Concept>(tc::val<Arg&>))>;
+		};
+		template<template<class...>class Concept, template<class...>class Meta, class ...Arg>
+		struct concept_mapped :Meta<typename mapped_type<Concept<std::remove_reference_t<Arg>...>, Arg>::type...>
+		{};
 
 		template<bool Test, class = void, template<class...>class Constraint, class...Args>
 		struct constraint_if_impl
@@ -99,15 +186,9 @@ namespace tc
 		};
 	}//namespace detail
 
-	///<summary>
-	///仮のインスタンス作成(declvalのヘルパ)
-	///</summary>
-	template<class Type>
-	Type&& val = std::declval<Type>();
-
-	///<summary>
-	///制約
-	///</summary>
+	 ///<summary>
+	 ///制約
+	 ///</summary>
 	template<class ...Args>
 	using constraint = detail::void_t<Args...>;
 
@@ -124,35 +205,17 @@ namespace tc
 	using requires = std::enable_if_t<WhereConcept::value, std::nullptr_t >;
 
 	///<summary>
-	///Constraintを満たすか
-	///</summary>
-	template <template<class...>class Constraint, class ...Args>
-	using requires_c = requires<detail::is_detected<Constraint, Args...>>;
-
-	///<summary>
-	///ConstraintをConcept形式に変換
+	///Constraintをメタ関数に変換
 	///</summary>
 	template<template<class...>class Constraint>
-	struct to_concept
+	struct to_meta_func
 	{
 		template<class... Args>
 		using type = detail::is_detected<Constraint, Args...>;
 	};
+	template<template<class...>class Constraint, class ...Args>
+	using to_meta_func_t = typename to_meta_func<Constraint>::template type<Args...>;
 
-	template<template<class...>class Constraint, class... Args>
-	using to_concept_t = typename to_concept<Constraint>::template type<Args...>;
-
-	///<summary>
-	///ConceptをConstraint形式に変換
-	///</summary>
-	template<template<class...>class Concept>
-	struct to_constraint
-	{
-		template<class... Args>
-		using type = constraint<requires<Concept<Args...>>>;
-	};
-	template<template<class...>class Concept, class... Args>
-	using to_constraint_t = typename to_constraint<Concept>::template type<Args...>;
 
 }//namespace tc
 
@@ -209,13 +272,13 @@ namespace tc
 		/// 後置インクリメント可能か
 		///</summary>
 		template<class Type>
-		struct PostIncrementable :to_concept<detail::PostIncrementable_c>::type< Type>
+		struct PostIncrementable :to_meta_func<detail::PostIncrementable_c>::type< Type>
 		{};
 		///<summary>
 		/// 後置デクリメント可能か
 		///</summary>		
 		template<class Type>
-		struct PostDecrementable :to_concept<detail::PostDecrementable_c>::type< Type>
+		struct PostDecrementable :to_meta_func<detail::PostDecrementable_c>::type< Type>
 		{};
 		///<summary>
 		/// 単項operator ~ をもつか
@@ -498,11 +561,11 @@ namespace tc
 		struct Function :std::is_function<Type>
 		{};
 
-		//////************************************************************************************************
-		//////
-		//////型の特性
-		//////
-		//////************************************************************************************************
+		//************************************************************************************************
+		//
+		//型の特性
+		//
+		//************************************************************************************************
 
 		namespace detail
 		{
@@ -583,18 +646,18 @@ namespace tc
 			>;
 		}//namespace detail
 
-		///<summary>
-		///アロケーターか
-		///</summary>
+		 ///<summary>
+		 ///アロケーターか
+		 ///</summary>
 		template<class Type>
-		struct Allocator :to_concept<detail::Allocator_c>::type<Type>
+		struct Allocator :to_meta_func<detail::Allocator_c>::type<Type>
 		{};
 
 		///<summary>
 		///TのオブジェクトとUのオブジェクトが入れ替え可能か
 		///</summary>
 		template<class T, class U = T>
-		struct Swappable :to_concept<detail::Swappable_c>::type< std::add_lvalue_reference_t<T>, std::add_lvalue_reference_t<U>>
+		struct Swappable :to_meta_func<detail::Swappable_c>::type< std::add_lvalue_reference_t<T>, std::add_lvalue_reference_t<U>>
 		{};
 
 		///<summary>
@@ -608,7 +671,7 @@ namespace tc
 		/// null許容か
 		///</summary>
 		template<class Type>
-		struct NullablePointer : to_concept<detail::NullablePointer_c>::type<Type>
+		struct NullablePointer : to_meta_func<detail::NullablePointer_c>::type<Type>
 		{};
 
 		//--TODO is_invocableに変更したい--
@@ -617,35 +680,35 @@ namespace tc
 		///関数呼び出し可能な型か
 		///</summary>
 		template <class Func, class... Args>
-		struct Invocable : to_concept<detail::Invocable_c>::type< Func, Args...>
+		struct Invocable : to_meta_func<detail::Invocable_c>::type< Func, Args...>
 		{};
 
 		///<summary>
 		///関数オブジェクトか
 		///</summary>
 		template <class Type>
-		struct FunctionObject :to_concept<detail::FunctionObject_c>::type< Type>
+		struct FunctionObject :to_meta_func<detail::FunctionObject_c>::type< Type>
 		{};
 
 		///<summary>
 		///コンセプトか
 		///</summary>
 		template <class Type>
-		struct Concept : to_concept<detail::Concept_c>::type< Type>
+		struct Concept : to_meta_func<detail::Concept_c>::type< Type>
 		{};
 
 		///<summary>
 		///ハッシュ関数オブジェクトか
 		///</summary>
 		template <class Type, class Key>
-		struct Hash : to_concept<detail::Hash_c>::type< Type, Key>
+		struct Hash : to_meta_func<detail::Hash_c>::type< Type, Key>
 		{};
 
 		///<summary>
 		///期間、時刻、現在の時刻を取得可能か
 		///</summary>
 		template<class Type>
-		struct Clock :to_concept<detail::Clock_c>::type< Type>
+		struct Clock :to_meta_func<detail::Clock_c>::type< Type>
 		{};
 
 
@@ -771,56 +834,56 @@ namespace tc
 
 		}//namespace detail
 
-		///<summary>
-		///イテレーターをもつか
-		///</summary>
+		 ///<summary>
+		 ///イテレーターをもつか
+		 ///</summary>
 		TC_HAS_MEMBER_TYPE(HasIterator, iterator);
 
 		///<summary>
 		///イテレーターかどうか
 		///</summary>
 		template<class It>
-		struct Iterator : to_concept<detail::Iterator_c>::type<It>
+		struct Iterator : to_meta_func<detail::Iterator_c>::type<It>
 		{};
 		///<summary>
 		///入力イテレーターかどうか
 		///</summary>
 		template<class It>
-		struct InputIterator : to_concept<detail::InputIterator_c>::type<It>
+		struct InputIterator : to_meta_func<detail::InputIterator_c>::type<It>
 		{};
 
 		///<summary>
 		///出力イテレーターかどうか
 		///</summary>
 		template<class It>
-		struct OutputIterator : to_concept<detail::OutputIterator_c>::type<It>
+		struct OutputIterator : to_meta_func<detail::OutputIterator_c>::type<It>
 		{};
 
 		///<summary>
 		///前方イテレーターかどうか
 		///</summary>
 		template<class It>
-		struct ForwardIterator : to_concept<detail::ForwardIterator_c>::type<It>
+		struct ForwardIterator : to_meta_func<detail::ForwardIterator_c>::type<It>
 		{};
 		///<summary>
 		///双方向イテレーターかどうか
 		///</summary>
 		template<class It>
-		struct BidirectionalIterator : to_concept<detail::BidirectionalIterator_c>::type<It>
+		struct BidirectionalIterator : to_meta_func<detail::BidirectionalIterator_c>::type<It>
 		{};
 
 		///<summary>
 		///ランダムアクセスイテレーターかどうか
 		///</summary>
 		template<class It>
-		struct RandomAccessIterator : to_concept<detail::RandomAccessIterator_c>::type<It>
+		struct RandomAccessIterator : to_meta_func<detail::RandomAccessIterator_c>::type<It>
 		{};
 
 		///<summary>
 		///イテレーターの値型がスワップ可能か
 		///</summary>
 		template<class It>
-		struct ValueSwappable : to_concept<detail::ValueSwappable_c>::type<It>
+		struct ValueSwappable : to_meta_func<detail::ValueSwappable_c>::type<It>
 		{};
 
 
@@ -930,72 +993,72 @@ namespace tc
 
 		}//namespace detail
 
-		///<summary>
-		///コンテナかどうか
-		///</summary>
+		 ///<summary>
+		 ///コンテナかどうか
+		 ///</summary>
 		template<class C>
-		struct Container : to_concept<detail::Container_c>::type<C, Iterator<C>>
+		struct Container : to_meta_func<detail::Container_c>::type<C, Iterator<C>>
 		{};
 
 		///<summary>
 		///前方イテレーターをもつコンテナかどうか
 		///</summary>
 		template<class C>
-		struct ForwardContainer : to_concept<detail::Container_c>::type< C, ForwardIterator<C>>
+		struct ForwardContainer : to_meta_func<detail::Container_c>::type< C, ForwardIterator<C>>
 		{};
 		///<summary>
 		///ランダムアクセスイテレーターをもつコンテナかどうか
 		///</summary>
 		template<class C>
-		struct RandomAccessContainer : to_concept<detail::Container_c>::type< C, RandomAccessIterator<C>>
+		struct RandomAccessContainer : to_meta_func<detail::Container_c>::type< C, RandomAccessIterator<C>>
 		{};
 
 		///<summary>
 		///リバースイテレーターをもつコンテナかどうか
 		///</summary>
 		template<class C>
-		struct ReversibleContainer : to_concept<detail::ReversibleContainer_c>::type<C>
+		struct ReversibleContainer : to_meta_func<detail::ReversibleContainer_c>::type<C>
 		{};
 
 		///<summary>
 		///任意のコンテナCに対して、その要素型をデフォルトで挿入可能か
 		///</summary>
 		template<class C>
-		struct DefaultInsertable :to_concept<detail::DefaultInsertable_c>::type<C>
+		struct DefaultInsertable :to_meta_func<detail::DefaultInsertable_c>::type<C>
 		{};
 
 		///<summary>
 		///任意のコンテナCに対して、その要素型のコピー挿入可能か
 		///</summary>
 		template<class C>
-		struct CopyInsertable :to_concept<detail::CopyInsertable_c>::type<C>
+		struct CopyInsertable :to_meta_func<detail::CopyInsertable_c>::type<C>
 		{};
 		///<summary>
 		///任意のコンテナCに対して、その要素型の右辺値オブジェクトをムーブ挿入可能か
 		///</summary>
 		template<class C>
-		struct MoveInsertable :to_concept<detail::MoveInsertable_c>::type<C>
+		struct MoveInsertable :to_meta_func<detail::MoveInsertable_c>::type<C>
 		{};
 
 		///<summary>
 		///任意のコンテナCに対して、要素型のコンストラクタ引数列Argsから直接構築可能か
 		///</summary>
 		template <class C, class... Args>
-		struct EmplaceConstructible : to_concept<detail::EmplaceConstructible_c>::type<C, Args...>
+		struct EmplaceConstructible : to_meta_func<detail::EmplaceConstructible_c>::type<C, Args...>
 		{};
 
 		///<summary>
 		///任意のコンテナCに対して、要素型の破棄が可能か
 		///</summary>
 		template<class C>
-		struct Erasable :to_concept<detail::Erasable_c>::type<C>
+		struct Erasable :to_meta_func<detail::Erasable_c>::type<C>
 		{};
 
 		///<summary>
 		///アロケーターを認識するコンテナか
 		///</summary>
 		template<class C>
-		struct AllocatorAwareContainer : to_concept<detail::AllocatorAwareContainer_c>::type<C>
+		struct AllocatorAwareContainer : to_meta_func<detail::AllocatorAwareContainer_c>::type<C>
 		{};
 		//************************************************************************************************
 		//
@@ -1016,81 +1079,15 @@ namespace tc
 }//namespace tc
 
 
-//************************************************************************************************
-//
-//concept_map
-//
-//************************************************************************************************
-
-namespace tc
-{
-
-	template<class Concept>
-	struct concept_map
-	{
-		using is_default = void;
-
-		template<class T>
-		T&& operator =(T&& other)
-		{
-			return std::forward<T>(other);
-		}
-	};
-
-	namespace detail
-	{
-		template<class Concept, class Type, class = void>
-		struct concept_mapping_impl : concept_map<void>
-		{
-			using concept_map<void>::operator=;
-		};
-		template<class Concept, class Type>
-		struct concept_mapping_impl<Concept, Type, void_t<decltype(concept_map<Concept>() = tc::val<Type&>)>> :concept_map<Concept>
-		{
-			using concept_map<Concept>::operator=;
-		};
-
-		template<class... Type>
-		auto ref_make_tuple(Type&&... arg)->decltype(std::tuple<Type&&...>(arg...))
-		{
-			return std::tuple<Type&&...>(arg...);
-		}
-
-		template<class Concept, class ...Type>
-		auto make_mapping_tuple(Type&&... value)->decltype(ref_make_tuple((concept_mapping_impl<Concept, Type>() = value)...))
-		{
-			return ref_make_tuple((concept_mapping_impl<Concept, Type>() = value)...);
-		}
-	}//namespace detail
-
-
-	 ///<summary>
-	 ///インスタンスにコンセプトマップを適応させる
-	 ///</summary>
-	template<class Concept, class Type>
-	auto concept_mapping(Type&& value)->decltype(detail::concept_mapping_impl<Concept, Type>() = value)
-	{
-
-		return detail::concept_mapping_impl<Concept, Type>() = value;
-	}
-	template<template<class...>class Concept, class ...Type>
-	auto concept_mapping(Type&&... value)->decltype(detail::make_mapping_tuple<Concept<std::remove_reference_t<Type>...>>(value...))
-	{
-		using C = Concept<std::remove_reference_t<Type>...>;
-		return detail::make_mapping_tuple<C>(value...);
-	}
-
-
-}//namespace tc
-
-///<summary>
-///whereマクロ
-///</summary>
+ ///<summary>
+ ///whereマクロ
+ ///</summary>
 #define TC_WHERE( ... ) tc::requires< __VA_ARGS__ > = nullptr
 
-///<summary>
-///条件をみたさないとアサート
-///</summary>
-#define TC_CONCEPT_ASSERT( ... ) static_assert(__VA_ARGS__::value,#__VA_ARGS__ )
+#define TC_MAPPED_WHERE( ... ) tc::requires< tc::detail::concept_mapped<__VA_ARGS__ >> = nullptr
 
+ ///<summary>
+ ///条件をみたさないとアサート
+ ///</summary>
+#define TC_CONCEPT_ASSERT( ... ) static_assert(__VA_ARGS__::value,#__VA_ARGS__ )
 

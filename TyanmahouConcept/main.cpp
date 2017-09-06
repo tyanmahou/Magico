@@ -1,20 +1,20 @@
 #include<iostream>
 #include"Concept.hpp"
+#include<vector>
 
-template<class T,TC_WHERE(tc::Concept::LessThanComparable<T>)>
-bool Test(T&& a, T&& b)
+
+namespace tc
 {
-	return a < b;
-}
 
+	///<summary>
+	///条件をみたさないとアサート
+	///</summary>
+	template<class T>
+	void f()
+	{
+
+	}
+}
 void main()
 {
-	struct A {};
-	A a;
-
-	Test(0, 0);
-
-	static_assert(tc::Concept::LessEqualComparable<A>::value==false,"A has not operator <");
-
-	tc::Concept::Container<int>::value;
 }
