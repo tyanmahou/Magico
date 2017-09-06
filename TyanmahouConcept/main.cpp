@@ -1,20 +1,27 @@
 #include<iostream>
-#include"Concept.hpp"
 #include<vector>
 
+#include"Concept.hpp"
 
-namespace tc
+struct Test{};
+
+template<>
+struct tc::concept_map<tc::Concept::Abstract<Test>>
 {
-
-	///<summary>
-	///条件をみたさないとアサート
-	///</summary>
-	template<class T>
-	void f()
+	struct Wrap:Test
 	{
+		virtual void a() = 0;
+	};
 
+	Wrap& operator=(Test& a)
+	{
+		return static_cast<Wrap&>(a);
 	}
-}
+
+};
+
 void main()
 {
+	static_assert(std::is_abstract<Test>::value==false);
+	static_assert(tc::Concept::Abstract<Test>::value==true);
 }

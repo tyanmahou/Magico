@@ -2,18 +2,16 @@
 #include<type_traits>
 #include<tuple>
 
-//----------------------------------------------------------------------------------
-//コンセプトに変換
-//----------------------------------------------------------------------------------
+///<summary>
+///コンセプトに変換
+///</summary>
 #define TC_TO_CONCEPT(className,constraint,...)\
-struct className : tc::detail::concept_mapped< className ,typename tc::to_meta_func< constraint >::template type,__VA_ARGS__>\
+struct className : tc::detail::to_concept< className ,typename tc::to_meta_func<constraint>::template type,__VA_ARGS__>\
 {}
 
-
-//----------------------------------------------------------------------------------
-//memNameのメンバをもつかどうか
-//----------------------------------------------------------------------------------
-
+///<summary>
+///memNameのメンバをもつかどうか
+///</summary>
 #define TC_HAS_MEMBER(className,memName)\
 namespace detail\
 {\
@@ -23,11 +21,9 @@ using className##_c = tc::constraint<decltype(&Type::memName)>;\
 template<class Type>\
 TC_TO_CONCEPT(className, detail::className##_c, Type)
 
-
-//----------------------------------------------------------------------------------
-//typeNameのメンバ型名をもつかどうか
-//----------------------------------------------------------------------------------
-
+///<summary>
+///typeNameのメンバ型名をもつかどうか
+///</summary>
 #define TC_HAS_MEMBER_TYPE(className ,typeName)\
 namespace detail\
 {\
@@ -37,10 +33,9 @@ using className##_c = tc::constraint<typename Type::typeName>;\
 template<class Type>\
 TC_TO_CONCEPT(className, detail::className##_c, Type)
 
-//----------------------------------------------------------------------------------
-//symbol単項演算が可能か
-//----------------------------------------------------------------------------------
-
+///<summary>
+///symbol単項演算が可能か
+///</summary>
 #define TC_HAS_UNARY_OPERATOR(className,symbol)\
 namespace detail\
 {\
@@ -50,10 +45,9 @@ namespace detail\
 template<class Type>\
 TC_TO_CONCEPT(className, detail::className##_c, Type)
 
-//----------------------------------------------------------------------------------
-//symbol2項演算が可能か
-//----------------------------------------------------------------------------------
-
+///<summary>
+///symbol2項演算が可能か
+///</summary>
 #define TC_HAS_BINARY_OPERATOR(className,symbol)\
 namespace detail\
 {\
@@ -168,7 +162,7 @@ namespace tc
 			using type = std::remove_reference_t<decltype(tc::concept_mapping<Concept>(tc::val<Arg&>))>;
 		};
 		template<template<class...>class Concept, template<class...>class Meta, class ...Arg>
-		struct concept_mapped :Meta<typename mapped_type<Concept<std::remove_reference_t<Arg>...>, Arg>::type...>
+		struct to_concept :Meta<typename mapped_type<Concept<std::remove_reference_t<Arg>...>, Arg>::type...>
 		{};
 
 		template<bool Test, class = void, template<class...>class Constraint, class...Args>
@@ -272,14 +266,14 @@ namespace tc
 		/// 後置インクリメント可能か
 		///</summary>
 		template<class Type>
-		struct PostIncrementable :to_meta_func<detail::PostIncrementable_c>::type< Type>
-		{};
+		TC_TO_CONCEPT(PostIncrementable, detail::PostIncrementable_c, Type);
+
 		///<summary>
 		/// 後置デクリメント可能か
 		///</summary>		
 		template<class Type>
-		struct PostDecrementable :to_meta_func<detail::PostDecrementable_c>::type< Type>
-		{};
+		TC_TO_CONCEPT(PostDecrementable, detail::PostDecrementable_c, Type);
+
 		///<summary>
 		/// 単項operator ~ をもつか
 		///</summary>
@@ -409,7 +403,7 @@ namespace tc
 		///<summary>
 		/// 小なり比較演算 をもつか
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(LessThanComparable, <);
+		TC_HAS_BINARY_OPERATOR(LessThanComparable, < );
 
 		///<summary>
 		/// 小なり=比較演算 をもつか
@@ -419,7 +413,7 @@ namespace tc
 		///<summary>
 		/// 大なり比較演算をもつか
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(GreaterThanComparable, >);
+		TC_HAS_BINARY_OPERATOR(GreaterThanComparable, > );
 
 		///<summary>
 		/// 大なり=比較演算をもつか
@@ -446,119 +440,117 @@ namespace tc
 		/// operator =(copy) をもつか
 		///</summary>
 		template< class To, class From = To>
-		struct CopyAssignable : std::is_assignable<
+		struct CopyAssignable : tc::detail::to_concept< CopyAssignable, std::is_assignable,
 			typename std::add_lvalue_reference<To>::type,
-			typename std::add_lvalue_reference<
-			typename std::add_const<From>::type
-			>::type
-		>::type
+			typename std::add_lvalue_reference<typename std::add_const<From>::type>::type
+		>
 		{};
 
 		///<summary>
 		/// operator =(move) をもつか
 		///</summary>
 		template< class To, class From = To>
-		struct MoveAssignable :std::is_assignable<
+		struct MoveAssignable :tc::detail::to_concept< MoveAssignable, std::is_assignable,
 			typename std::add_lvalue_reference<To>::type,
 			typename std::add_rvalue_reference<From>::type
-		>::type
+		>
 		{};
 
 		///<summary>
 		/// Type( Args... ) の形式のコンストラクタ呼び出しが可能か
 		///</summary>
 		template< class Type, class... Args>
-		struct Constructible : std::is_constructible<Type, Args...>
+		struct Constructible :tc::detail::to_concept<Constructible, std::is_constructible, Type, Args...>
 		{};
 
 		///<summary>
 		/// デフォルトコンストラクタ をもつか
 		///</summary>
 		template< class Type >
-		struct DefaultConstructible : std::is_default_constructible<Type>
+		struct DefaultConstructible : tc::detail::to_concept<DefaultConstructible, std::is_default_constructible, Type>
 		{};
 
 		///<summary>
 		/// コピーコンストラクタ をもつか
 		///</summary>
 		template< class Type>
-		struct CopyConstructible : std::is_copy_constructible<Type>
+		struct CopyConstructible : tc::detail::to_concept<CopyConstructible, std::is_copy_constructible, Type>
 		{};
 
 		///<summary>
 		/// ムーブコンストラクタ をもつか
 		///</summary>
 		template< class Type>
-		struct MoveConstructible : std::is_move_constructible<Type>
+		struct MoveConstructible : tc::detail::to_concept< MoveConstructible, std::is_move_constructible, Type>
 		{};
 
 		///<summary>
 		/// デストラクタ をもつか
 		///</summary>
 		template< class Type>
-		struct Destructible : std::is_destructible<Type>
+		struct Destructible : tc::detail::to_concept<Destructible, std::is_destructible, Type>
 		{};
 
 		///<summary>
 		/// 仮想デストラクタ をもつか
 		///</summary>
 		template< class Type>
-		struct HasVirtualDestructor : std::has_virtual_destructor<Type>
+		struct HasVirtualDestructor : tc::detail::to_concept<HasVirtualDestructor, std::has_virtual_destructor, Type>
 		{};
 
 		///<summary>
 		///TとUが同じか
 		///</summary>
 		template<class T, class U>
-		struct IsSame : std::is_same<T, U>
+		struct IsSame : tc::detail::to_concept<IsSame, std::is_same, T, U>
 		{};
 
 		///<summary>
 		///TypeがBase,もしくはBaseを継承しているか
 		///</summary>
 		template<class Type, class Base>
-		struct Extended : std::is_base_of<Base, Type>
+		struct Extended : tc::detail::to_concept<Extended, std::is_base_of, Base, Type>
 		{};
 
 		///<summary>
 		///スカラーかどうか
 		///</summary>
 		template<class Type>
-		struct Scalar :std::is_scalar<Type>
+		struct Scalar :tc::detail::to_concept<Scalar, std::is_scalar, Type>
 		{};
 
 		///<summary>
 		///仮想クラスかどうか
 		///</summary>
 		template<class Type>
-		struct Abstract :std::is_abstract<Type>
+		struct Abstract :tc::detail::to_concept<Abstract, std::is_abstract, Type>
 		{};
 		///<summary>
 		///enum型か
 		///</summary>
 		template<class Type>
-		struct Enum :std::is_enum<Type>
+		struct Enum :tc::detail::to_concept<Enum, std::is_enum, Type>
 		{};
 
 		///<summary>
 		///class(struct)型か
 		///</summary>
 		template<class Type>
-		struct Class :std::is_class<Type>
+		struct Class :tc::detail::to_concept<Class, std::is_class, Type>
 		{};
 
 		///<summary>
 		///union型か
 		///</summary>
 		template<class Type>
-		struct Union :std::is_union<Type>
+		struct Union :tc::detail::to_concept<Union, std::is_union, Type>
 		{};
 
 		///<summary>
 		///関数型t(...)か
 		///</summary>
 		template<class Type>
-		struct Function :std::is_function<Type>
+		struct Function :tc::detail::to_concept<Function, std::is_function, Type>
 		{};
 
 		//************************************************************************************************
@@ -650,29 +642,26 @@ namespace tc
 		 ///アロケーターか
 		 ///</summary>
 		template<class Type>
-		struct Allocator :to_meta_func<detail::Allocator_c>::type<Type>
-		{};
+		TC_TO_CONCEPT(Allocator, detail::Allocator_c, Type);
 
 		///<summary>
 		///TのオブジェクトとUのオブジェクトが入れ替え可能か
 		///</summary>
 		template<class T, class U = T>
-		struct Swappable :to_meta_func<detail::Swappable_c>::type< std::add_lvalue_reference_t<T>, std::add_lvalue_reference_t<U>>
-		{};
+		TC_TO_CONCEPT(Swappable, detail::Swappable_c, std::add_lvalue_reference_t<T>, std::add_lvalue_reference_t<U>);
 
 		///<summary>
 		/// FromがToにキャストできるか
 		///</summary>
 		template< class From, class To >
-		struct Convertible :std::is_convertible<From, To>
+		struct Convertible : tc::detail::to_concept<Convertible, std::is_convertible, From, To>
 		{};
 
 		///<summary>
 		/// null許容か
 		///</summary>
 		template<class Type>
-		struct NullablePointer : to_meta_func<detail::NullablePointer_c>::type<Type>
-		{};
+		TC_TO_CONCEPT(NullablePointer, detail::NullablePointer_c, Type);
 
 		//--TODO is_invocableに変更したい--
 
@@ -680,37 +669,31 @@ namespace tc
 		///関数呼び出し可能な型か
 		///</summary>
 		template <class Func, class... Args>
-		struct Invocable : to_meta_func<detail::Invocable_c>::type< Func, Args...>
-		{};
+		TC_TO_CONCEPT(Invocable, detail::Invocable_c, Func, Args...);
 
 		///<summary>
 		///関数オブジェクトか
 		///</summary>
 		template <class Type>
-		struct FunctionObject :to_meta_func<detail::FunctionObject_c>::type< Type>
-		{};
+		TC_TO_CONCEPT(FunctionObject, detail::FunctionObject_c, Type);
 
 		///<summary>
 		///コンセプトか
 		///</summary>
 		template <class Type>
-		struct Concept : to_meta_func<detail::Concept_c>::type< Type>
-		{};
+		TC_TO_CONCEPT(Concept, detail::Concept_c, Type);
 
 		///<summary>
 		///ハッシュ関数オブジェクトか
 		///</summary>
 		template <class Type, class Key>
-		struct Hash : to_meta_func<detail::Hash_c>::type< Type, Key>
-		{};
+		TC_TO_CONCEPT(Hash, detail::Hash_c, Type, Key);
 
 		///<summary>
 		///期間、時刻、現在の時刻を取得可能か
 		///</summary>
 		template<class Type>
-		struct Clock :to_meta_func<detail::Clock_c>::type< Type>
-		{};
-
+		TC_TO_CONCEPT(Clock, detail::Clock_c, Type);
 
 		//************************************************************************************************
 		//
@@ -723,28 +706,28 @@ namespace tc
 		///トリビアルコピー可能か
 		///</summary>
 		template<class Type>
-		struct TriviallyCopyable : std::is_trivially_copyable<Type>
+		struct TriviallyCopyable : tc::detail::to_concept<TriviallyCopyable, std::is_trivially_copyable, Type>
 		{};
 
 		///<summary>
 		///トリビアル型か
 		///</summary>
 		template<class Type>
-		struct TrivialType : std::is_trivial<Type>
+		struct TrivialType : tc::detail::to_concept<TrivialType, std::is_trivial, Type>
 		{};
 
 		///<summary>
 		///標準レイアウト型か
 		///</summary>
 		template<class Type>
-		struct StandardLayoutType : std::is_standard_layout<Type>
+		struct StandardLayoutType : tc::detail::to_concept<StandardLayoutType, std::is_standard_layout, Type>
 		{};
 
 		///<summary>
 		///POD型か
 		///</summary>
 		template<class Type>
-		struct PODType : std::is_pod<Type>
+		struct PODType : tc::detail::to_concept<PODType, std::is_pod, Type>
 		{};
 
 
@@ -843,49 +826,44 @@ namespace tc
 		///イテレーターかどうか
 		///</summary>
 		template<class It>
-		struct Iterator : to_meta_func<detail::Iterator_c>::type<It>
-		{};
+		TC_TO_CONCEPT(Iterator, detail::Iterator_c, It);
+
 		///<summary>
 		///入力イテレーターかどうか
 		///</summary>
 		template<class It>
-		struct InputIterator : to_meta_func<detail::InputIterator_c>::type<It>
-		{};
+		TC_TO_CONCEPT(InputIterator, detail::InputIterator_c, It);
 
 		///<summary>
 		///出力イテレーターかどうか
 		///</summary>
 		template<class It>
-		struct OutputIterator : to_meta_func<detail::OutputIterator_c>::type<It>
-		{};
+		TC_TO_CONCEPT(OutputIterator, detail::OutputIterator_c, It);
 
 		///<summary>
 		///前方イテレーターかどうか
 		///</summary>
 		template<class It>
-		struct ForwardIterator : to_meta_func<detail::ForwardIterator_c>::type<It>
-		{};
+		TC_TO_CONCEPT(ForwardIterator, detail::ForwardIterator_c, It);
+
 		///<summary>
 		///双方向イテレーターかどうか
 		///</summary>
 		template<class It>
-		struct BidirectionalIterator : to_meta_func<detail::BidirectionalIterator_c>::type<It>
-		{};
+		TC_TO_CONCEPT(BidirectionalIterator, detail::BidirectionalIterator_c, It);
+
 
 		///<summary>
 		///ランダムアクセスイテレーターかどうか
 		///</summary>
 		template<class It>
-		struct RandomAccessIterator : to_meta_func<detail::RandomAccessIterator_c>::type<It>
-		{};
+		TC_TO_CONCEPT(RandomAccessIterator, detail::RandomAccessIterator_c, It);
 
 		///<summary>
 		///イテレーターの値型がスワップ可能か
 		///</summary>
 		template<class It>
-		struct ValueSwappable : to_meta_func<detail::ValueSwappable_c>::type<It>
-		{};
-
+		TC_TO_CONCEPT(ValueSwappable, detail::ValueSwappable_c, It);
 
 		//************************************************************************************************
 		//
@@ -896,98 +874,106 @@ namespace tc
 		namespace detail
 		{
 
-			template<class C, class IteratorConcept = Iterator<typename C::iterator>>
+			template<class X>
 			using  Container_c = constraint<
-				typename C::value_type,
-				typename C::reference,
-				typename C::const_reference,
-				typename C::iterator,
-				typename C::const_iterator,
-				typename C::iterator,
-				typename C::difference_type,
-				typename C::size_type,
-				requires<IteratorConcept>,
-				requires<DefaultConstructible<C>>,
-				requires<CopyConstructible<C>>,
-				requires<Destructible<C>>,
-				requires<EqualityComparable<C>>,
-				requires<NotEqualityComparable<C>>,
-				requires<CopyAssignable<C> >,
+				typename X::value_type,
+				typename X::reference,
+				typename X::const_reference,
+				typename X::iterator,
+				typename X::const_iterator,
+				typename X::iterator,
+				typename X::difference_type,
+				typename X::size_type,
+				requires<DefaultConstructible<X>>,
+				requires<CopyConstructible<X>>,
+				requires<Destructible<X>>,
+				requires<EqualityComparable<X>>,
+				requires<NotEqualityComparable<X>>,
+				requires<CopyAssignable<X> >,
 				decltype(
-					std::declval<C&>().begin(),
-					std::declval<C&>().end(),
-					std::declval<C&>().cbegin(),
-					std::declval<C&>().cend(),
-					std::declval<C&>().swap(std::declval<C&>()),
-					std::swap(std::declval<C&>(), std::declval<C&>()),
-					std::declval<C&>().size(),
-					std::declval<C&>().max_size(),
-					std::declval<C&>().empty()
+					std::declval<X&>().begin(),
+					std::declval<X&>().end(),
+					std::declval<X&>().cbegin(),
+					std::declval<X&>().cend(),
+					std::declval<X&>().swap(std::declval<X&>()),
+					std::swap(std::declval<X&>(), std::declval<X&>()),
+					std::declval<X&>().size(),
+					std::declval<X&>().max_size(),
+					std::declval<X&>().empty()
 					)
+			> ;
+			template<class X>
+			using  ForwardContainer_c = constraint<
+				Container_c<X>,
+				ForwardIterator_c<typename X::iterator>
+			>;
+			template<class X>
+			using RandomAccessContainer_c= constraint<
+				Container_c<X>,
+				RandomAccessIterator_c<typename X::iterator>
 			>;
 
-
-			template<class C>
+			template<class X>
 			using ReversibleContainer_c = constraint <
-				Container_c<C>,
-				requires<BidirectionalIterator<typename C::iterator>>,
-				typename C::reverse_iterator,
-				typename C::const_reverse_iterator,
+				Container_c<X>,
+				requires<BidirectionalIterator<typename X::iterator>>,
+				typename X::reverse_iterator,
+				typename X::const_reverse_iterator,
 				decltype(
-					std::declval<C&>().rbegin(),
-					std::declval<C&>().rend(),
-					std::declval<C&>().crbegin(),
-					std::declval<C&>().crend()
+					std::declval<X&>().rbegin(),
+					std::declval<X&>().rend(),
+					std::declval<X&>().crbegin(),
+					std::declval<X&>().crend()
 					)
 			>;
 
 
-			template<class C>
+			template<class X>
 			using DefaultInsertable_c = constraint<
-				Container_c<C>,
-				requires<DefaultConstructible<typename C::value_type>>
+				Container_c<X>,
+				requires<DefaultConstructible<typename X::value_type>>
 			>;
 
 
-			template<class C>
+			template<class X>
 			using CopyInsertable_c = constraint<
-				Container_c<C>,
-				requires<CopyConstructible<typename C::value_type>>
+				Container_c<X>,
+				requires<CopyConstructible<typename X::value_type>>
 			>;
 
 
-			template<class C>
+			template<class X>
 			using MoveInsertable_c = constraint<
-				Container_c<C>,
-				requires<MoveConstructible<typename C::value_type>>
+				Container_c<X>,
+				requires<MoveConstructible<typename X::value_type>>
 			>;
 
-			template <class C, class... Args>
+			template <class X, class... Args>
 			using EmplaceConstructible_c = constraint<
-				Container_c<C>,
-				requires<Constructible<typename C::value_type, Args...>>
+				Container_c<X>,
+				requires<Constructible<typename X::value_type, Args...>>
 			>;
 
-			template<class C>
+			template<class X>
 			using Erasable_c = constraint<
-				Container_c<C>,
-				requires<Destructible<typename C::value_type>>
+				Container_c<X>,
+				requires<Destructible<typename X::value_type>>
 			>;
 
-			template<class C>
+			template<class X>
 			using AllocatorAwareContainer_c = constraint<
-				requires<CopyAssignable<C>>,
-				CopyInsertable_c<C>,
-				requires<MoveAssignable<C>>,
-				MoveInsertable_c<C>,
-				requires<DefaultConstructible<std::allocator<typename C::value_type>>>,
-				requires<Constructible<C, std::allocator<typename C::value_type>>>,
-				requires<Constructible < C, std::add_lvalue_reference_t<C>, std::allocator<typename C::value_type >> >,
-				requires<Constructible < C, std::add_rvalue_reference_t<C>, std::allocator<typename C::value_type >> >,
-				typename C::allocator_type,
+				requires<CopyAssignable<X>>,
+				CopyInsertable_c<X>,
+				requires<MoveAssignable<X>>,
+				MoveInsertable_c<X>,
+				requires<DefaultConstructible<std::allocator<typename X::value_type>>>,
+				requires<Constructible < X, std::allocator<typename X::value_type>>>,
+				requires<Constructible < X, std::add_lvalue_reference_t<X>, std::allocator<typename X::value_type >> >,
+				requires<Constructible < X, std::add_rvalue_reference_t<X>, std::allocator<typename X::value_type >> >,
+				typename X::allocator_type,
 				decltype(
-					std::declval<C&>().get_allocator(),
-					std::declval<C&>().swap(std::declval<C&>())
+					std::declval<X&>().get_allocator(),
+					std::declval<X&>().swap(std::declval<X&>())
 					)
 			>;
 
@@ -996,70 +982,64 @@ namespace tc
 		 ///<summary>
 		 ///コンテナかどうか
 		 ///</summary>
-		template<class C>
-		struct Container : to_meta_func<detail::Container_c>::type<C, Iterator<C>>
-		{};
+		template<class X>
+		TC_TO_CONCEPT(Container, detail::Container_c, X);
 
 		///<summary>
 		///前方イテレーターをもつコンテナかどうか
 		///</summary>
-		template<class C>
-		struct ForwardContainer : to_meta_func<detail::Container_c>::type< C, ForwardIterator<C>>
-		{};
+		template<class X>
+		TC_TO_CONCEPT(ForwardContainer, detail::ForwardContainer_c, X);
+
 		///<summary>
 		///ランダムアクセスイテレーターをもつコンテナかどうか
 		///</summary>
-		template<class C>
-		struct RandomAccessContainer : to_meta_func<detail::Container_c>::type< C, RandomAccessIterator<C>>
-		{};
+		template<class X>
+		TC_TO_CONCEPT(RandomAccessContainer, detail::RandomAccessContainer_c, X);
+
 
 		///<summary>
 		///リバースイテレーターをもつコンテナかどうか
 		///</summary>
-		template<class C>
-		struct ReversibleContainer : to_meta_func<detail::ReversibleContainer_c>::type<C>
-		{};
+		template<class X>
+		TC_TO_CONCEPT(ReversibleContainer, detail::ReversibleContainer_c, X);
 
 		///<summary>
 		///任意のコンテナCに対して、その要素型をデフォルトで挿入可能か
 		///</summary>
-		template<class C>
-		struct DefaultInsertable :to_meta_func<detail::DefaultInsertable_c>::type<C>
-		{};
+		template<class X>
+		TC_TO_CONCEPT(DefaultInsertable, detail::DefaultInsertable_c, X);
 
 		///<summary>
 		///任意のコンテナCに対して、その要素型のコピー挿入可能か
 		///</summary>
-		template<class C>
-		struct CopyInsertable :to_meta_func<detail::CopyInsertable_c>::type<C>
-		{};
+		template<class X>
+		TC_TO_CONCEPT(CopyInsertable, detail::CopyInsertable_c, X);
+
 		///<summary>
 		///任意のコンテナCに対して、その要素型の右辺値オブジェクトをムーブ挿入可能か
 		///</summary>
-		template<class C>
-		struct MoveInsertable :to_meta_func<detail::MoveInsertable_c>::type<C>
-		{};
+		template<class X>
+		TC_TO_CONCEPT(MoveInsertable, detail::MoveInsertable_c, X);
 
 		///<summary>
 		///任意のコンテナCに対して、要素型のコンストラクタ引数列Argsから直接構築可能か
 		///</summary>
-		template <class C, class... Args>
-		struct EmplaceConstructible : to_meta_func<detail::EmplaceConstructible_c>::type<C, Args...>
-		{};
+		template <class X, class... Args>
+		TC_TO_CONCEPT(EmplaceConstructible, detail::EmplaceConstructible_c, X, Args...);
 
 		///<summary>
 		///任意のコンテナCに対して、要素型の破棄が可能か
 		///</summary>
-		template<class C>
-		struct Erasable :to_meta_func<detail::Erasable_c>::type<C>
-		{};
+		template<class X>
+		TC_TO_CONCEPT(Erasable, detail::Erasable_c, X);
 
 		///<summary>
 		///アロケーターを認識するコンテナか
 		///</summary>
-		template<class C>
-		struct AllocatorAwareContainer : to_meta_func<detail::AllocatorAwareContainer_c>::type<C>
-		{};
+		template<class X>
+		TC_TO_CONCEPT(AllocatorAwareContainer, detail::AllocatorAwareContainer_c, X);
+
 		//************************************************************************************************
 		//
 		//その他
@@ -1084,10 +1064,7 @@ namespace tc
  ///</summary>
 #define TC_WHERE( ... ) tc::requires< __VA_ARGS__ > = nullptr
 
-#define TC_MAPPED_WHERE( ... ) tc::requires< tc::detail::concept_mapped<__VA_ARGS__ >> = nullptr
-
  ///<summary>
  ///条件をみたさないとアサート
  ///</summary>
 #define TC_CONCEPT_ASSERT( ... ) static_assert(__VA_ARGS__::value,#__VA_ARGS__ )
-
