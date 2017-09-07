@@ -57,6 +57,22 @@ using className##_c = tc::constraint<decltype(std::declval<Left&>() symbol std::
 template<class Left,class Right=Left>\
 TC_TO_CONCEPT(className, detail::className##_c, Left,Right)
 
+//************************************************************************************************
+//
+//requires
+//
+//************************************************************************************************
+namespace tc 
+{
+
+	///<summary>
+	///Concept‚ªğŒ‚ğ–‚½‚·‚©
+	///</summary>
+	template < class WhereConcept >
+	using requires = std::enable_if_t<WhereConcept::value, std::nullptr_t >;
+
+
+}//namesapce tc
 
 //************************************************************************************************
 //
@@ -138,7 +154,12 @@ namespace tc
 
 }//namespace tc
 
- //----------------------------------------------------------------------------------
+ //************************************************************************************************
+ //
+ //constraint
+ //
+ //************************************************************************************************
+
 namespace tc
 {
 
@@ -161,9 +182,15 @@ namespace tc
 		{
 			using type = std::remove_reference_t<decltype(tc::concept_mapping<Concept>(tc::val<Arg&>))>;
 		};
-		template<template<class...>class Concept, template<class...>class Meta, class ...Arg>
-		struct to_concept :Meta<typename mapped_type<Concept<std::remove_reference_t<Arg>...>, Arg>::type...>
-		{};
+		template<template<class...>class Concept, template<class...>class Meta, class ...Args>
+		struct to_concept :Meta<typename mapped_type<Concept<std::remove_reference_t<Args>...>, Args>::type...>
+		{
+		
+			using base = Meta<Args...>;
+			
+			template<class... T>
+			using constraint = tc::requires<Meta<T...>>;
+		};
 
 		template<bool Test, class = void, template<class...>class Constraint, class...Args>
 		struct constraint_if_impl
@@ -191,12 +218,6 @@ namespace tc
 	///</summary>
 	template<bool Test, template<class...>class Constraint, class...Args>
 	using constraint_if = typename detail::constraint_if_impl<Test, void, Constraint, Args...>::type;
-
-	///<summary>
-	///Concept‚ªğŒ‚ğ–‚½‚·‚©
-	///</summary>
-	template < class WhereConcept >
-	using requires = std::enable_if_t<WhereConcept::value, std::nullptr_t >;
 
 	///<summary>
 	///Constraint‚ğƒƒ^ŠÖ”‚É•ÏŠ·

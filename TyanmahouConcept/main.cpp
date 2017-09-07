@@ -3,25 +3,55 @@
 
 #include"Concept.hpp"
 
-struct Test{};
+
+template<class T>
+using test_c = tc::constraint<
+	typename T::hoge
+>;
+
+template<class T>
+TC_TO_CONCEPT(Test, test_c,T);
+
+
+template<class T>
+using test2_c = tc::constraint<
+	Test<T>::constraint<T>,
+	typename T::piyo
+>;
+
+template<class T>
+TC_TO_CONCEPT(Test2, test2_c, T);
+
+struct A {
+	using hoge = int;
+	using piyo = int;
+};
+struct B {
+	using piyo=int;
+};
 
 template<>
-struct tc::concept_map<tc::Concept::Abstract<Test>>
+struct tc::concept_map<Test<B>>
 {
-	struct Wrap:Test
+	struct Wrap:B
 	{
-		virtual void a() = 0;
+		using hoge = int;
 	};
 
-	Wrap& operator=(Test& a)
+	Wrap& operator=(B& o)
 	{
-		return static_cast<Wrap&>(a);
+		return static_cast<Wrap&>(o);
 	}
-
 };
+template<class T,TC_WHERE(Test2<T>)>
+void f(T a)
+{
+//	T::hoge i = 0;
+}
 
 void main()
 {
-	static_assert(std::is_abstract<Test>::value==false);
-	static_assert(tc::Concept::Abstract<Test>::value==true);
+	Test<A> a;
+	f(A{});
+	f(B{});
 }
