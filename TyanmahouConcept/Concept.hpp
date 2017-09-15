@@ -1,6 +1,14 @@
 #pragma once
 #include<type_traits>
 #include<tuple>
+#include<memory>
+
+
+//************************************************************************************************
+//
+//macro
+//
+//************************************************************************************************
 
 ///<summary>
 ///コンセプトに変換
@@ -57,6 +65,32 @@ using className##_c = tc::constraint<decltype(std::declval<Left&>() symbol std::
 template<class Left,class Right=Left>\
 TC_TO_CONCEPT(className, detail::className##_c, Left,Right)
 
+
+///<summary>
+///whereマクロ
+///</summary>
+#define TC_WHERE( ... ) tc::requires< __VA_ARGS__ > = nullptr
+
+///<summary>
+///条件をみたさないとアサート
+///</summary>
+#define TC_CONCEPT_ASSERT( ... ) static_assert(__VA_ARGS__::value,#__VA_ARGS__ )
+
+//************************************************************************************************
+//
+//util
+//
+//************************************************************************************************
+
+namespace tc
+{
+	///<summary>
+	///仮のインスタンス作成(declvalのヘルパ)
+	///</summary>
+	template<class Type>
+	Type&& val = std::declval<Type>();
+}
+
 //************************************************************************************************
 //
 //requires
@@ -82,12 +116,6 @@ namespace tc
 
 namespace tc
 {
-
-	///<summary>
-	///仮のインスタンス作成(declvalのヘルパ)
-	///</summary>
-	template<class Type>
-	Type&& val = std::declval<Type>();
 
 	template<class Concept>
 	struct concept_map
@@ -232,6 +260,90 @@ namespace tc
 	using to_meta_func_t = typename to_meta_func<Constraint>::template type<Args...>;
 
 
+}//namespace tc
+
+ //************************************************************************************************
+ //
+ //concept_any
+ //
+ //************************************************************************************************
+namespace tc
+{
+
+	///<summary>
+	///コンセプトを満たす型を"参照"
+	///</summary>
+	template<template<class>class Concept>
+	class concept_any
+	{
+	private:
+		struct base
+		{
+			virtual ~base() = default;
+
+			virtual const std::type_info& type()const = 0;
+		};
+
+		template<class T>
+		struct impl :base
+		{
+			T&& value;
+
+			impl(T&& v) :
+				value(std::forward<T>(v))
+			{}
+			const std::type_info& type()const override
+			{
+				return typeid(T);
+			}
+		};
+
+	public:
+		concept_any() = default;
+
+		template<class T, TC_WHERE(Concept<std::remove_reference_t<T>>)>
+		concept_any(T&& v)
+		{
+			m_value = std::make_shared<impl<T>>(std::forward<T>(v));
+		}
+
+		template<class T, TC_WHERE(Concept<std::remove_reference_t<T>>)>
+		concept_any& operator=(T&& v)
+		{
+			m_value = std::make_shared<impl<T>>(std::forward<T>(v));
+			return *this;
+		}
+
+		///<summary>
+		///コンセプトマッピング後の値を取得
+		///<summary>
+		template<class T>
+		decltype(auto) get()
+		{
+			return std::get<0>(tc::concept_mapping<Concept>(static_cast<impl<T>&>(*m_value).value));
+		}
+
+		///<summary>
+		///元の型の値を取得
+		///<summary>
+		template<class T>
+		decltype(auto) get_origin()
+		{
+			return static_cast<impl<T>&>(*m_value).value;
+		}
+
+
+		///<summary>
+		///元の型情報取得
+		///<summary>
+		const std::type_info& type()const
+		{
+			return m_value->type();
+		}
+
+	private:
+		std::shared_ptr<base> m_value;
+	};
 }//namespace tc
 
  //************************************************************************************************
@@ -1079,13 +1191,3 @@ namespace tc
 
 }//namespace tc
 
-
- ///<summary>
- ///whereマクロ
- ///</summary>
-#define TC_WHERE( ... ) tc::requires< __VA_ARGS__ > = nullptr
-
- ///<summary>
- ///条件をみたさないとアサート
- ///</summary>
-#define TC_CONCEPT_ASSERT( ... ) static_assert(__VA_ARGS__::value,#__VA_ARGS__ )
