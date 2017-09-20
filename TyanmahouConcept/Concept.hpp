@@ -151,9 +151,9 @@ namespace tc
 		};
 
 		template<class... Type>
-		auto ref_make_tuple(Type&&... arg)->decltype(std::tuple<Type&&...>(std::forward<Type>(arg)...))
+		auto ref_make_tuple(Type&&... arg)->decltype(std::tuple<Type...>(std::forward<Type>(arg)...))
 		{
-			return std::tuple<Type&&...>(std::forward<Type>(arg)...);
+			return std::tuple<Type...>(std::forward<Type>(arg)...);
 		}
 
 		template<class Concept, class ...Type>
@@ -320,7 +320,7 @@ namespace tc
 		template<class T>
 		decltype(auto) get()
 		{
-			return std::get<0>(tc::concept_mapping<Concept>(static_cast<impl<T>&>(*m_value).value));
+			return (tc::concept_mapping<Concept<T>>(static_cast<impl<T>&>(*m_value).value));
 		}
 
 		///<summary>

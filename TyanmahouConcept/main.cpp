@@ -3,104 +3,49 @@
 #include<list>
 #include"Concept.hpp"
 
+template<class T, TC_WHERE(std::is_integral<T>)>
+struct Test
+{};
+
 template<class T>
-using Drawble_c = tc::constraint<
-	decltype(tc::val<T>.draw(), tc::val<T>.a)
+using IntegerTest_c = tc::constraint<
+	typename Test<T>
 >;
 
 template<class T>
-TC_TO_CONCEPT(Drawble, Drawble_c, T);
+TC_TO_CONCEPT(IntegerTest, IntegerTest_c, T);
 
-struct Square {};
-struct Circle { int a = 10; void draw() { std::cout << "Circle" << std::endl;; } };
 
-template<class T>
-struct tc::concept_map<Drawble<T>>
+template<>
+struct tc::concept_map<IntegerTest<double>>
 {
-	struct SWrap :Square
+	int operator =(double& a)
 	{
-		int a = 2;
-		void draw()
-		{
-			std::cout << "Square" << std::endl;
-		}
-	};
+		int b = a + 2;
 
-	template<class U>
-	struct VWrap :std::vector<U>
-	{
-		__declspec(property(get = getA, put = setA)) int a;
-		int& getA()
-		{
-			return this->back();
-		}
-		void setA(int a)
-		{
-			this->back() = a;
-		}
-		void draw()
-		{
-			for (auto&& elm : *this)
-			{
-				std::cout << elm ;
-			}
-			std::cout << std::endl;
-		}
-	};
-
-
-	SWrap& operator=(Square& s)
-	{
-		return static_cast<SWrap&>(s);
-	}
-
-	template<class U>
-	VWrap<U>& operator=(std::vector<U>& v)
-	{
-		return static_cast<VWrap<U>&>(v);
+		return b;
 	}
 };
 
-#include<functional>
-namespace test
+template<class T>
+void f(tc::concept_any<IntegerTest> _v)
 {
-	struct D :tc::concept_any<Drawble>
-	{
+	auto v = _v.get<T>();
 
-	
-		template<class T,TC_WHERE(Drawble<T>)>
-		D(T&& v):tc::concept_any<Drawble>(v),
-			a(this->get<T>().a)
-		{
-			draw_impl = [&]() {this->get<T>().draw(); };
-		}
-
-		void draw()
-		{
-			draw_impl();
-		}
-		int& a;
-	private:
-		std::function<void()> draw_impl;
-	};
+	std::cout << v << std::endl;
 }
 
-
-void f(test::D draw)
+std::tuple<double,int,int> test(double& a)
 {
-	draw.draw();
-	draw.a = 20;
+	return tc::detail::ref_make_tuple(0.5, 0, 1);
 }
-
 void main()
 {
+//	f<int>(0);
+	double a = 0.5;
+	double b = 1.5;
+	//f<double>(0.5);
+	std::cout << std::get<0>(tc::concept_mapping<IntegerTest>(0.5)) << std::endl;
 
-	f(Square{});
-	Circle c;
-	f(c);
-	std::cout << c.a << std::endl;
-	std::vector<int> a{ 1,2,3 };
-	f(a);
 
-	std::cout << a[2];
 }
