@@ -2,7 +2,7 @@
 #include<type_traits>
 #include<tuple>
 #include<memory>
-
+#include<any>
 
 //************************************************************************************************
 //
@@ -10,36 +10,6 @@
 //
 //************************************************************************************************
 
-///<summary>
-///コンセプトに変換
-///</summary>
-#define TC_TO_CONCEPT(className,constraint,...)\
-struct className : tc::detail::to_concept< className ,typename tc::to_meta_func<constraint>::template type,__VA_ARGS__>\
-{}
-
-///<summary>
-///memNameのメンバをもつかどうか
-///</summary>
-#define TC_HAS_MEMBER(className,memName)\
-namespace detail\
-{\
-template<class Type>\
-using className##_c = tc::constraint<decltype(&Type::memName)>;\
-}\
-template<class Type>\
-TC_TO_CONCEPT(className, detail::className##_c, Type)
-
-///<summary>
-///typeNameのメンバ型名をもつかどうか
-///</summary>
-#define TC_HAS_MEMBER_TYPE(className ,typeName)\
-namespace detail\
-{\
-template<class Type>\
-using className##_c = tc::constraint<typename Type::typeName>;\
-}\
-template<class Type>\
-TC_TO_CONCEPT(className, detail::className##_c, Type)
 
 ///<summary>
 ///symbol単項演算が可能か
@@ -72,9 +42,19 @@ TC_TO_CONCEPT(className, detail::className##_c, Left,Right)
 #define TC_WHERE( ... ) tc::requires< __VA_ARGS__ > = nullptr
 
 ///<summary>
+///whereマクロ(bool)
+///</summary>
+#define TC_WHERE_BOOL( ... ) tc::requires_bool< static_cast<bool>(__VA_ARGS__) > = nullptr
+
+///<summary>
 ///条件をみたさないとアサート
 ///</summary>
 #define TC_CONCEPT_ASSERT( ... ) static_assert(__VA_ARGS__::value,#__VA_ARGS__ )
+
+///<summary>
+///条件をみたさないとアサート(bool)
+///</summary>
+#define TC_CONCEPT_ASSERT_BOOL( ... ) static_assert(static_cast<bool>(__VA_ARGS__),#__VA_ARGS__ )
 
 //************************************************************************************************
 //
@@ -84,26 +64,69 @@ TC_TO_CONCEPT(className, detail::className##_c, Left,Right)
 
 namespace tc
 {
+
+	namespace detail
+	{
+		template<class...>
+		struct void_t_impl
+		{
+			typedef void type;
+		};
+	}
+	template<class... Test>
+	using void_t = typename detail::void_t_impl<Test...>::type;
+
+	namespace detail
+	{
+
+		template<class, template<class...>class Constraint, class ...Args>
+		struct is_detected_impl :std::false_type
+		{};
+
+		template<template<class...>class Constraint, class ...Args>
+		struct is_detected_impl<void_t<Constraint<Args...>>, Constraint, Args...> :std::true_type
+		{};
+	}
+	//-- TODO std::is_detected
+
+	template<template<class...>class Constraint, class ...Args>
+	using is_detected = detail::is_detected_impl <void, Constraint, Args...>;
+
+
+
 	///<summary>
 	///仮のインスタンス作成(declvalのヘルパ)
 	///</summary>
 	template<class Type>
 	Type&& val = std::declval<Type>();
-}
+	///<summary>
+	///仮のインスタンス作成(declvalのヘルパ)
+	///</summary>
+	template<class Type>
+	Type&& has_type = val<Type>;
+
+
+}//namesapce tc
 
 //************************************************************************************************
 //
 //requires
 //
 //************************************************************************************************
-namespace tc 
+namespace tc
 {
 
 	///<summary>
-	///Conceptが条件を満たすか
+	///WhereConceptが条件を満たすか
 	///</summary>
 	template < class WhereConcept >
 	using requires = std::enable_if_t<WhereConcept::value, std::nullptr_t >;
+
+	///<summary>
+	///Testがtureかどうか
+	///</summary>
+	template < bool Test >
+	using requires_bool = std::enable_if_t<Test, std::nullptr_t >;
 
 
 }//namesapce tc
@@ -131,13 +154,6 @@ namespace tc
 
 	namespace detail
 	{
-		template<class...>
-		struct void_t_impl
-		{
-			typedef void type;
-		};
-		template<class... Test>
-		using void_t = typename void_t_impl<Test...>::type;
 
 		template<class Concept, class Type, class = void>
 		struct concept_mapping_impl : concept_map<void>
@@ -173,6 +189,9 @@ namespace tc
 
 		return detail::concept_mapping_impl<Concept, Type>() = value;
 	}
+	///<summary>
+	///インスタンスにコンセプトマップを適応させる 返り値tuple
+	///</summary>
 	template<template<class...>class Concept, class ...Type>
 	auto concept_mapping(Type&&... value)->decltype(detail::make_mapping_tuple<Concept<std::remove_reference_t<Type>...>>(value...))
 	{
@@ -180,6 +199,19 @@ namespace tc
 		return detail::make_mapping_tuple<C>(value...);
 	}
 
+	namespace detail
+	{
+		template<class Concept, class Arg>
+		struct ConceptMapped
+		{
+			using type = std::remove_reference_t<decltype(tc::concept_mapping<Concept>(tc::val<Arg&>))>;
+		};
+	}
+	///<summary>
+	///コンセプトマップ後の型
+	///</summary>
+	template<class Concept, class Arg>
+	using ConceptMapped_t = typename detail::ConceptMapped<Concept, Arg>::type;
 }//namespace tc
 
  //************************************************************************************************
@@ -190,75 +222,32 @@ namespace tc
 
 namespace tc
 {
-
 	namespace detail
 	{
-		template<class = void, template<class...>class Constraint, class ...Args>
-		struct is_detected_impl :std::false_type
-		{};
+		template<class Concept, class ... Args>
+		using ConceptCheck = decltype(&Concept::template requires<Args...>);
 
-		template<template<class...>class Constraint, class ...Args>
-		struct is_detected_impl<void_t<Constraint<Args...>>, Constraint, Args...> :std::true_type
-		{};
+	}
 
-		//-- TODO std::is_detected
-		template<template<class...>class Constraint, class ...Args>
-		using is_detected = is_detected_impl <void, Constraint, Args...>;
-
-		template<class Concept, class Arg>
-		struct mapped_type
-		{
-			using type = std::remove_reference_t<decltype(tc::concept_mapping<Concept>(tc::val<Arg&>))>;
-		};
-		template<template<class...>class Concept, template<class...>class Meta, class ...Args>
-		struct to_concept :Meta<typename mapped_type<Concept<std::remove_reference_t<Args>...>, Args>::type...>
-		{
-		
-			using base = Meta<Args...>;
-			
-			template<class... T>
-			using constraint = tc::requires<Meta<T...>>;
-		};
-
-		template<bool Test, class = void, template<class...>class Constraint, class...Args>
-		struct constraint_if_impl
-		{};
-		template<template<class...>class Constraint, class...Args>
-		struct constraint_if_impl<true, void_t<Constraint<Args...>>, Constraint, Args...>
-		{
-			using type = void_t<Constraint<Args...>>;
-		};
-		template<template<class...>class Constraint, class...Args>
-		struct constraint_if_impl<false, void, Constraint, Args...>
-		{
-			using type = void;
-		};
-	}//namespace detail
-
-	 ///<summary>
-	 ///制約
-	 ///</summary>
+	///<summary>
+	///制約
+	///</summary>
 	template<class ...Args>
-	using constraint = detail::void_t<Args...>;
+	using constraint = void_t<Args...>;
 
 	///<summary>
-	///Testが成功した場合 Constraintを制約とみなす
+	///requires実装クラスをコンセプト(メタ関数)に変換
 	///</summary>
-	template<bool Test, template<class...>class Constraint, class...Args>
-	using constraint_if = typename detail::constraint_if_impl<Test, void, Constraint, Args...>::type;
+	template<class Constraint, class ...Args>
+	struct to_concept : is_detected<detail::ConceptCheck, Constraint, Args...>
+	{};
 
 	///<summary>
-	///Constraintをメタ関数に変換
+	///void_t/constraintをコンセプト(メタ関数)に変換
 	///</summary>
-	template<template<class...>class Constraint>
-	struct to_meta_func
-	{
-		template<class... Args>
-		using type = detail::is_detected<Constraint, Args...>;
-	};
 	template<template<class...>class Constraint, class ...Args>
-	using to_meta_func_t = typename to_meta_func<Constraint>::template type<Args...>;
-
+	struct void_t_to_concept : is_detected<Constraint, Args...>
+	{};
 
 }//namespace tc
 
@@ -267,90 +256,116 @@ namespace tc
  //concept_any
  //
  //************************************************************************************************
+
 namespace tc
 {
+	namespace detail
+	{
+			//実装
+			template<class T>
+			struct AnyCastImpl
+			{
+				static T Func(std::any& _any)
+				{
+					using Type = std::remove_const_t<T>;
+					if (auto& type = _any.type(); type == typeid(std::reference_wrapper<Type>))
+					{
+						return std::any_cast<std::reference_wrapper<Type>>(_any);
+					}
+					else if (type == typeid(std::reference_wrapper<const Type>))
+					{
+						return std::any_cast<std::reference_wrapper<const Type>>(_any);
+					}
+					return std::any_cast<T>(_any);
+				}
+			};
+			//参照
+			template<class T>
+			struct AnyCastImpl<T&>
+			{
+				static T& Func(std::any& _any)
+				{
+					if (_any.type() == typeid(std::reference_wrapper<T>))
+					{
+						return std::any_cast<std::reference_wrapper<T>>(_any);
+					}
+					return std::any_cast<T&>(_any);
+				}
+			};
+			//const参照
+			template<class T>
+			struct AnyCastImpl<const T&>
+			{
+				static const T& Func(std::any& _any)
+				{
+					if (auto& type = _any.type(); type == typeid(std::reference_wrapper<T>))
+					{
+						return std::any_cast<std::reference_wrapper<T>>(_any);
+					}
+					else if (type == typeid(std::reference_wrapper<const T>))
+					{
+						return std::any_cast<std::reference_wrapper<const T>>(_any);
+					}
+					return std::any_cast<T&>(_any);
+				}
+			};
+	
+		//ラップ関数
+		template<class T>
+		T any_cast_wrapper(std::any& _any)
+		{
+			return AnyCastImpl<T>::Func(_any);
+		}
 
+	}
 	///<summary>
-	///コンセプトを満たす型を"参照"
+	///コンセプトを満たす型
 	///</summary>
 	template<template<class>class Concept>
-	class concept_any
+	class concept_any : protected std::any
 	{
-	private:
-		struct base
-		{
-			virtual ~base() = default;
-
-			virtual const std::type_info& type()const = 0;
-		};
-
-		template<class T>
-		struct impl :base
-		{
-			T&& value;
-
-			impl(T&& v) :
-				value(std::forward<T>(v))
-			{}
-			const std::type_info& type()const override
-			{
-				return typeid(T);
-			}
-		};
-
 	public:
+
 		concept_any() = default;
 
-		template<class T, TC_WHERE(Concept<std::remove_reference_t<T>>)>
-		concept_any(T&& v)
+		template<class T, TC_WHERE(Concept<tc::ConceptMapped_t<Concept<T>, T>>)>
+		concept_any(const T& v) :
+			std::any(v)
+		{}
+		template<class T, TC_WHERE(Concept<tc::ConceptMapped_t<Concept<T>, T>>)>
+		concept_any(const std::reference_wrapper<T>& v) :
+			std::any(v)
+		{}
+		template<class T, TC_WHERE(Concept<tc::ConceptMapped_t<Concept<T>, T>>)>
+		concept_any& operator=(const T& v)
 		{
-			m_value = std::make_shared<impl<T>>(std::forward<T>(v));
+			return static_cast<concept_any&>(std::any::operator=(v));
 		}
 
-		template<class T, TC_WHERE(Concept<std::remove_reference_t<T>>)>
-		concept_any& operator=(T&& v)
+		using std::any::emplace;
+		using std::any::has_value;
+		using std::any::reset;
+		using std::any::type;
+		void swap(concept_any& any)
 		{
-			m_value = std::make_shared<impl<T>>(std::forward<T>(v));
-			return *this;
+			std::any::swap(any);
 		}
 
-		///<summary>
-		///コンセプトマッピング後の値を取得
-		///<summary>
 		template<class T>
 		decltype(auto) get()
 		{
-			return (tc::concept_mapping<Concept<T>>(static_cast<impl<T>&>(*m_value).value));
+			return tc::concept_mapping<Concept<std::remove_reference_t<T>>>(detail::any_cast_wrapper<T>(*this));
 		}
-
-		///<summary>
-		///元の型の値を取得
-		///<summary>
-		template<class T>
-		decltype(auto) get_origin()
-		{
-			return static_cast<impl<T>&>(*m_value).value;
-		}
-
-
-		///<summary>
-		///元の型情報取得
-		///<summary>
-		const std::type_info& type()const
-		{
-			return m_value->type();
-		}
-
-	private:
-		std::shared_ptr<base> m_value;
 	};
+
 }//namespace tc
 
- //************************************************************************************************
- //
- //concept example 
- //
- //************************************************************************************************
+//************************************************************************************************
+//
+//concept example 
+//
+//************************************************************************************************
+/*
 namespace tc
 {
 	namespace Concept
@@ -403,7 +418,7 @@ namespace tc
 
 		///<summary>
 		/// 後置デクリメント可能か
-		///</summary>		
+		///</summary>
 		template<class Type>
 		TC_TO_CONCEPT(PostDecrementable, detail::PostDecrementable_c, Type);
 
@@ -1191,3 +1206,4 @@ namespace tc
 
 }//namespace tc
 
+*/
