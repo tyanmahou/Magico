@@ -37,4 +37,5 @@ int main()
 	std::cout << Test<tc::as_mapped<A>>::value << std::endl;
 	std::cout << tc::Concept::Plusable<int,tc::as_mapped<A>>::value << std::endl;
 	return 0;
+
 }
