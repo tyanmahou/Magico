@@ -10,32 +10,6 @@
 //
 //************************************************************************************************
 
-
-///<summary>
-///symbol単項演算が可能か
-///</summary>
-#define TC_HAS_UNARY_OPERATOR(className,symbol)\
-namespace detail\
-{\
-	template<class Type>\
-	using className##_c = tc::constraint<decltype(symbol std::declval<Type&>())>;\
-}\
-template<class Type>\
-TC_TO_CONCEPT(className, detail::className##_c, Type)
-
-///<summary>
-///symbol2項演算が可能か
-///</summary>
-#define TC_HAS_BINARY_OPERATOR(className,symbol)\
-namespace detail\
-{\
-template<class Left,class Right=Left>\
-using className##_c = tc::constraint<decltype(std::declval<Left&>() symbol std::declval<Right&>())>; \
-}\
-template<class Left,class Right=Left>\
-TC_TO_CONCEPT(className, detail::className##_c, Left,Right)
-
-
 ///<summary>
 ///whereマクロ
 ///</summary>
@@ -99,11 +73,6 @@ namespace tc
 	///</summary>
 	template<class Type>
 	Type&& val = std::declval<Type>();
-	///<summary>
-	///仮のインスタンス作成(declvalのヘルパ)
-	///</summary>
-	template<class Type>
-	Type&& has_type = val<Type>;
 
 
 }//namesapce tc
@@ -161,7 +130,7 @@ namespace tc
 			using concept_map<void>::operator=;
 		};
 		template<class Concept, class Type>
-		struct concept_mapping_impl<Concept, Type, void_t<decltype(concept_map<Concept>() = tc::val<Type&>)>> :concept_map<Concept>
+		struct concept_mapping_impl<Concept, Type, void_t<decltype(concept_map<Concept>() = tc::val<Type>)>> :concept_map<Concept>
 		{
 			using concept_map<Concept>::operator=;
 		};
@@ -202,16 +171,67 @@ namespace tc
 	namespace detail
 	{
 		template<class Concept, class Arg>
-		struct ConceptMapped
+		struct concept_mapped
 		{
 			using type = std::remove_reference_t<decltype(tc::concept_mapping<Concept>(tc::val<Arg&>))>;
 		};
+
 	}
 	///<summary>
 	///コンセプトマップ後の型
 	///</summary>
 	template<class Concept, class Arg>
-	using ConceptMapped_t = typename detail::ConceptMapped<Concept, Arg>::type;
+	using concept_mapped_t = typename detail::concept_mapped<Concept, Arg>::type;
+
+
+	///<summary>
+	///コンセプトマップ後適用後の型として判定
+	///</summary>
+	template<class Type>
+	struct as_mapped
+	{};
+
+	namespace detail
+	{
+		template<class Concept, class Arg>
+		struct as_mapped_if
+		{
+			using type = Arg;
+		};
+		template<class Concept, class Arg>
+		struct as_mapped_if<Concept, as_mapped<Arg>>
+		{
+			using type = concept_mapped_t<Concept, Arg>;
+		};
+		template<class Concept, class Arg>
+		using as_mapped_if_t = typename as_mapped_if<Concept, Arg>::type;
+
+		template<class Arg>
+		struct remove_mapped
+		{
+			using type = Arg;
+		};
+		template<class Arg>
+		struct remove_mapped<as_mapped<Arg>>
+		{
+			using type = Arg;
+		};
+
+		template<class Arg>
+		using remove_mapped_t = typename remove_mapped<Arg>::type;
+	}
+
+	///<summary>
+	///Typeがas_mappedだった場合マッピング後の型に
+	///</summary>
+	template<class Type, template<class...>class Concept, class ...Args>
+	using as_mapped_if_t = typename tc::detail::as_mapped_if_t<Concept<typename tc::detail::remove_mapped_t<Args>...>, Type>;
+
+	///<summary>
+	///Conceptの継承
+	///</summary>
+	template<template<class...>class Sub, template<class...>class Super,class ...Args>
+	using concept_extends = Super<as_mapped_if_t<Args,Sub,Args...>...>;
 }//namespace tc
 
  //************************************************************************************************
@@ -235,19 +255,57 @@ namespace tc
 	template<class ...Args>
 	using constraint = void_t<Args...>;
 
+
 	///<summary>
 	///requires実装クラスをコンセプト(メタ関数)に変換
 	///</summary>
 	template<class Constraint, class ...Args>
-	struct to_concept : is_detected<detail::ConceptCheck, Constraint, Args...>
+	struct to_concept : is_detected<
+		detail::ConceptCheck,
+		Constraint, 
+		as_mapped_if_t<
+			Args,
+			to_concept,
+			Constraint, 
+			Args...
+			>...
+		>
 	{};
 
 	///<summary>
 	///void_t/constraintをコンセプト(メタ関数)に変換
 	///</summary>
 	template<template<class...>class Constraint, class ...Args>
-	struct void_t_to_concept : is_detected<Constraint, Args...>
+	struct void_t_to_concept  : is_detected<
+		Constraint, 
+		detail::as_mapped_if_t<
+			void_t_to_concept<Constraint, detail::remove_mapped_t<Args>...>, 
+			Args>...
+		>
 	{};
+
+	///<summary>
+	///通常のメタ関数をコンセプト(メタ関数)に変換
+	///</summary>
+	template<template<class...>class Meta, class ...Args>
+	struct meta_to_concept  : Meta<
+		detail::as_mapped_if_t<
+			meta_to_concept<Meta, detail::remove_mapped_t<Args>...>,
+			Args>...
+		>
+	{};
+
+	///<summary>
+	///Type型が存在するか
+	///</summary>
+	template<class Type>
+	Type&& has_type = val<Type>;
+
+	///<summary>
+	///式ExpがRet型か
+	///</summary>
+	template<class Ret, class Exp>
+	auto type_check(Exp&& exp)->tc::requires<std::is_same<Ret,Exp>>;
 
 }//namespace tc
 
@@ -328,15 +386,15 @@ namespace tc
 
 		concept_any() = default;
 
-		template<class T, TC_WHERE(Concept<tc::ConceptMapped_t<Concept<T>, T>>)>
+		template<class T, TC_WHERE(Concept<tc::concept_mapped_t<Concept<T>, T>>)>
 		concept_any(const T& v) :
 			std::any(v)
 		{}
-		template<class T, TC_WHERE(Concept<tc::ConceptMapped_t<Concept<T>, T>>)>
+		template<class T, TC_WHERE(Concept<tc::concept_mapped_t<Concept<T>, T>>)>
 		concept_any(const std::reference_wrapper<T>& v) :
 			std::any(v)
 		{}
-		template<class T, TC_WHERE(Concept<tc::ConceptMapped_t<Concept<T>, T>>)>
+		template<class T, TC_WHERE(Concept<tc::concept_mapped_t<Concept<T>, T>>)>
 		concept_any& operator=(const T& v)
 		{
 			return static_cast<concept_any&>(std::any::operator=(v));
@@ -354,7 +412,13 @@ namespace tc
 		template<class T>
 		decltype(auto) get()
 		{
-			return tc::concept_mapping<Concept<std::remove_reference_t<T>>>(detail::any_cast_wrapper<T>(*this));
+			decltype(auto) v = get_origin<T>();
+			return tc::concept_mapping<Concept<std::remove_reference_t<T>>>(v);
+		}
+		template<class T>
+		decltype(auto) get_origin()
+		{
+			return detail::any_cast_wrapper<T>(*this);
 		}
 	};
 
@@ -365,7 +429,7 @@ namespace tc
 //concept example 
 //
 //************************************************************************************************
-/*
+
 namespace tc
 {
 	namespace Concept
@@ -378,17 +442,37 @@ namespace tc
 		namespace detail
 		{
 
-			template<class Type>
-			using PostIncrementable_c = constraint<decltype(std::declval<Type&>()++)>;
-
-			template<class Type>
-			using PostDecrementable_c = constraint<decltype(std::declval<Type&>()--)>;
+			
+			struct PostIncrementable_c
+			{
+				template<class Type>
+				auto requires(Type&& t)->decltype(t++);
+			};
+			struct PostDecrementable_c 
+			{
+				template<class Type>
+				auto requires(Type&& t)->decltype(t--);
+			};
 		}
+	
+
+#define TC_HAS_UNARY_OPERATOR(className,symbol)\
+namespace detail\
+{\
+	struct className##_c{\
+	template<class Type>\
+	auto requires(Type&& t)->decltype(symbol t);\
+	};\
+}\
+template<class Type>\
+struct className : tc::to_concept<detail::className##_c,tc::as_mapped_if_t<Type,className,Type>>{}
+
 
 		///<summary>
 		/// operator ! をもつか
 		///</summary>
 		TC_HAS_UNARY_OPERATOR(Negatable, !);
+	
 
 		///<summary>
 		/// 単項operator + をもつか
@@ -414,18 +498,18 @@ namespace tc
 		/// 後置インクリメント可能か
 		///</summary>
 		template<class Type>
-		TC_TO_CONCEPT(PostIncrementable, detail::PostIncrementable_c, Type);
+		struct PostIncrementable:to_concept<detail::PostIncrementable_c, tc::as_mapped_if_t<Type,PostIncrementable,Type>>{};
 
 		///<summary>
 		/// 後置デクリメント可能か
 		///</summary>
 		template<class Type>
-		TC_TO_CONCEPT(PostDecrementable, detail::PostDecrementable_c, Type);
+		struct PostDecrementable : to_concept<detail::PostDecrementable_c, tc::as_mapped_if_t<Type, PostDecrementable, Type>>{};
 
 		///<summary>
 		/// 単項operator ~ をもつか
 		///</summary>
-		TC_HAS_UNARY_OPERATOR(Complementable, ~);
+		TC_HAS_UNARY_OPERATOR(Complementable, ~ );
 
 		///<summary>
 		/// アドレス取得可能か
@@ -438,6 +522,22 @@ namespace tc
 		TC_HAS_UNARY_OPERATOR(Indirectable, *);
 
 
+#undef TC_HAS_UNARY_OPERATOR
+
+#define TC_HAS_BINARY_OPERATOR(className,symbol)\
+namespace detail\
+{\
+	struct className##_c{\
+	template<class Left,class Right=Left>\
+	auto requires(Left&& l,Right&& r)->decltype(l symbol r);\
+	};\
+}\
+template<class Left,class Right=Left>\
+struct className:tc::to_concept<detail::className##_c,\
+		tc::as_mapped_if_t<Left,className, Left,Right>,\
+		tc::as_mapped_if_t<Right,className, Left,Right>\
+>{}
+	
 		///<summary>
 		/// 加算可能か
 		///</summary>
@@ -577,7 +677,8 @@ namespace tc
 		/// operator != をもつか
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(NotEqualityComparable, != );
-
+#undef TC_HAS_BINARY_OPERATOR
+		
 		//************************************************************************************************
 		//
 		//基本的なコンセプト
@@ -588,119 +689,111 @@ namespace tc
 		/// operator =(copy) をもつか
 		///</summary>
 		template< class To, class From = To>
-		struct CopyAssignable : tc::detail::to_concept< CopyAssignable, std::is_assignable,
-			typename std::add_lvalue_reference<To>::type,
-			typename std::add_lvalue_reference<typename std::add_const<From>::type>::type
-		>
-		{};
+		struct CopyAssignable : std::is_assignable<
+			std::add_lvalue_reference_t<as_mapped_if_t<To, CopyAssignable, To, From>>,
+			std::add_lvalue_reference_t<std::add_const_t<as_mapped_if_t<From, CopyAssignable, To, From>>>
+		> {};
 
 		///<summary>
 		/// operator =(move) をもつか
 		///</summary>
 		template< class To, class From = To>
-		struct MoveAssignable :tc::detail::to_concept< MoveAssignable, std::is_assignable,
-			typename std::add_lvalue_reference<To>::type,
-			typename std::add_rvalue_reference<From>::type
-		>
-		{};
+		struct MoveAssignable : std::is_assignable<
+			std::add_lvalue_reference_t<as_mapped_if_t<To, MoveAssignable, To, From>>,
+			std::add_rvalue_reference_t<as_mapped_if_t<From, MoveAssignable, To, From>>
+		> {};
 
 		///<summary>
 		/// Type( Args... ) の形式のコンストラクタ呼び出しが可能か
 		///</summary>
 		template< class Type, class... Args>
-		struct Constructible :tc::detail::to_concept<Constructible, std::is_constructible, Type, Args...>
-		{};
+		struct Constructible : std::is_constructible<
+			as_mapped_if_t<Type, Constructible,Type,Args...>,
+			as_mapped_if_t<Args, Constructible, Type, Args...>...
+		> {};
 
 		///<summary>
 		/// デフォルトコンストラクタ をもつか
 		///</summary>
 		template< class Type >
-		struct DefaultConstructible : tc::detail::to_concept<DefaultConstructible, std::is_default_constructible, Type>
-		{};
+		struct DefaultConstructible : concept_extends<DefaultConstructible,std::is_default_constructible,Type> {};
 
 		///<summary>
 		/// コピーコンストラクタ をもつか
 		///</summary>
-		template< class Type>
-		struct CopyConstructible : tc::detail::to_concept<CopyConstructible, std::is_copy_constructible, Type>
-		{};
+		template<class Type>
+		struct CopyConstructible : concept_extends<CopyConstructible, std::is_default_constructible, Type> {};
 
 		///<summary>
 		/// ムーブコンストラクタ をもつか
 		///</summary>
 		template< class Type>
-		struct MoveConstructible : tc::detail::to_concept< MoveConstructible, std::is_move_constructible, Type>
-		{};
-
+		struct MoveConstructible: concept_extends<MoveConstructible, std::is_move_constructible, Type>{};
+	
 		///<summary>
 		/// デストラクタ をもつか
 		///</summary>
 		template< class Type>
-		struct Destructible : tc::detail::to_concept<Destructible, std::is_destructible, Type>
-		{};
+		struct Destructible : concept_extends<Destructible, std::is_destructible, Type>{};
 
 		///<summary>
 		/// 仮想デストラクタ をもつか
 		///</summary>
 		template< class Type>
-		struct HasVirtualDestructor : tc::detail::to_concept<HasVirtualDestructor, std::has_virtual_destructor, Type>
-		{};
+		struct  HasVirtualDestructor :tc::concept_extends<HasVirtualDestructor, std::has_virtual_destructor, Type> {};
 
 		///<summary>
 		///TとUが同じか
 		///</summary>
 		template<class T, class U>
-		struct IsSame : tc::detail::to_concept<IsSame, std::is_same, T, U>
-		{};
+		struct  IsSame :tc::concept_extends<IsSame, std::is_same, T,U> {};
 
 		///<summary>
 		///TypeがBase,もしくはBaseを継承しているか
 		///</summary>
 		template<class Type, class Base>
-		struct Extended : tc::detail::to_concept<Extended, std::is_base_of, Base, Type>
-		{};
+		struct Extended :std::is_base_of<
+			as_mapped_if_t<Base, Extended, Type, Base>,
+			as_mapped_if_t<Type, Extended, Type, Base>
+		> {};
 
 		///<summary>
 		///スカラーかどうか
 		///</summary>
 		template<class Type>
-		struct Scalar :tc::detail::to_concept<Scalar, std::is_scalar, Type>
-		{};
+		struct Scalar : tc::concept_extends<Scalar, std::is_scalar,Type> {};
 
 		///<summary>
 		///仮想クラスかどうか
 		///</summary>
 		template<class Type>
-		struct Abstract :tc::detail::to_concept<Abstract, std::is_abstract, Type>
-		{};
+		struct Abstract : tc::concept_extends<Abstract, std::is_abstract, Type> {};
+
 		///<summary>
 		///enum型か
 		///</summary>
 		template<class Type>
-		struct Enum :tc::detail::to_concept<Enum, std::is_enum, Type>
-		{};
+		struct Enum : tc::concept_extends<Enum, std::is_enum, Type> {};
 
 		///<summary>
 		///class(struct)型か
 		///</summary>
 		template<class Type>
-		struct Class :tc::detail::to_concept<Class, std::is_class, Type>
-		{};
+		struct Class : tc::concept_extends<Class, std::is_class, Type> {};
 
 		///<summary>
 		///union型か
 		///</summary>
 		template<class Type>
-		struct Union :tc::detail::to_concept<Union, std::is_union, Type>
-		{};
+		struct Union : tc::concept_extends<Union, std::is_union, Type> {};
 
 		///<summary>
 		///関数型t(...)か
 		///</summary>
 		template<class Type>
-		struct Function :tc::detail::to_concept<Function, std::is_function, Type>
-		{};
+		struct Function : tc::concept_extends<Function, std::is_function, Type> {};
 
+	
 		//************************************************************************************************
 		//
 		//型の特性
@@ -785,7 +878,7 @@ namespace tc
 					)
 			>;
 		}//namespace detail
-
+		 /*
 		 ///<summary>
 		 ///アロケーターか
 		 ///</summary>
@@ -1201,9 +1294,9 @@ namespace tc
 		struct Condition : std::bool_constant<conditional>
 		{};
 
+		*/
 	}//namespace Concept
 
 
 }//namespace tc
 
-*/
