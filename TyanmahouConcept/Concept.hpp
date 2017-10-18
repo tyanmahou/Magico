@@ -299,13 +299,16 @@ namespace tc
 	///TypeŒ^‚ª‘¶İ‚·‚é‚©
 	///</summary>
 	template<class Type>
-	Type&& has_type = val<Type>;
+	Type&& associated_type = val<Type>;
 
 	///<summary>
-	///®Exp‚ªRetŒ^‚©
+	///®‚ª•]‰¿‰Â”\‚ÅRetŒ^‚©
 	///</summary>
+	///<param name= "exp">
+	///•]‰¿‚·‚é®
+	///</param>
 	template<class Ret, class Exp>
-	auto type_check(Exp&& exp)->tc::requires<std::is_same<Ret, Exp>>;
+	auto vailed_expr(Exp&& exp)->tc::requires<std::is_same<Ret, Exp>>;
 
 }//namespace tc
 
