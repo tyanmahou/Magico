@@ -426,7 +426,7 @@ namespace tc
 	{
 		//************************************************************************************************
 		//
-		//演算子
+		//Operator
 		//
 		//************************************************************************************************
 		namespace detail
@@ -667,7 +667,7 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 
 		//************************************************************************************************
 		//
-		//基本的なコンセプト
+		//Basic
 		//
 		//************************************************************************************************
 
@@ -782,7 +782,7 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 
 		//************************************************************************************************
 		//
-		//型の特性
+		//Library-wide
 		//
 		//************************************************************************************************
 
@@ -938,7 +938,7 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 		struct MetaFunc : tc::concept_extends<MetaFunc, detail::MetaFunc_c, Type>
 		{};
 
-	
+
 		///<summary>
 		///ハッシュ関数オブジェクトか
 		///</summary>
@@ -953,36 +953,38 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 		struct Clock : tc::concept_extends<Clock, detail::Clock_c, Type>
 		{};
 
-		/*
+		
 		//************************************************************************************************
 		//
-		//レイアウト
+		//Layout
 		//
 		//************************************************************************************************
 		///<summary>
 		///トリビアルコピー可能か
 		///</summary>
 		template<class Type>
-		struct TriviallyCopyable : tc::detail::to_concept<TriviallyCopyable, std::is_trivially_copyable, Type>
+		struct TriviallyCopyable : tc::concept_extends_meta<TriviallyCopyable, std::is_trivially_copyable, Type>
 		{};
 		///<summary>
 		///トリビアル型か
 		///</summary>
 		template<class Type>
-		struct TrivialType : tc::detail::to_concept<TrivialType, std::is_trivial, Type>
+		struct TrivialType : tc::concept_extends_meta<TrivialType, std::is_trivial, Type>
 		{};
 		///<summary>
 		///標準レイアウト型か
 		///</summary>
 		template<class Type>
-		struct StandardLayoutType : tc::detail::to_concept<StandardLayoutType, std::is_standard_layout, Type>
+		struct StandardLayoutType : tc::concept_extends_meta<StandardLayoutType, std::is_standard_layout, Type>
 		{};
 		///<summary>
 		///POD型か
 		///</summary>
 		template<class Type>
-		struct PODType : tc::detail::to_concept<PODType, std::is_pod, Type>
+		struct PODType : tc::concept_extends_meta<PODType, std::is_pod, Type>
 		{};
+
+		/*
 		//************************************************************************************************
 		//
 		//イテレーター
