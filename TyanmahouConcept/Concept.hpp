@@ -48,8 +48,29 @@ namespace tc
 	///仮のインスタンス作成(declvalのヘルパ)
 	///</summary>
 	template<class Type>
-	Type&& val = std::declval<Type>();
+	std::add_rvalue_reference_t<Type> val = std::declval<Type>();
 
+	///<summary>
+	///メタ関数 論理和
+	///</summary>
+	template<class Head, class... Tail>
+	struct Or :std::conditional_t <  Head::value, std::true_type, Or < Tail... > >
+	{};
+	template<class Concpet>
+	struct Or<Concpet> :std::bool_constant<Concpet::value>
+	{};
+	///<summary>
+	///メタ関数 否定
+	///</summary>
+	template < class Concpet >
+	struct Not : std::bool_constant <!Concpet::value >
+	{};
+	///<summary>
+	///メタ関数 論理積
+	///</summary>
+	template <class ... Args>
+	struct And :Not < Or  < Not < Args >... > >
+	{};
 
 }//namesapce tc
 
@@ -64,8 +85,8 @@ namespace tc
 	///<summary>
 	///WhereConceptが条件を満たすか
 	///</summary>
-	template < class WhereConcept >
-	using requires = std::enable_if_t<WhereConcept::value, std::nullptr_t >;
+	template < class... WhereConcept >
+	using requires = std::enable_if_t<And<WhereConcept...>::value, std::nullptr_t >;
 
 	///<summary>
 	///Testがtureかどうか
@@ -221,12 +242,6 @@ namespace tc
 
 	}
 
-	///<summary>
-	///制約
-	///</summary>
-	template<class ...Args>
-	using constraint = void_t<Args...>;
-
 
 	///<summary>
 	///requires実装クラスをコンセプト(メタ関数)に変換
@@ -271,7 +286,7 @@ namespace tc
 	///Type型が存在するか
 	///</summary>
 	template<class Type>
-	Type&& associated_type = val<Type>;
+	std::add_rvalue_reference_t<Type> associated_type = val<Type>;
 
 	///<summary>
 	///式が評価可能でRet型か
@@ -283,19 +298,39 @@ namespace tc
 	auto vailed_expr(Exp&& exp)->tc::requires<std::is_same<Ret, Exp>>;
 
 	///<summary>
+	///式がType型に変更可能か
+	///</summary>
+	///<param name= "exp">
+	///評価する式
+	///</param>
+	template<class Type, class Exp>
+	auto convertible_expr(Exp&& exp)->tc::requires<std::is_convertible<Exp,Type>>;
+
+	///<summary>
 	///制約の継承
 	///</summary>
 	template<class... Concept>
-	tc::void_t<tc::requires<Concept>...>* requires_extends = nullptr;
+	tc::requires<Concept...> requires_extends = nullptr;
 
 	///<summary>
-	///Conceptを継承するときに仕様
+	///制約の継承(requires実装classから)
+	///</summary>
+	///<param name= "requires">
+	///requires実装classのrequires関数のアドレス
+	///</param>
+	template<class... RequiresFuncAddress>
+	void requires_extends_c(RequiresFuncAddress&&... requires);
+
+	///<summary>
+	///Conceptを継承するときに使用
 	///</summary>
 	template<template<class...>class Sub, class Constraint, class... Args>
 	using concept_extends = to_concept<Constraint, tc::detail::as_mapped_if_t<Sub<typename tc::detail::remove_mapped_t<Args>...>, Args>... >;
 
 	template<template<class...>class Sub, template<class...>class Super, class ...Args>
-	using concept_extends_meta = Super<as_mapped_if_t<Args, Sub, Args...>...>;
+	using concept_extends_meta = Super<tc::detail::as_mapped_if_t<Sub<typename tc::detail::remove_mapped_t<Args>...>, Args>...>;
+
+
 
 }//namespace tc
 
@@ -708,7 +743,7 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 		/// コピーコンストラクタ をもつか
 		///</summary>
 		template<class Type>
-		struct CopyConstructible : concept_extends_meta <CopyConstructible, std::is_default_constructible, Type> {};
+		struct CopyConstructible : concept_extends_meta <CopyConstructible, std::is_copy_constructible, Type> {};
 
 		///<summary>
 		/// ムーブコンストラクタ をもつか
@@ -953,7 +988,7 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 		struct Clock : tc::concept_extends<Clock, detail::Clock_c, Type>
 		{};
 
-		
+
 		//************************************************************************************************
 		//
 		//Layout
@@ -984,124 +1019,172 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 		struct PODType : tc::concept_extends_meta<PODType, std::is_pod, Type>
 		{};
 
-		/*
 		//************************************************************************************************
 		//
-		//イテレーター
+		//Iterator
 		//
 		//************************************************************************************************
 		namespace detail
 		{
-		template<class It>
-		using Iterator_c = constraint<
-		requires<CopyConstructible<It>>,
-		requires<CopyAssignable<It>>,
-		requires<Destructible<It>>,
-		requires<Swappable<It>>,
-		requires<Indirectable<It>>,
-		requires<IsSame<It&, decltype(++std::declval<It&>())>>,
-		typename std::iterator_traits<It>::value_type
-		>;
-		template<class It>
-		using InputIterator_c = constraint <
-		Iterator_c<It>,
-		requires<EqualityComparable<It>>,
-		requires<NotEqualityComparable<It>>,
-		requires<IsSame<typename std::iterator_traits<It>::reference, decltype(*std::declval<It&>())>>,
-		requires <Convertible<decltype(*std::declval<It&>()), typename std::iterator_traits<It>::value_type>>,
-		requires<Convertible< decltype(*std::declval<It&>()++), typename std::iterator_traits<It>::value_type>>,
-		decltype(
-		(void)(++std::declval<It&>())
-		)
-		>;
-		template<class It>
-		using OutputIterator_c = constraint<
-		Iterator_c<It>,
-		requires<IsSame<It&, decltype(++std::declval<It&>())>>,
-		requires<Convertible<decltype(std::declval<It&>()++), const It&>>,
-		decltype(
-		*std::declval<It&>() = *std::declval<It&>(),
-		(*std::declval<It&>())++ = *std::declval<It&>()
-		)
-		>;
-		template<class It>
-		using ForwardIterator_c = constraint<
-		InputIterator_c<It>,
-		requires<DefaultConstructible<It>>,
-		requires<IsSame<It, decltype(std::declval<It&>()++)>>,
-		requires<IsSame<typename std::iterator_traits<It>::reference, decltype(*std::declval<It&>()++)>>
-		>;
-		template<class It>
-		using BidirectionalIterator_c = constraint<
-		ForwardIterator_c<It>,
-		requires<IsSame<It&, decltype(--std::declval<It&>())>>,
-		requires<Convertible<decltype(std::declval<It&>()--), const It&>>,
-		requires<IsSame<typename std::iterator_traits<It>::reference, decltype(*std::declval<It&>()--)>>
-		>;
-		template<class It>
-		using RandomAccessIterator_c = constraint <
-		BidirectionalIterator_c<It>,
-		requires<LessThanComparable<It>>,
-		requires<LessEqualComparable<It>>,
-		requires<GreaterThanComparable<It>>,
-		requires<GreaterEqualComparable<It>>,
-		requires<IsSame<It&, decltype(std::declval<It&>() += std::declval<typename std::iterator_traits<It>::difference_type&>())>>,
-		requires<IsSame<It, decltype(
-		std::declval<It&>() + std::declval<typename std::iterator_traits<It>::difference_type&>(),
-		std::declval<typename std::iterator_traits<It>::difference_type&>() + std::declval<It&>()
-		)>>,
-		requires<IsSame<It&, decltype(std::declval<It&>() -= std::declval<typename std::iterator_traits<It>::difference_type&>())>>,
-		requires<IsSame<It, decltype(std::declval<It&>() - std::declval<typename std::iterator_traits<It>::difference_type&>())>>,
-		requires<Convertible<
-		decltype(std::declval<It&>()[std::declval<typename std::iterator_traits<It>::difference_type&>()]),
-		typename std::iterator_traits<It>::reference>
-		>
-		>;
-		template<class It>
-		using ValueSwappable_c = constraint<
-		Iterator_c<It>,
-		requires<Swappable<typename std::iterator_traits<It>::value_type>>
-		>;
+			struct Iterator_c
+			{
+				template<class It>
+				auto requires(It it)->decltype(constraint(
+					requires_extends<
+					CopyConstructible<It>,
+					CopyAssignable<It>,
+					Destructible<It>,
+					Swappable<It>,
+					Indirectable<It>
+					>,
+					associated_type<typename std::iterator_traits<It>::value_type>,
+					vailed_expr<It&>(++it)
+					));
+			};
+
+			struct InputIterator_c
+			{
+				template<class It>
+				auto requires(It&& it)->decltype(
+					requires_extends_c(&Iterator_c::requires<It>),
+					requires_extends<
+					EqualityComparable<It>,
+					NotEqualityComparable<It>
+					>,
+					tc::convertible_expr<typename std::iterator_traits<It>::value_type>(*it),
+					tc::convertible_expr<typename std::iterator_traits<It>::value_type>(*it++),
+					tc::vailed_expr<typename std::iterator_traits<It>::reference>(*it)
+				);
+			};
+
+			struct OutputIterator_c
+			{
+				template<class It>
+				auto requires(It&& it)->decltype(
+					requires_extends_c(&Iterator_c::requires<It>),
+					tc::convertible_expr<const It&>(it++),
+					tc::vailed_expr<It&>(++it),
+					*it = *it,
+					*it++ = *it
+				);
+			};
+
+			struct ForwardIterator_c
+			{
+				template<class It>
+				auto requires(It&& it)->decltype(
+					requires_extends_c(&InputIterator_c::requires<It>),
+					requires_extends<
+					DefaultConstructible<It>
+					>,
+					tc::vailed_expr<It>(it++),
+					tc::vailed_expr<typename std::iterator_traits<It>::reference>(*it++)
+				);
+			};
+
+			struct BidirectionalIterator_c
+			{
+				template<class It>
+				auto requires(It&& it)->decltype(
+					requires_extends_c(&ForwardIterator_c::requires<It>),
+					tc::convertible_expr<const It&>(it--),
+					tc::vailed_expr<It&>(--it),
+					tc::vailed_expr<typename std::iterator_traits<It>::reference>(*it--)
+				);
+			};
+
+			struct RandomAccessIterator_c
+			{
+				template<class It>
+				auto requires(It&& it, typename std::iterator_traits<It>::difference_type n)->decltype(
+					requires_extends_c(&BidirectionalIterator_c::requires<It>),
+					requires_extends<
+					LessThanComparable<It>, LessEqualComparable<It>,
+					GreaterThanComparable<It>, GreaterEqualComparable<It>
+					>,
+					tc::vailed_expr<It&>(it += n),
+					tc::vailed_expr<It>(it + n), tc::vailed_expr<It>(n + it),
+					tc::vailed_expr<It&>(it -= n),
+					tc::vailed_expr<It>(it - n),
+					tc::convertible_expr<typename std::iterator_traits<It>::reference>(it[n])
+					);
+			};
+
+
+			struct ValueSwappable_c
+			{
+				template<class It>
+				auto requires(It it)->decltype(constraint(
+					&Iterator_c::requires<It>,
+					requires_extends<
+					Swappable<typename std::iterator_traits<It>::value_type>
+					>
+				));
+			};
+
+			struct HasIterator_c
+			{
+				template<class Type>
+				auto requires()->decltype(tc::constraint(
+					&Iterator_c::requires<typename Type::iterator>
+				));
+			};
 		}//namespace detail
+
+
 		///<summary>
 		///イテレーターをもつか
 		///</summary>
-		TC_HAS_MEMBER_TYPE(HasIterator, iterator);
+		template<class Type>
+		struct HasIterator : concept_extends<HasIterator, detail::HasIterator_c, Type>
+		{};
+
 		///<summary>
 		///イテレーターかどうか
 		///</summary>
 		template<class It>
-		TC_TO_CONCEPT(Iterator, detail::Iterator_c, It);
+		struct Iterator : concept_extends<Iterator, detail::Iterator_c, It>
+		{};
 		///<summary>
 		///入力イテレーターかどうか
 		///</summary>
 		template<class It>
-		TC_TO_CONCEPT(InputIterator, detail::InputIterator_c, It);
+		struct InputIterator : concept_extends<InputIterator, detail::InputIterator_c, It>
+		{};
 		///<summary>
 		///出力イテレーターかどうか
 		///</summary>
 		template<class It>
-		TC_TO_CONCEPT(OutputIterator, detail::OutputIterator_c, It);
+		struct OutputIterator : concept_extends<OutputIterator, detail::OutputIterator_c, It>
+		{};
+
 		///<summary>
 		///前方イテレーターかどうか
 		///</summary>
 		template<class It>
-		TC_TO_CONCEPT(ForwardIterator, detail::ForwardIterator_c, It);
+		struct ForwardIterator : concept_extends<ForwardIterator, detail::ForwardIterator_c, It>
+		{};
 		///<summary>
 		///双方向イテレーターかどうか
 		///</summary>
 		template<class It>
-		TC_TO_CONCEPT(BidirectionalIterator, detail::BidirectionalIterator_c, It);
+		struct BidirectionalIterator : concept_extends<BidirectionalIterator, detail::BidirectionalIterator_c, It>
+		{};
 		///<summary>
 		///ランダムアクセスイテレーターかどうか
 		///</summary>
 		template<class It>
-		TC_TO_CONCEPT(RandomAccessIterator, detail::RandomAccessIterator_c, It);
+		struct RandomAccessIterator : concept_extends<RandomAccessIterator, detail::RandomAccessIterator_c, It>
+		{};
+
+	
 		///<summary>
 		///イテレーターの値型がスワップ可能か
 		///</summary>
 		template<class It>
-		TC_TO_CONCEPT(ValueSwappable, detail::ValueSwappable_c, It);
+		struct ValueSwappable : concept_extends<ValueSwappable, detail::ValueSwappable_c, It>
+		{};
+		/*
 		//************************************************************************************************
 		//
 		//コンテナ
@@ -1319,3 +1402,4 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
  ///条件をみたさないとアサート(bool)
  ///</summary>
 #define TC_CONCEPT_ASSERT_BOOL( ... ) static_assert(static_cast<bool>(__VA_ARGS__),#__VA_ARGS__ )
+
