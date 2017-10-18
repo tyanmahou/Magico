@@ -1,75 +1,49 @@
 #include<iostream>
+#include<vector>
+#include<list>
+#include<map>
+#include<chrono>
 #include"Concept.hpp"
 
+using namespace tc;
 
-//パターン1 構造体とメンバ関数　変数名を扱えるのがよい
 
-struct _Addable
+struct As
 {
-	template<class T , class U>
-	auto requires(T&& a, U&& b)->decltype(
-		a + b ,
-		a - b ,
-		a * b 
+	template<class T>
+	auto requires(T&& v)->decltype(
+		tc::requires_extends<tc::concept::Plusable<T>>,
+		tc::requires_extends<tc::concept::Minusable<T>>
 		);
 };
 
+template<class T>
+using A = tc::to_concept<As, T>;
 
-
-//パターン2 エイリアステンプレート　declvalを使う表現が可読性ダウン？　行数は減る
-
-template<class T, class U>
-using _Addable2 = decltype(
-	tc::val<T> + tc::val<U>,
-	tc::val<T> - tc::val<U>, 
-	tc::val<T> * tc::val<U>
-	);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//ああ
-template<class T, class U = T>
-using Addable2 = tc::alias_to_concept<_Addable2, T, U>;
-
-
-struct A
+struct Hoge
 {
-	A operator +(const A& o)
+
+};
+
+template<>
+struct tc::concept_map<tc::concept::Hash<Hoge,int>>
+{
+	struct T
 	{
-		return o;
-	}
-	A operator -(const A& o)
+		size_t operator ()(int v)
+		{
+			return v;
+		}
+	};
+
+	T operator =(const Hoge& a)
 	{
-		return o;
+		return T();
 	}
+
 };
 int main()
-{
-	Addable2<int>::value;
+{	
+	std::cout<<tc::concept::Clock<std::chrono::system_clock>::value<<std::endl;
 	return 0;
-
 }
