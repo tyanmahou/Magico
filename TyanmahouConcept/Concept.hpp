@@ -227,11 +227,7 @@ namespace tc
 	template<class Type, template<class...>class Concept, class ...Args>
 	using as_mapped_if_t = typename tc::detail::as_mapped_if_t<Concept<typename tc::detail::remove_mapped_t<Args>...>, Type>;
 
-	///<summary>
-	///Conceptの継承
-	///</summary>
-	template<template<class...>class Sub, template<class...>class Super, class ...Args>
-	using concept_extends = Super<as_mapped_if_t<Args, Sub, Args...>...>;
+
 }//namespace tc
 
  //************************************************************************************************
@@ -273,13 +269,13 @@ namespace tc
 	{};
 
 	///<summary>
-	///void_t/constraintをコンセプト(メタ関数)に変換
+	///alias形式constraintをコンセプト(メタ関数)に変換
 	///</summary>
 	template<template<class...>class Constraint, class ...Args>
-	struct void_t_to_concept : is_detected<
+	struct alias_to_concept : is_detected<
 		Constraint,
 		detail::as_mapped_if_t<
-		void_t_to_concept<Constraint, detail::remove_mapped_t<Args>...>,
+		alias_to_concept<Constraint, detail::remove_mapped_t<Args>...>,
 		Args>...
 	>
 	{};
@@ -309,6 +305,12 @@ namespace tc
 	///</param>
 	template<class Ret, class Exp>
 	auto vailed_expr(Exp&& exp)->tc::requires<std::is_same<Ret, Exp>>;
+
+	///<summary>
+	///Conceptを継承するときに仕様
+	///</summary>
+	template<template<class...>class Sub, template<class...>class Super, class ...Args>
+	using concept_extends = Super<as_mapped_if_t<Args, Sub, Args...>...>;
 
 }//namespace tc
 

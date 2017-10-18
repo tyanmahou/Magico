@@ -2,53 +2,74 @@
 #include"Concept.hpp"
 
 
-struct Test_c
+//パターン1 構造体とメンバ関数　変数名を扱えるのがよい
+
+struct _Addable
 {
-	template<class T>
-	auto requires(T&& t)->decltype(
-			tc::vailed_expr<int&>(t.hoge())
-			);
+	template<class T , class U>
+	auto requires(T&& a, U&& b)->decltype(
+		a + b ,
+		a - b ,
+		a * b 
+		);
 };
 
-///aa
-template<class T>
-using Test = tc::to_concept<Test_c, T>;
+
+
+//パターン2 エイリアステンプレート　declvalを使う表現が可読性ダウン？　行数は減る
+
+template<class T, class U>
+using _Addable2 = decltype(
+	tc::val<T> + tc::val<U>,
+	tc::val<T> - tc::val<U>, 
+	tc::val<T> * tc::val<U>
+	);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//ああ
+template<class T, class U = T>
+using Addable2 = tc::alias_to_concept<_Addable2, T, U>;
+
 
 struct A
 {
-	int a;
-	int& hoge()
+	A operator +(const A& o)
 	{
-		return a;
+		return o;
+	}
+	A operator -(const A& o)
+	{
+		return o;
 	}
 };
-struct doo
-{
-	bool operator<(const doo&) const{ return false; }
-};
-template<class RandomAccessIterator>
-struct RandI
-{
-	void c()
-	{
-		typename std::iterator_traits<RandomAccessIterator>::difference_type n;
-		i += n; // exercise the requirements for RandomAccessIterator
-	}
-};
-#include<algorithm>
-#include<list>
-
-template<class RandomAccessIterator>
-void stable_sort_(RandomAccessIterator b, RandomAccessIterator e)
-{
-	std::stable_sort(b, e);
-}
 int main()
 {
-	std::list<doo> l;
-	stable_sort_(l.begin(),l.end());
-	std::cout << Test<A>::value << std::endl;
-	std::cout << tc::Concept::Plusable<int,tc::as_mapped<A>>::value << std::endl;
+	Addable2<int>::value;
 	return 0;
 
 }
