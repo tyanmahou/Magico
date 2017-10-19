@@ -97,14 +97,14 @@ namespace tc
 
 
 	///<summary>
-	///テンプレート関数の制約　Ret：返り値の型　Concept 制約
+	///制約チェック　Ret：返り値の型　Concept 制約
 	///</summary>
 	template<class Ret, class ...Concept>
 	using where = std::enable_if_t<
 		std::is_same<tc::requires<Concept...>, std::nullptr_t>::value,
 		Ret>;
 	///<summary>
-	///テンプレート関数の制約　Ret：返り値の型　Exp bool値
+	///制約チェック　Ret：返り値の型　Exp bool値
 	///</summary>
 	template<class Ret, bool Exp>
 	using where_bool = std::enable_if_t<Exp,Ret>;
@@ -248,6 +248,10 @@ namespace tc
 
 namespace tc
 {
+
+	/*
+	to_concept
+	*/
 	namespace detail
 	{
 		template<class Concept, class ... Args>
@@ -328,11 +332,14 @@ namespace tc
 	>
 	{};
 
+	/*
+	requires helper
+	*/
 	///<summary>
 	///Type型が存在するか
 	///</summary>
 	template<class Type>
-	std::add_rvalue_reference_t<Type> associated_type = val<Type>();
+	auto associated_type()->decltype(val<Type>());
 
 	///<summary>
 	///式が評価可能でRet型か
@@ -953,12 +960,12 @@ struct className:tc::to_concept_ex<className,detail::className##_c,Left,Right>{}
 			{
 				template <class Type>
 				auto requires(Type&& t)->decltype(
-					tc::associated_type<Type::rep>,
-					tc::associated_type<Type::period>,
-					tc::associated_type<Type::duration>,
-					tc::associated_type<Type::time_point>,
+					tc::associated_type<typename Type::rep>(),
+					tc::associated_type<typename Type::period>(),
+					tc::associated_type<typename Type::duration>(),
+					tc::associated_type<typename Type::time_point>(),
 					vailed_expr<const bool&>(t.is_steady),
-					vailed_expr<Type::time_point>(t.now())
+					vailed_expr<typename Type::time_point>(t.now())
 					);
 			};
 		}//namespace detail
@@ -1071,7 +1078,7 @@ struct className:tc::to_concept_ex<className,detail::className##_c,Left,Right>{}
 			struct Iterator_c
 			{
 				template<class It>
-				auto requires(It it)->decltype(
+				auto requires(It it, typename std::iterator_traits<It>::value_type v)->decltype(
 					requires_extends<
 					CopyConstructible<It>,
 					CopyAssignable<It>,
@@ -1079,7 +1086,6 @@ struct className:tc::to_concept_ex<className,detail::className##_c,Left,Right>{}
 					Swappable<It>,
 					Indirectable<It>
 					>,
-					associated_type<typename std::iterator_traits<It>::value_type>,
 					vailed_expr<It&>(++it)
 					);
 			};
