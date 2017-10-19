@@ -1,6 +1,7 @@
 #pragma once
 #include<type_traits>
 #include<tuple>
+#include<functional>
 #include<memory>
 #include<any>
 
@@ -48,7 +49,7 @@ namespace tc
 	///仮のインスタンス作成(declvalのヘルパ)
 	///</summary>
 	template<class Type>
-	std::add_rvalue_reference_t<Type> val = std::declval<Type>();
+	auto val()->decltype(std::declval<Type>());
 
 	///<summary>
 	///メタ関数 論理和
@@ -95,6 +96,18 @@ namespace tc
 	using requires_bool = std::enable_if_t<Test, std::nullptr_t >;
 
 
+	///<summary>
+	///テンプレート関数の制約　Ret：返り値の型　Concept 制約
+	///</summary>
+	template<class Ret, class ...Concept>
+	using where = std::enable_if_t<
+		std::is_same<tc::requires<Concept...>, std::nullptr_t>::value,
+		Ret>;
+	///<summary>
+	///テンプレート関数の制約　Ret：返り値の型　Exp bool値
+	///</summary>
+	template<class Ret, bool Exp>
+	using where_bool = std::enable_if_t<Exp,Ret>;
 }//namesapce tc
 
  //************************************************************************************************
@@ -127,19 +140,19 @@ namespace tc
 			using concept_map<void>::operator=;
 		};
 		template<class Concept, class Type>
-		struct concept_mapping_impl<Concept, Type, void_t<decltype(concept_map<Concept>() = tc::val<Type>)>> :concept_map<Concept>
+		struct concept_mapping_impl<Concept, Type, void_t<decltype(concept_map<Concept>() = tc::val<Type>())>> :concept_map<Concept>
 		{
 			using concept_map<Concept>::operator=;
 		};
 
 		template<class... Type>
-		auto ref_make_tuple(Type&&... arg)->decltype(std::tuple<Type...>(std::forward<Type>(arg)...))
+		decltype(auto) ref_make_tuple(Type&&... arg)
 		{
 			return std::tuple<Type...>(std::forward<Type>(arg)...);
 		}
 
 		template<class Concept, class ...Type>
-		auto make_mapping_tuple(Type&&... value)->decltype(ref_make_tuple((concept_mapping_impl<Concept, Type>() = value)...))
+		decltype(auto)  make_mapping_tuple(Type&&... value)
 		{
 			return ref_make_tuple((concept_mapping_impl<Concept, Type>() = value)...);
 		}
@@ -159,7 +172,7 @@ namespace tc
 	///インスタンスにコンセプトマップを適応させる 返り値tuple
 	///</summary>
 	template<template<class...>class Concept, class ...Type>
-	auto concept_mapping(Type&&... value)->decltype(detail::make_mapping_tuple<Concept<std::remove_reference_t<Type>...>>(value...))
+	decltype(auto) concept_mapping(Type&&... value)
 	{
 		using C = Concept<std::remove_reference_t<Type>...>;
 		return detail::make_mapping_tuple<C>(value...);
@@ -170,7 +183,7 @@ namespace tc
 		template<class Concept, class Arg>
 		struct concept_mapped
 		{
-			using type = std::remove_reference_t<decltype(tc::concept_mapping<Concept>(tc::val<Arg&>))>;
+			using type = std::remove_reference_t<decltype(tc::concept_mapping<Concept>(tc::val<Arg&>()))>;
 		};
 
 	}
@@ -258,7 +271,18 @@ namespace tc
 		>...
 	>
 	{};
-
+	///<summary>
+	///requires実装クラスをコンセプト(メタ関数)に変換し継承 SubConceptには派生classを与える
+	///</summary>
+	template<template<class...>class SubConcept,class Constraint, class ...Args>
+	struct to_concept_ex : is_detected<
+		detail::ConceptCheck,
+		Constraint,
+		detail::as_mapped_if_t<
+		SubConcept<detail::remove_mapped_t<Args>...>,
+		Args>...
+	>
+	{};
 	///<summary>
 	///alias形式constraintをコンセプト(メタ関数)に変換
 	///</summary>
@@ -267,6 +291,17 @@ namespace tc
 		Constraint,
 		detail::as_mapped_if_t<
 		alias_to_concept<Constraint, detail::remove_mapped_t<Args>...>,
+		Args>...
+	>
+	{};
+	///<summary>
+	///alias形式constraintをコンセプト(メタ関数)に変換し継承 SubConceptには派生classを与える
+	///</summary>
+	template<template<class...>class SubConcept,template<class...>class Constraint, class ...Args>
+	struct alias_to_concept_ex : is_detected<
+		Constraint,
+		detail::as_mapped_if_t<
+		SubConcept<detail::remove_mapped_t<Args>...>,
 		Args>...
 	>
 	{};
@@ -283,10 +318,21 @@ namespace tc
 	{};
 
 	///<summary>
+	///通常のメタ関数をコンセプト(メタ関数)に変換し継承 SubConceptには派生classを与える
+	///</summary>
+	template<template<class...>class SubConcept,template<class...>class Meta, class ...Args>
+	struct meta_to_concept_ex : Meta<
+		detail::as_mapped_if_t<
+		SubConcept<detail::remove_mapped_t<Args>...>,
+		Args>...
+	>
+	{};
+
+	///<summary>
 	///Type型が存在するか
 	///</summary>
 	template<class Type>
-	std::add_rvalue_reference_t<Type> associated_type = val<Type>;
+	std::add_rvalue_reference_t<Type> associated_type = val<Type>();
 
 	///<summary>
 	///式が評価可能でRet型か
@@ -321,14 +367,7 @@ namespace tc
 	template<class... RequiresFuncAddress>
 	void requires_extends_c(RequiresFuncAddress&&... requires);
 
-	///<summary>
-	///Conceptを継承するときに使用
-	///</summary>
-	template<template<class...>class Sub, class Constraint, class... Args>
-	using concept_extends = to_concept<Constraint, tc::detail::as_mapped_if_t<Sub<typename tc::detail::remove_mapped_t<Args>...>, Args>... >;
 
-	template<template<class...>class Sub, template<class...>class Super, class ...Args>
-	using concept_extends_meta = Super<tc::detail::as_mapped_if_t<Sub<typename tc::detail::remove_mapped_t<Args>...>, Args>...>;
 
 
 
@@ -488,7 +527,7 @@ namespace detail\
 	};\
 }\
 template<class Type>\
-struct className : tc::concept_extends<className,detail::className##_c,Type>{}
+struct className : tc::to_concept_ex<className,detail::className##_c,Type>{}
 
 
 		///<summary>
@@ -556,7 +595,7 @@ namespace detail\
 	};\
 }\
 template<class Left,class Right=Left>\
-struct className:tc::concept_extends<className,detail::className##_c,Left,Right>{}
+struct className:tc::to_concept_ex<className,detail::className##_c,Left,Right>{}
 
 		///<summary>
 		/// 加算可能か
@@ -737,37 +776,37 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 		/// デフォルトコンストラクタ をもつか
 		///</summary>
 		template< class Type >
-		struct DefaultConstructible : concept_extends_meta <DefaultConstructible, std::is_default_constructible, Type> {};
+		struct DefaultConstructible : meta_to_concept_ex <DefaultConstructible, std::is_default_constructible, Type> {};
 
 		///<summary>
 		/// コピーコンストラクタ をもつか
 		///</summary>
 		template<class Type>
-		struct CopyConstructible : concept_extends_meta <CopyConstructible, std::is_copy_constructible, Type> {};
+		struct CopyConstructible : meta_to_concept_ex<CopyConstructible, std::is_copy_constructible, Type> {};
 
 		///<summary>
 		/// ムーブコンストラクタ をもつか
 		///</summary>
 		template< class Type>
-		struct MoveConstructible : concept_extends_meta <MoveConstructible, std::is_move_constructible, Type> {};
+		struct MoveConstructible : meta_to_concept_ex<MoveConstructible, std::is_move_constructible, Type> {};
 
 		///<summary>
 		/// デストラクタ をもつか
 		///</summary>
 		template< class Type>
-		struct Destructible : concept_extends_meta <Destructible, std::is_destructible, Type> {};
+		struct Destructible : meta_to_concept_ex<Destructible, std::is_destructible, Type> {};
 
 		///<summary>
 		/// 仮想デストラクタ をもつか
 		///</summary>
 		template< class Type>
-		struct  HasVirtualDestructor :tc::concept_extends_meta <HasVirtualDestructor, std::has_virtual_destructor, Type> {};
+		struct  HasVirtualDestructor :tc::meta_to_concept_ex<HasVirtualDestructor, std::has_virtual_destructor, Type> {};
 
 		///<summary>
 		///TとUが同じか
 		///</summary>
 		template<class T, class U>
-		struct  IsSame :tc::concept_extends_meta <IsSame, std::is_same, T, U> {};
+		struct  IsSame :tc::meta_to_concept_ex<IsSame, std::is_same, T, U> {};
 
 		///<summary>
 		///TypeがBase,もしくはBaseを継承しているか
@@ -782,37 +821,37 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 		///スカラーかどうか
 		///</summary>
 		template<class Type>
-		struct Scalar : tc::concept_extends_meta <Scalar, std::is_scalar, Type> {};
+		struct Scalar : tc::meta_to_concept_ex<Scalar, std::is_scalar, Type> {};
 
 		///<summary>
 		///仮想クラスかどうか
 		///</summary>
 		template<class Type>
-		struct Abstract : tc::concept_extends_meta <Abstract, std::is_abstract, Type> {};
+		struct Abstract : tc::meta_to_concept_ex<Abstract, std::is_abstract, Type> {};
 
 		///<summary>
 		///enum型か
 		///</summary>
 		template<class Type>
-		struct Enum : tc::concept_extends_meta <Enum, std::is_enum, Type> {};
+		struct Enum : tc::meta_to_concept_ex<Enum, std::is_enum, Type> {};
 
 		///<summary>
 		///class(struct)型か
 		///</summary>
 		template<class Type>
-		struct Class : tc::concept_extends_meta <Class, std::is_class, Type> {};
+		struct Class : tc::meta_to_concept_ex<Class, std::is_class, Type> {};
 
 		///<summary>
 		///union型か
 		///</summary>
 		template<class Type>
-		struct Union : tc::concept_extends_meta <Union, std::is_union, Type> {};
+		struct Union : tc::meta_to_concept_ex<Union, std::is_union, Type> {};
 
 		///<summary>
 		///関数型t(...)か
 		///</summary>
 		template<class Type>
-		struct Function : tc::concept_extends_meta <Function, std::is_function, Type> {};
+		struct Function : tc::meta_to_concept_ex<Function, std::is_function, Type> {};
 
 
 		//************************************************************************************************
@@ -825,6 +864,9 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 		{
 			struct Allocator_c
 			{
+			private:
+				size_t n;
+			public:
 				template<class Type>
 				auto requires(Type&& alloc, typename Type::value_type* ptr, const typename Type::value_type* cptr)->decltype(
 					requires_extends<
@@ -839,7 +881,7 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 					alloc.deallocate(ptr, n)
 					);
 
-				size_t n;
+	
 			};
 
 			struct Swappable_c
@@ -925,7 +967,7 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 		 ///アロケーターか
 		 ///</summary>
 		template<class Type>
-		struct Allocator :tc::concept_extends<Allocator, detail::Allocator_c, Type>
+		struct Allocator :to_concept_ex<Allocator, detail::Allocator_c, Type>
 		{};
 
 
@@ -933,7 +975,7 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 		///TのオブジェクトとUのオブジェクトが入れ替え可能か
 		///</summary>
 		template<class T, class U = T>
-		struct Swappable :tc::concept_extends<Swappable, detail::Swappable_c, T, U>
+		struct Swappable :to_concept_ex<Swappable, detail::Swappable_c, T, U>
 		{};
 
 
@@ -941,14 +983,14 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 		/// FromがToにキャストできるか
 		///</summary>
 		template< class From, class To >
-		struct Convertible : tc::concept_extends_meta<Convertible, std::is_convertible, From, To>
+		struct Convertible : meta_to_concept_ex<Convertible, std::is_convertible, From, To>
 		{};
 
 		///<summary>
 		/// null許容か
 		///</summary>
 		template<class Type>
-		struct NullablePointer :tc::concept_extends<NullablePointer, detail::NullablePointer_c, Type>
+		struct NullablePointer :to_concept_ex<NullablePointer, detail::NullablePointer_c, Type>
 		{};
 
 
@@ -958,19 +1000,19 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 		///関数呼び出し可能な型か
 		///</summary>
 		template <class Func, class... Args>
-		struct Invocable :tc::concept_extends<Invocable, detail::Invocable_c, Func, Args...>
+		struct Invocable :to_concept_ex<Invocable, detail::Invocable_c, Func, Args...>
 		{};
 		///<summary>
 		///関数オブジェクトか
 		///</summary>
 		template <class Type>
-		struct FunctionObject : tc::concept_extends<FunctionObject, detail::FunctionObject_c, Type>
+		struct FunctionObject : to_concept_ex<FunctionObject, detail::FunctionObject_c, Type>
 		{};
 		///<summary>
 		///メタ関数か
 		///</summary>
 		template <class Type>
-		struct MetaFunc : tc::concept_extends<MetaFunc, detail::MetaFunc_c, Type>
+		struct MetaFunc : to_concept_ex<MetaFunc, detail::MetaFunc_c, Type>
 		{};
 
 
@@ -978,14 +1020,14 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 		///ハッシュ関数オブジェクトか
 		///</summary>
 		template <class Type, class Key>
-		struct Hash : tc::concept_extends< Hash, detail::Hash_c, Type, Key >
+		struct Hash : to_concept_ex< Hash, detail::Hash_c, Type, Key >
 		{};
 
 		///<summary>
 		///期間、時刻、現在の時刻を取得可能か
 		///</summary>
 		template <class Type>
-		struct Clock : tc::concept_extends<Clock, detail::Clock_c, Type>
+		struct Clock : to_concept_ex<Clock, detail::Clock_c, Type>
 		{};
 
 
@@ -998,25 +1040,25 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 		///トリビアルコピー可能か
 		///</summary>
 		template<class Type>
-		struct TriviallyCopyable : tc::concept_extends_meta<TriviallyCopyable, std::is_trivially_copyable, Type>
+		struct TriviallyCopyable : meta_to_concept_ex<TriviallyCopyable, std::is_trivially_copyable, Type>
 		{};
 		///<summary>
 		///トリビアル型か
 		///</summary>
 		template<class Type>
-		struct TrivialType : tc::concept_extends_meta<TrivialType, std::is_trivial, Type>
+		struct TrivialType : meta_to_concept_ex<TrivialType, std::is_trivial, Type>
 		{};
 		///<summary>
 		///標準レイアウト型か
 		///</summary>
 		template<class Type>
-		struct StandardLayoutType : tc::concept_extends_meta<StandardLayoutType, std::is_standard_layout, Type>
+		struct StandardLayoutType : meta_to_concept_ex<StandardLayoutType, std::is_standard_layout, Type>
 		{};
 		///<summary>
 		///POD型か
 		///</summary>
 		template<class Type>
-		struct PODType : tc::concept_extends_meta<PODType, std::is_pod, Type>
+		struct PODType : meta_to_concept_ex<PODType, std::is_pod, Type>
 		{};
 
 		//************************************************************************************************
@@ -1029,7 +1071,7 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 			struct Iterator_c
 			{
 				template<class It>
-				auto requires(It it)->decltype(constraint(
+				auto requires(It it)->decltype(
 					requires_extends<
 					CopyConstructible<It>,
 					CopyAssignable<It>,
@@ -1039,7 +1081,7 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 					>,
 					associated_type<typename std::iterator_traits<It>::value_type>,
 					vailed_expr<It&>(++it)
-					));
+					);
 			};
 
 			struct InputIterator_c
@@ -1114,20 +1156,20 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 			struct ValueSwappable_c
 			{
 				template<class It>
-				auto requires(It it)->decltype(constraint(
+				auto requires(It it)->decltype(
 					&Iterator_c::requires<It>,
 					requires_extends<
 					Swappable<typename std::iterator_traits<It>::value_type>
 					>
-				));
+				);
 			};
 
 			struct HasIterator_c
 			{
 				template<class Type>
-				auto requires()->decltype(tc::constraint(
+				auto requires()->decltype(
 					&Iterator_c::requires<typename Type::iterator>
-				));
+				);
 			};
 		}//namespace detail
 
@@ -1136,45 +1178,45 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 		///イテレーターをもつか
 		///</summary>
 		template<class Type>
-		struct HasIterator : concept_extends<HasIterator, detail::HasIterator_c, Type>
+		struct HasIterator : to_concept_ex<HasIterator, detail::HasIterator_c, Type>
 		{};
 
 		///<summary>
 		///イテレーターかどうか
 		///</summary>
 		template<class It>
-		struct Iterator : concept_extends<Iterator, detail::Iterator_c, It>
+		struct Iterator : to_concept_ex<Iterator, detail::Iterator_c, It>
 		{};
 		///<summary>
 		///入力イテレーターかどうか
 		///</summary>
 		template<class It>
-		struct InputIterator : concept_extends<InputIterator, detail::InputIterator_c, It>
+		struct InputIterator : to_concept_ex<InputIterator, detail::InputIterator_c, It>
 		{};
 		///<summary>
 		///出力イテレーターかどうか
 		///</summary>
 		template<class It>
-		struct OutputIterator : concept_extends<OutputIterator, detail::OutputIterator_c, It>
+		struct OutputIterator : to_concept_ex<OutputIterator, detail::OutputIterator_c, It>
 		{};
 
 		///<summary>
 		///前方イテレーターかどうか
 		///</summary>
 		template<class It>
-		struct ForwardIterator : concept_extends<ForwardIterator, detail::ForwardIterator_c, It>
+		struct ForwardIterator : to_concept_ex<ForwardIterator, detail::ForwardIterator_c, It>
 		{};
 		///<summary>
 		///双方向イテレーターかどうか
 		///</summary>
 		template<class It>
-		struct BidirectionalIterator : concept_extends<BidirectionalIterator, detail::BidirectionalIterator_c, It>
+		struct BidirectionalIterator : to_concept_ex<BidirectionalIterator, detail::BidirectionalIterator_c, It>
 		{};
 		///<summary>
 		///ランダムアクセスイテレーターかどうか
 		///</summary>
 		template<class It>
-		struct RandomAccessIterator : concept_extends<RandomAccessIterator, detail::RandomAccessIterator_c, It>
+		struct RandomAccessIterator : to_concept_ex<RandomAccessIterator, detail::RandomAccessIterator_c, It>
 		{};
 
 	
@@ -1182,7 +1224,7 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
 		///イテレーターの値型がスワップ可能か
 		///</summary>
 		template<class It>
-		struct ValueSwappable : concept_extends<ValueSwappable, detail::ValueSwappable_c, It>
+		struct ValueSwappable : to_concept_ex<ValueSwappable, detail::ValueSwappable_c, It>
 		{};
 		/*
 		//************************************************************************************************
@@ -1396,7 +1438,7 @@ struct className:tc::concept_extends<className,detail::className##_c,Left,Right>
  ///<summary>
  ///条件をみたさないとアサート
  ///</summary>
-#define TC_CONCEPT_ASSERT( ... ) static_assert(__VA_ARGS__::value,#__VA_ARGS__ )
+#define TC_CONCEPT_ASSERT( ... ) static_assert(tc::And<__VA_ARGS__>::value,#__VA_ARGS__ )
 
  ///<summary>
  ///条件をみたさないとアサート(bool)
