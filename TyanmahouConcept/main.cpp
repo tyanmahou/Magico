@@ -5,23 +5,29 @@
 #include<set>
 #include<stack>
 #include<chrono>
+#include<algorithm>
 #include"Concept.hpp"
 
 
-template<class T>
-auto test(T begin,T end)->tc::where<void,tc::concept::RandomAccessIterator<T>>
-{
-	std::cout << tc::concept::RandomAccessIterator<T>::value << std::endl;
-}
 
+namespace tc
+{
+	template<class T>
+	auto stable_sort(T& x)->tc::where<void,tc::concept::AllocatorAwareContainer<T>>
+	{
+		std::stable_sort(x.begin(), x.end());
+	}
+
+
+}
 int main()
 {
 	std::vector<int> v;
 	std::list<int> l;
 	std::set<int>    st;
 	std::stack<int>  sk;
-	std::cout<<tc::concept::Clock<std::chrono::system_clock>::value;
-	test(v.begin(), v.end());
-//	test(l.begin(), l.end());
+	int a;
+	tc::stable_sort(v);
+	tc::stable_sort(l);
 	return 0;
 }
