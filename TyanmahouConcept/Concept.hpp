@@ -1378,6 +1378,18 @@ struct className:tc::to_concept_ex<className,detail::className##_c,Left,Right>{}
 						);
 			};
 
+
+			struct Range_c
+			{
+				template<class Type>
+				auto requires(Type&& t)->decltype(
+					tc::requires<
+					Iterator<decltype(std::begin(t))>,
+					Iterator<decltype(std::end(t))>
+					>{}
+					);
+			};
+
 		}//namespace detail
 
 
@@ -1452,6 +1464,12 @@ struct className:tc::to_concept_ex<className,detail::className##_c,Left,Right>{}
 		struct AllocatorAwareContainer :tc::to_concept_ex<AllocatorAwareContainer, detail::AllocatorAwareContainer_c, X>
 		{};
 
+		///<summary>
+		///ƒŒƒ“ƒW‚©‚Ç‚¤‚©
+		///</summary>
+		template<class Type>
+		struct Range :tc::to_concept_ex< Range, detail::Range_c, Type>
+		{};
 
 		//************************************************************************************************
 		//
