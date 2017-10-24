@@ -169,7 +169,7 @@ namespace tc
 	template<template<class...>class Concept, class ...Type>
 	decltype(auto) concept_mapping(Type&&... value)
 	{
-		using C = Concept<std::remove_reference_t<Type>...>;
+		using C = Concept<std::decay_t<Type>...>;
 		return detail::make_mapping_tuple<C>(value...);
 	}
 
@@ -178,7 +178,7 @@ namespace tc
 		template<class Concept, class Arg>
 		struct concept_mapped
 		{
-			using type = std::remove_reference_t<decltype(tc::concept_mapping<Concept>(tc::val<Arg&>()))>;
+			using type = std::decay_t<decltype(tc::concept_mapping<Concept>(tc::val<Arg&>()))>;
 		};
 
 	}
@@ -484,7 +484,7 @@ namespace tc
 		decltype(auto) get()
 		{
 			decltype(auto) v = get_origin<T>();
-			return tc::concept_mapping<Concept<std::remove_reference_t<T>>>(v);
+			return tc::concept_mapping<Concept<std::decay_t<T>>>(v);
 		}
 		template<class T>
 		decltype(auto) get_origin()
