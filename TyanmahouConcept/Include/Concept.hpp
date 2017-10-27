@@ -616,6 +616,10 @@ TC_CONCEPT(className,Left,Right)\
 		//
 		//************************************************************************************************
 
+
+		///<summary>
+		///イテレーターかどうか
+		///</summary>
 		template<class It> TC_CONCEPT(Iterator, It)
 		{
 		private:
@@ -635,6 +639,10 @@ TC_CONCEPT(className,Left,Right)\
 
 		};
 
+
+		///<summary>
+		///入力イテレーターかどうか
+		///</summary>
 		template<class It> TC_CONCEPT(InputIterator, It)
 		{
 		private:
@@ -653,6 +661,10 @@ TC_CONCEPT(className,Left,Right)\
 				);
 		};
 
+
+		///<summary>
+		///出力イテレーターかどうか
+		///</summary>
 		template<class It> TC_CONCEPT(OutputIterator, It)
 		{
 		private:
@@ -668,6 +680,10 @@ TC_CONCEPT(className,Left,Right)\
 				);
 		};
 
+
+		///<summary>
+		///前方イテレーターかどうか
+		///</summary>
 		template<class It> TC_CONCEPT(ForwardIterator, It)
 		{
 		private:
@@ -682,6 +698,9 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 
+		///<summary>
+		///双方向イテレーターかどうか
+		///</summary>
 		template<class It> TC_CONCEPT(BidirectionalIterator, It)
 		{
 		private:
@@ -696,6 +715,9 @@ TC_CONCEPT(className,Left,Right)\
 				);
 		};
 
+		///<summary>
+		///ランダムアクセスイテレーターかどうか
+		///</summary>
 		template<class It> TC_CONCEPT(RandomAccessIterator, It)
 		{
 		private:
@@ -719,6 +741,11 @@ TC_CONCEPT(className,Left,Right)\
 
 		};
 
+
+
+		///<summary>
+		///イテレーターの値型がスワップ可能か
+		///</summary>
 		template<class It> TC_CONCEPT(ValueSwappable, It)
 		{
 		private:
@@ -730,313 +757,196 @@ TC_CONCEPT(className,Left,Right)\
 				tc::extends<Swappable>::require<typename std::iterator_traits<It>::value_type>()
 				);
 		};
-		namespace detail
-		{
-
-			struct ValueSwappable_c
-			{
-			};
-
-			struct HasIterator_c
-			{
-				template<class Type>
-				auto require()->decltype(
-					&Iterator_c::require<typename Type::iterator>
-					);
-			};
-		}//namespace detail
-
 
 		///<summary>
 		///イテレーターをもつか
 		///</summary>
-		template<class Type>
-		struct HasIterator : to_concept_ex<HasIterator, detail::HasIterator_c, Type>
-		{};
+		template<class Type> TC_CONCEPT(HasIterator, Type)
+		{
 
-		///<summary>
-		///イテレーターかどうか
-		///</summary>
-		template<class It>
-		struct Iterator : to_concept_ex<Iterator, detail::Iterator_c, It>
-		{};
-		///<summary>
-		///入力イテレーターかどうか
-		///</summary>
-		template<class It>
-		struct InputIterator : to_concept_ex<InputIterator, detail::InputIterator_c, It>
-		{};
-		///<summary>
-		///出力イテレーターかどうか
-		///</summary>
-		template<class It>
-		struct OutputIterator : to_concept_ex<OutputIterator, detail::OutputIterator_c, It>
-		{};
-
-		///<summary>
-		///前方イテレーターかどうか
-		///</summary>
-		template<class It>
-		struct ForwardIterator : to_concept_ex<ForwardIterator, detail::ForwardIterator_c, It>
-		{};
-		///<summary>
-		///双方向イテレーターかどうか
-		///</summary>
-		template<class It>
-		struct BidirectionalIterator : to_concept_ex<BidirectionalIterator, detail::BidirectionalIterator_c, It>
-		{};
-		///<summary>
-		///ランダムアクセスイテレーターかどうか
-		///</summary>
-		template<class It>
-		struct RandomAccessIterator : to_concept_ex<RandomAccessIterator, detail::RandomAccessIterator_c, It>
-		{};
-
-
-		///<summary>
-		///イテレーターの値型がスワップ可能か
-		///</summary>
-		template<class It>
-		struct ValueSwappable : to_concept_ex<ValueSwappable, detail::ValueSwappable_c, It>
-		{};
+			template<class Type>
+			auto require()->decltype(
+				tc::extends<Iterator>::require<typename Type::iterator>()
+				);
+		};
 
 		//************************************************************************************************
 		//
 		//コンテナ
 		//
 		//************************************************************************************************
-		namespace detail
-		{
-			struct Container_c
-			{
-				template<class X,
-					class value_t = typename X::value_type,
-					class ref = typename X::reference,
-					class cref = typename X::const_reference,
-					class itr = typename X::iterator,
-					class citr = typename X::const_iterator,
-					class dif = typename X::difference_type,
-					class size = typename X::size_type,
-					class extends = tc::require<
-					DefaultConstructible<X>,
-					CopyConstructible<X>,
-					Destructible<X>,
-					EqualityComparable<X>,
-					NotEqualityComparable<X>,
-					CopyAssignable<X>
-					>
-				>
-					auto require(X&& x)->decltype(
-						tc::vailed_expr<itr>(x.begin()),
-						tc::vailed_expr<itr>(x.end()),
-						tc::vailed_expr<citr>(x.cbegin()),
-						tc::vailed_expr<citr>(x.cend()),
-						tc::vailed_expr<void>((x.swap(x), _void)),
-						tc::vailed_expr<void>((std::swap(x, x), _void)),
-						tc::vailed_expr<size>(x.size()),
-						tc::vailed_expr<size>(x.max_size()),
-						tc::convertible_expr<bool>(x.empty())
-						);
-			};
-
-			struct ForwardContainer_c
-			{
-				template<class X,
-					class extends = tc::require<ForwardIterator<typename X::iterator>>
-				>
-					auto require(X&& x)->decltype(
-						tc::require_c(&Container_c::require<X>)
-						);
-			};
-
-
-			struct RandomAccessContainer_c
-			{
-				template<class X,
-					class extends = tc::require<RandomAccessIterator<typename X::iterator>>
-				>
-					auto require(X&& x)->decltype(
-						tc::require_c(&Container_c::require<X>)
-						);
-			};
-
-			struct ReversibleContainer_c
-			{
-				template<class X,
-					class ritr = typename X::reverse_iterator,
-					class critr = typename X::const_reverse_iterator,
-					class extends = tc::require<BidirectionalIterator<typename X::iterator>>
-				>
-					auto require(X&& x)->decltype(
-						tc::require_c(&Container_c::require<X>),
-						tc::vailed_expr<ritr>(x.rbegin()),
-						tc::vailed_expr<ritr>(x.rend()),
-						tc::vailed_expr<critr>(x.crbegin()),
-						tc::vailed_expr<critr>(x.crend())
-						);
-			};
-
-			struct DefaultInsertable_c
-			{
-				template<class X,
-					class extends = tc::require<DefaultConstructible<typename X::iterator>>
-				>
-					auto require(X&& x)->decltype(
-						tc::require_c(&Container_c::require<X>)
-						);
-			};
-
-			struct CopyInsertable_c
-			{
-				template<class X,
-					class extends = tc::require<CopyConstructible<typename X::iterator>>
-				>
-					auto require(X&& x)->decltype(
-						tc::require_c(&Container_c::require<X>)
-						);
-			};
-
-			struct MoveInsertable_c
-			{
-				template<class X,
-					class extends = tc::require<MoveConstructible<typename X::iterator>>
-				>
-					auto require(X&& x)->decltype(
-						tc::require_c(&Container_c::require<X>)
-						);
-			};
-
-			struct EmplaceConstructible_c
-			{
-				template<class X, class... Args>
-				auto require(X&& x)->decltype(
-					tc::require<Constructible<typename X::value_type, Args...>>{},
-					tc::require_c(&Container_c::require<X>)
-					);
-			};
-
-			struct Erasable_c
-			{
-				template<class X,
-					class extends = tc::require<Destructible<typename X::iterator>>
-				>
-					auto require(X&& x)->decltype(
-						tc::require_c(&Container_c::require<X>)
-						);
-			};
-
-			struct AllocatorAwareContainer_c
-			{
-				template<class X,
-					class alloc_t = typename X::allocator_type,
-					class extends = tc::require<
-					CopyAssignable<X>,
-					MoveAssignable<X>,
-					DefaultConstructible<std::allocator<typename X::value_type>>,
-					Constructible < X, std::allocator<typename X::value_type>>,
-					Constructible < X, std::add_lvalue_reference_t<X>, std::allocator<typename X::value_type >>,
-					Constructible < X, std::add_rvalue_reference_t<X>, std::allocator<typename X::value_type >>
-					>
-				>
-					auto require(X&& x)->decltype(
-						tc::require_c(&CopyInsertable_c::require<X>, &MoveInsertable_c::require<X>),
-						tc::vailed_expr<alloc_t>(x.get_allocator()),
-						tc::vailed_expr<void>((x.swap(x), _void))
-						);
-			};
-
-
-			struct Range_c
-			{
-				template<class Type>
-				auto require(Type&& t)->decltype(
-					tc::require<
-					Iterator<decltype(std::begin(t))>,
-					Iterator<decltype(std::end(t))>
-					>{}
-				);
-			};
-
-		}//namespace detail
 
 
 		///<summary>
 		///コンテナかどうか
 		///</summary>
-		template<class X>
-		struct Container :tc::to_concept_ex<Container, detail::Container_c, X>
-		{};
-
+		template<class X> TC_CONCEPT(Container, X)
+		{
+			template<class X,
+				class value_t = typename X::value_type,
+				class ref = typename X::reference,
+				class cref = typename X::const_reference,
+				class itr = typename X::iterator,
+				class citr = typename X::const_iterator,
+				class dif = typename X::difference_type,
+				class size = typename X::size_type,
+				class extends = tc::require<
+				DefaultConstructible<X>,
+				CopyConstructible<X>,
+				Destructible<X>,
+				EqualityComparable<X>,
+				NotEqualityComparable<X>,
+				CopyAssignable<X>
+				>
+			>
+				auto require(X&& x)->decltype(
+					tc::vailed_expr<itr>(x.begin()),
+					tc::vailed_expr<itr>(x.end()),
+					tc::vailed_expr<citr>(x.cbegin()),
+					tc::vailed_expr<citr>(x.cend()),
+					tc::vailed_expr<void>((x.swap(x), _void)),
+					tc::vailed_expr<void>((std::swap(x, x), _void)),
+					tc::vailed_expr<size>(x.size()),
+					tc::vailed_expr<size>(x.max_size()),
+					tc::convertible_expr<bool>(x.empty())
+					);
+		};
 
 		///<summary>
 		///前方イテレーターをもつコンテナかどうか
 		///</summary>
-		template<class X>
-		struct ForwardContainer :tc::to_concept_ex<ForwardContainer, detail::ForwardContainer_c, X>
-		{};
+		template<class X> TC_CONCEPT(ForwardContainer, X)
+		{
+			template<class X>
+			auto require(X&& x)->decltype(
+				tc::extends<Container>::require<X>(),
+				tc::extends<ForwardIterator>::require<typename X::iterator>()
+				);
+		};
+
 		///<summary>
 		///ランダムアクセスイテレーターをもつコンテナかどうか
 		///</summary>
-		template<class X>
-		struct RandomAccessContainer :tc::to_concept_ex<RandomAccessContainer, detail::RandomAccessContainer_c, X>
-		{};
+		template<class X> TC_CONCEPT(RandomAccessContainer, X)
+		{
+			template<class X>
+			auto require(X&& x)->decltype(
+				tc::extends<Container>::require<X>(),
+				tc::extends<RandomAccessIterator>::require<typename X::iterator>()
+				);
+		};
 
 		///<summary>
 		///リバースイテレーターをもつコンテナかどうか
 		///</summary>
-		template<class X>
-		struct ReversibleContainer :tc::to_concept_ex<ReversibleContainer, detail::ReversibleContainer_c, X>
-		{};
+		template<class X> TC_CONCEPT(ReversibleContainer, X)
+		{
+			template<class X,
+				class ritr = typename X::reverse_iterator,
+				class critr = typename X::const_reverse_iterator
+			>
+				auto require(X&& x)->decltype(
+					tc::extends<Container>::require<X>(),
+					tc::extends<BidirectionalIterator>::require<typename X::iterator>(),
+					tc::vailed_expr<ritr>(x.rbegin()),
+					tc::vailed_expr<ritr>(x.rend()),
+					tc::vailed_expr<critr>(x.crbegin()),
+					tc::vailed_expr<critr>(x.crend())
+					);
+		};
+
 
 		///<summary>
-		///任意のコンテナCに対して、その要素型をデフォルトで挿入可能か
+		///任意のコンテナXに対して、その要素型をデフォルトで挿入可能か
 		///</summary>
-		template<class X>
-		struct DefaultInsertable :tc::to_concept_ex< DefaultInsertable, detail::DefaultInsertable_c, X>
-		{};
+		template<class X> TC_CONCEPT(DefaultInsertable, X)
+		{
+			template<class X>
+			auto require(X&& x)->decltype(
+				tc::extends<Container>::require<X>(),
+				tc::extends<DefaultConstructible>::require<typename X::value_type>()
+				);
+		};
 
 		///<summary>
-		///任意のコンテナCに対して、その要素型のコピー挿入可能か
+		///任意のコンテナXに対して、その要素型のコピー挿入可能か
 		///</summary>
-		template<class X>
-		struct CopyInsertable :tc::to_concept_ex<CopyInsertable, detail::CopyInsertable_c, X>
-		{};
+		template<class X> TC_CONCEPT(CopyInsertable, X)
+		{
+			template<class X>
+			auto require(X&& x)->decltype(
+				tc::extends<Container>::require<X>(),
+				tc::extends<CopyConstructible>::require<typename X::value_type>()
+				);
+		};
+
 
 		///<summary>
-		///任意のコンテナCに対して、その要素型の右辺値オブジェクトをムーブ挿入可能か
+		///任意のコンテナXに対して、その要素型の右辺値オブジェクトをムーブ挿入可能か
 		///</summary>
-		template<class X>
-		struct MoveInsertable :tc::to_concept_ex<MoveInsertable, detail::MoveInsertable_c, X>
-		{};
+		template<class X> TC_CONCEPT(MoveInsertable, X)
+		{
+			template<class X>
+			auto require(X&& x)->decltype(
+				tc::extends<Container>::require<X>(),
+				tc::extends<MoveConstructible>::require<typename X::value_type>()
+				);
+		};
+
 
 		///<summary>
-		///任意のコンテナCに対して、要素型のコンストラクタ引数列Argsから直接構築可能か
+		///任意のコンテナXに対して、要素型のコンストラクタ引数列Argsから直接構築可能か
 		///</summary>
-		template <class X, class... Args>
-		struct EmplaceConstructible :tc::to_concept_ex<EmplaceConstructible, detail::EmplaceConstructible_c, X, Args...>
-		{};
+		template<class X, class... Args> TC_CONCEPT(EmplaceConstructible, X,Args...)
+		{
+			template<class X, class... Args>
+			auto require(X&& x)->decltype(
+				tc::extends<Container>::require<X>(),
+				tc::extends<Constructible>::require<typename X::value_type, Args...>()
+				);
+		};
 
 		///<summary>
-		///任意のコンテナCに対して、要素型の破棄が可能か
+		///任意のコンテナXに対して、要素型の破棄が可能か
 		///</summary>
-		template<class X>
-		struct Erasable :tc::to_concept_ex<Erasable, detail::Erasable_c, X>
-		{};
+		template<class X> TC_CONCEPT(Erasable, X)
+		{
+			template<class X>
+			auto require(X&& x)->decltype(
+				tc::extends<Container>::require<X>(),
+				tc::extends<Destructible>::require<typename X::value_type>()
+				);
+		};
 
 
 		///<summary>
 		///アロケーターを認識するコンテナか
 		///</summary>
-		template<class X>
-		struct AllocatorAwareContainer :tc::to_concept_ex<AllocatorAwareContainer, detail::AllocatorAwareContainer_c, X>
-		{};
+		template<class X> TC_CONCEPT(AllocatorAwareContainer, X)
+		{
+			template<class X,class alloc_t = typename X::allocator_type>
+				auto require(X&& x)->decltype(
+					tc::extends<CopyAssignable, MoveAssignable, CopyInsertable, MoveInsertable>::require<X>(),
+					tc::extends<DefaultConstructible>::require<std::allocator<typename X::value_type>>(),
+					tc::extends<Constructible>::require<X, std::allocator<typename X::value_type>>(),
+					tc::extends<Constructible>::require<X, std::add_lvalue_reference_t<X>, std::allocator<typename X::value_type >>(),
+					tc::extends<Constructible>::require<X, std::add_rvalue_reference_t<X>, std::allocator<typename X::value_type >>(),
+					tc::vailed_expr<alloc_t>(x.get_allocator()),
+					tc::vailed_expr<void>((x.swap(x), _void))
+					);
+		};
 
 		///<summary>
 		///レンジかどうか
 		///</summary>
-		template<class Type>
-		struct Range :tc::to_concept_ex< Range, detail::Range_c, Type>
-		{};
+		template<class Type> TC_CONCEPT(Range, Type)
+		{
+			template<class Type>
+			auto require(Type&& range)->decltype(
+				tc::extends<Iterator>::require(std::begin(range)),
+				tc::extends<Iterator>::require(std::end(range))
+				);
+		};
 
 		//************************************************************************************************
 		//
@@ -1051,27 +961,18 @@ TC_CONCEPT(className,Left,Right)\
 		{};
 
 
-		namespace detail
-		{
-			template<template <class...>class Template, class Type>
-			struct is_template : std::false_type
-			{};
-			template<template <class...>class Template, class... Args>
-			struct is_template<Template, Template<Args...>> : std::true_type
-			{};
-		}
-
 		///<summary>
 		///TypeがTemplate型であるか
 		///</summary>
 		template<template <class...>class Template, class Type>
-		struct IsTemplate : detail::is_template<Template,
-			tc::detail::as_mapped_if_t<IsTemplate<Template, tc::detail::remove_mapped_t<Type>>, Type>
-		>
+		struct is_template : std::false_type
+		{};
+		template<template <class...>class Template, class... Args>
+		struct is_template<Template, Template<Args...>> : std::true_type
 		{};
 
 
-	}
-}//namespace tc::concept
+	}//namespace concept
+}//namespace tc
 
 

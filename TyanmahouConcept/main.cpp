@@ -2,12 +2,15 @@
 #include<vector>
 #include<list>
 #include<unordered_map>
-#include<Concept.hpp>
 #include<memory>
 #include<chrono>
+
+#include<Concept.hpp>
+
+
 int main()
 {
-
-	tc::concept::TrivialType<int>::value;
+	tc::concept::RandomAccessContainer<std::list<int>>::value;
+	tc::concept::AllocatorAwareContainer<std::list<int>>::value;
 	return 0;
 }
