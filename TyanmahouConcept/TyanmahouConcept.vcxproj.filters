@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ヘッダー ファイル\Concept">
+      <UniqueIdentifier>{4d83b576-8d27-4e7b-b1c4-03989ae376e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -20,8 +23,23 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Concept.hpp">
+    <ClInclude Include="Include\Concept.hpp">
       <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Concept\concept_any.hpp">
+      <Filter>ヘッダー ファイル\Concept</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Concept\concept_map.hpp">
+      <Filter>ヘッダー ファイル\Concept</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Concept\concept.hpp">
+      <Filter>ヘッダー ファイル\Concept</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Concept\utility.hpp">
+      <Filter>ヘッダー ファイル\Concept</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Concept\require.hpp">
+      <Filter>ヘッダー ファイル\Concept</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
