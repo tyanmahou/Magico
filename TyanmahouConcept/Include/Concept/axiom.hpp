@@ -43,7 +43,7 @@ namespace tc
 				{
 					if constexpr(Concept::value)
 					{
-						if (!Constraint{}.axiom<Types...>(args...))
+						if (!Constraint{}.template axiom<Types...>(args...))
 						{
 							static std::string message = std::string(typeid(Concept).name()) += " dose't satisfy axion";
 							throw tc::axiom_exception(message.c_str());
