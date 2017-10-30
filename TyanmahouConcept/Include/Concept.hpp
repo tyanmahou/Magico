@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include"Concept/concept.hpp"
-
+#include<functional>
 //************************************************************************************************
 //
 //concept example 
