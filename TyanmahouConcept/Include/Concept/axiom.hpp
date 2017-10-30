@@ -4,6 +4,24 @@
 #include<string>
 namespace tc
 {
+	class axiom_exception : public std::exception
+	{
+	private:
+		const char*const m_message;
+	public:
+
+		axiom_exception()noexcept :
+			m_message("no satisfy axiom")
+		{}
+		axiom_exception(const char* const message) noexcept :
+			m_message(message)
+		{}
+		const char*  what() const noexcept override
+		{
+			return m_message;
+		}
+	};
+
 	namespace detail
 	{
 
@@ -41,15 +59,4 @@ namespace tc
 		};
 	}//namespace detail
 
-	class axiom_exception : public std::exception
-	{
-	public:
-
-		axiom_exception()noexcept :
-			std::exception("no satisfy axiom", 1)
-		{}
-		axiom_exception(const char* const message) noexcept :
-			std::exception(message, 1)
-		{}
-	};
 }//namespace tc

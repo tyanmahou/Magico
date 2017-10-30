@@ -464,7 +464,7 @@ TC_CONCEPT(className,Left,Right)\
 		{
 			template< class From, class To >
 			auto require()->decltype(
-				tc::extends<std::is_convertible>::require<Type>()
+				tc::extends<std::is_convertible>::require<From,To>()
 				);
 		};
 
