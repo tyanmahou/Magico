@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include"utility.hpp"
 
 //************************************************************************************************
@@ -10,14 +10,14 @@ namespace tc
 {
 
 	///<summary>
-	///Concept‚ª‚·‚×‚ÄğŒ‚ğ–‚½‚·ê‡@nullptrŒ^‚É‚È‚é
+	///ConceptãŒã™ã¹ã¦æ¡ä»¶ã‚’æº€ãŸã™å ´åˆã€€nullptrå‹ã«ãªã‚‹
 	///</summary>
 	template < class... Concept >
 	using require = std::enable_if_t<And<Concept...>::value, std::nullptr_t >;
 
 	///<summary>
-	///§–ñƒ`ƒFƒbƒN
-	///[Ret]F•Ô‚è’l‚ÌŒ^@[Concept] §–ñ
+	///åˆ¶ç´„ãƒã‚§ãƒƒã‚¯
+	///[Ret]ï¼šè¿”ã‚Šå€¤ã®å‹ã€€[Concept] åˆ¶ç´„
 	///</summary>
 	template<class Ret, class ...Concept>
 	using where = std::enable_if_t<
@@ -25,7 +25,7 @@ namespace tc
 		Ret>;
 
 	///<summary>
-	///§–ñƒ`ƒFƒbƒN@RetF•Ô‚è’l‚ÌŒ^@Exp bool’l
+	///åˆ¶ç´„ãƒã‚§ãƒƒã‚¯ã€€Retï¼šè¿”ã‚Šå€¤ã®å‹ã€€Exp boolå€¤
 	///</summary>
 	template<class Ret, bool Exp>
 	using where_bool = std::enable_if_t<Exp, Ret>;

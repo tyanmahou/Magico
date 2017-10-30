@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include"concept_map.hpp"
 #include"require.hpp"
 #include"axiom.hpp"
@@ -25,7 +25,7 @@ namespace tc
 
 
 	///<summary>
-	///requireÀ‘•ƒNƒ‰ƒX‚ğƒRƒ“ƒZƒvƒg(ƒƒ^ŠÖ”)‚É•ÏŠ·‚µŒp³ SubConcept‚É‚Í”h¶class‚ğ—^‚¦‚é
+	///requireå®Ÿè£…ã‚¯ãƒ©ã‚¹ã‚’ã‚³ãƒ³ã‚»ãƒ—ãƒˆ(ãƒ¡ã‚¿é–¢æ•°)ã«å¤‰æ›ã—ç¶™æ‰¿ SubConceptã«ã¯æ´¾ç”Ÿclassã‚’ä¸ãˆã‚‹
 	///</summary>
 	template<template<class...>class SubConcept, class Constraint, class ...Args>
 	struct to_concept : is_detected<
@@ -51,7 +51,7 @@ namespace tc
 	***************************************************************/
 
 	///<summary>
-	///§–ñ‚ÌŒp³
+	///åˆ¶ç´„ã®ç¶™æ‰¿
 	///</summary>
 	template<template<class...>class ...Concepts>
 	struct extends
@@ -64,16 +64,16 @@ namespace tc
 	};
 
 	///<summary>
-	///TypeŒ^‚ª‘¶İ‚·‚é‚©
+	///Typeå‹ãŒå­˜åœ¨ã™ã‚‹ã‹
 	///</summary>
 	template<class Type>
 	auto associated_type()->decltype(val<Type>());
 
 	///<summary>
-	///®‚ªTypeŒ^‚Å•]‰¿‰Â”\‚©
+	///å¼ãŒTypeå‹ã§è©•ä¾¡å¯èƒ½ã‹
 	///</summary>
 	///<param name= "exp">
-	///•]‰¿‚·‚é®
+	///è©•ä¾¡ã™ã‚‹å¼
 	///</param>
 	template<class Type, class Exp>
 	auto valid_expr(Exp&& exp)->tc::require<std::is_convertible<Exp, Type>>;
@@ -94,17 +94,17 @@ namespace tc
 //************************************************************************************************
 
 ///<summary>
-///ğŒ‚ğ‚İ‚½‚³‚È‚¢‚ÆƒAƒT[ƒg
+///æ¡ä»¶ã‚’ã¿ãŸã•ãªã„ã¨ã‚¢ã‚µãƒ¼ãƒˆ
 ///</summary>
 #define TC_CONCEPT_ASSERT( ... ) static_assert(tc::And<__VA_ARGS__>::value,#__VA_ARGS__ )
 
 ///<summary>
-///ğŒ‚ğ‚İ‚½‚³‚È‚¢‚ÆƒAƒT[ƒg(bool)
+///æ¡ä»¶ã‚’ã¿ãŸã•ãªã„ã¨ã‚¢ã‚µãƒ¼ãƒˆ(bool)
 ///</summary>
 #define TC_CONCEPT_ASSERT_BOOL( ... ) static_assert(static_cast<bool>(__VA_ARGS__),#__VA_ARGS__ )
 
 ///<summary>
-///ƒRƒ“ƒZƒvƒg¶¬
+///ã‚³ãƒ³ã‚»ãƒ—ãƒˆç”Ÿæˆ
 ///</summary>
 #define TC_CONCEPT(name,...)\
 struct name : \

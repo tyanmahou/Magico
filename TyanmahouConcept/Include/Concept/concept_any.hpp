@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include<any>
 #include"concept_map.hpp"
 #include"require.hpp"
@@ -13,7 +13,7 @@ namespace tc
 {
 	namespace detail
 	{
-		//À‘•
+		//å®Ÿè£…
 		template<class T>
 		struct AnyCastImpl
 		{
@@ -31,7 +31,7 @@ namespace tc
 				return std::any_cast<T>(_any);
 			}
 		};
-		//QÆ
+		//å‚ç…§
 		template<class T>
 		struct AnyCastImpl<T&>
 		{
@@ -44,7 +44,7 @@ namespace tc
 				return std::any_cast<T&>(_any);
 			}
 		};
-		//constQÆ
+		//constå‚ç…§
 		template<class T>
 		struct AnyCastImpl<const T&>
 		{
@@ -62,7 +62,7 @@ namespace tc
 			}
 		};
 
-		//ƒ‰ƒbƒvŠÖ”
+		//ãƒ©ãƒƒãƒ—é–¢æ•°
 		template<class T>
 		T any_cast_wrapper(std::any& _any)
 		{
@@ -71,7 +71,7 @@ namespace tc
 
 	}
 	///<summary>
-	///ƒRƒ“ƒZƒvƒg‚ğ–‚½‚·Œ^
+	///ã‚³ãƒ³ã‚»ãƒ—ãƒˆã‚’æº€ãŸã™å‹
 	///</summary>
 	template<template<class>class Concept>
 	class concept_any : protected std::any

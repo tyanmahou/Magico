@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include"Concept/concept.hpp"
 
 //************************************************************************************************
@@ -25,33 +25,33 @@ template<class Type> TC_CONCEPT(className,Type)\
 }
 
 		///<summary>
-		/// operator ! ‚ð‚à‚Â‚©
+		/// operator ! ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		TC_HAS_UNARY_OPERATOR(Negatable, !);
 
 
 		///<summary>
-		/// ’P€operator + ‚ð‚à‚Â‚©
+		/// å˜é …operator + ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		TC_HAS_UNARY_OPERATOR(UnaryPlusable, +);
 
 		///<summary>
-		/// ’P€operator - ‚ð‚à‚Â‚©
+		/// å˜é …operator - ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		TC_HAS_UNARY_OPERATOR(UnaryMinusable, -);
 
 		///<summary>
-		/// ‘O’uƒCƒ“ƒNƒŠƒƒ“ƒg‰Â”\‚©
+		/// å‰ç½®ã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆå¯èƒ½ã‹
 		///</summary>
 		TC_HAS_UNARY_OPERATOR(PreIncrementable, ++);
 
 		///<summary>
-		/// ‘O’uƒfƒNƒŠƒƒ“ƒg‰Â”\‚©
+		/// å‰ç½®ãƒ‡ã‚¯ãƒªãƒ¡ãƒ³ãƒˆå¯èƒ½ã‹
 		///</summary>
 		TC_HAS_UNARY_OPERATOR(PreDecrementable, --);
 
 		///<summary>
-		/// Œã’uƒCƒ“ƒNƒŠƒƒ“ƒg‰Â”\‚©
+		/// å¾Œç½®ã‚¤ãƒ³ã‚¯ãƒªãƒ¡ãƒ³ãƒˆå¯èƒ½ã‹
 		///</summary>
 		template<class Type>
 		TC_CONCEPT(PostIncrementable, Type)
@@ -61,7 +61,7 @@ template<class Type> TC_CONCEPT(className,Type)\
 		};
 
 		///<summary>
-		/// Œã’uƒfƒNƒŠƒƒ“ƒg‰Â”\‚©
+		/// å¾Œç½®ãƒ‡ã‚¯ãƒªãƒ¡ãƒ³ãƒˆå¯èƒ½ã‹
 		///</summary>
 		template<class Type>
 		TC_CONCEPT(PostDecrementable, Type)
@@ -70,17 +70,17 @@ template<class Type> TC_CONCEPT(className,Type)\
 			auto require(Type&& t)->decltype(t--);
 		};
 		///<summary>
-		/// ’P€operator ~ ‚ð‚à‚Â‚©
+		/// å˜é …operator ~ ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		TC_HAS_UNARY_OPERATOR(Complementable, ~);
 
 		///<summary>
-		/// ƒAƒhƒŒƒXŽæ“¾‰Â”\‚©
+		/// ã‚¢ãƒ‰ãƒ¬ã‚¹å–å¾—å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_UNARY_OPERATOR(AddressObtainable, &);
 
 		///<summary>
-		/// ŠÖÚ‰‰ŽZ‰Â”\‚©
+		/// é–¢æŽ¥æ¼”ç®—å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_UNARY_OPERATOR(Indirectable, *);
 
@@ -96,142 +96,142 @@ TC_CONCEPT(className,Left,Right)\
 }
 
 		///<summary>
-		/// ‰ÁŽZ‰Â”\‚©
+		/// åŠ ç®—å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(Plusable, +);
 
 		///<summary>
-		/// Œ¸ŽZ‰Â”\‚©
+		/// æ¸›ç®—å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(Minusable, -);
 
 		///<summary>
-		/// æŽZ‰Â”\‚©
+		/// ä¹—ç®—å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(Multipliable, *);
 
 		///<summary>
-		/// œŽZ‰Â”\‚©
+		/// é™¤ç®—å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(Dividable, / );
 
 		///<summary>
-		/// è—]‰Â”\‚©
+		/// å‰°ä½™å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(Modulable, %);
 
 		///<summary>
-		/// ‰ÁŽZ‘ã“ü‰Â”\‚©
+		/// åŠ ç®—ä»£å…¥å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(PlusAssignable, +=);
 
 		///<summary>
-		/// Œ¸ŽZ‘ã“ü‰Â”\‚©
+		/// æ¸›ç®—ä»£å…¥å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(MinusAssignable, -=);
 
 		///<summary>
-		/// æŽZ‘ã“ü‰Â”\‚©
+		/// ä¹—ç®—ä»£å…¥å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(MultiplyAssignable, *=);
 
 		///<summary>
-		/// œŽZ‘ã“ü‰Â”\‚©
+		/// é™¤ç®—ä»£å…¥å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(DivideAssignable, /=);
 
 		///<summary>
-		/// è—]‘ã“ü‰Â”\‚©
+		/// å‰°ä½™ä»£å…¥å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(ModulusAssignable, %=);
 
 		///<summary>
-		/// ¶ƒVƒtƒg‰Â”\‚©
+		/// å·¦ã‚·ãƒ•ãƒˆå¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(LeftShiftable, << );
 
 		///<summary>
-		/// ‰EƒVƒtƒg‰Â”\‚©
+		/// å³ã‚·ãƒ•ãƒˆå¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(RightShiftable, >> );
 
 		///<summary>
-		/// ¶ƒVƒtƒg‘ã“ü‰Â”\‚©
+		/// å·¦ã‚·ãƒ•ãƒˆä»£å…¥å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(LeftShiftAssignable, <<=);
 
 		///<summary>
-		/// ‰EƒVƒtƒg‰Â”\‚©
+		/// å³ã‚·ãƒ•ãƒˆå¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(RightShifAssignable, >>=);
 
 		///<summary>
-		/// ƒrƒbƒg‚²‚Æ‚ÌAND‰‰ŽZ‰Â”\‚©
+		/// ãƒ“ãƒƒãƒˆã”ã¨ã®ANDæ¼”ç®—å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(BitAndPossible, &);
 
 		///<summary>
-		/// ƒrƒbƒg‚²‚Æ‚ÌOR‰‰ŽZ‰Â”\‚©
+		/// ãƒ“ãƒƒãƒˆã”ã¨ã®ORæ¼”ç®—å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(BitOrPossible, | );
 
 		///<summary>
-		/// ƒrƒbƒg‚²‚Æ‚Ì”r‘¼“IOR‰‰ŽZ‰Â”\‚©
+		/// ãƒ“ãƒƒãƒˆã”ã¨ã®æŽ’ä»–çš„ORæ¼”ç®—å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(BitXorPossible, ^);
 
 		///<summary>
-		/// ƒrƒbƒg‚²‚Æ‚ÌAND‰‰ŽZ‘ã“ü‰Â”\‚©
+		/// ãƒ“ãƒƒãƒˆã”ã¨ã®ANDæ¼”ç®—ä»£å…¥å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(BitAndAssignable, &=);
 
 		///<summary>
-		/// ƒrƒbƒg‚²‚Æ‚ÌOR‰‰ŽZ‘ã“ü‰Â”\‚©
+		/// ãƒ“ãƒƒãƒˆã”ã¨ã®ORæ¼”ç®—ä»£å…¥å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(BitOrAssignable, |=);
 
 		///<summary>
-		/// ƒrƒbƒg‚²‚Æ‚Ì”r‘¼“IOR‰‰ŽZ‘ã“ü‰Â”\‚©
+		/// ãƒ“ãƒƒãƒˆã”ã¨ã®æŽ’ä»–çš„ORæ¼”ç®—ä»£å…¥å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(BitXorAssignable, ^=);
 
 		///<summary>
-		/// ˜_—Ï‰Â”\‚©
+		/// è«–ç†ç©å¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(LogicalAndPossible, &&);
 
 		///<summary>
-		/// ˜_—˜a‰Â”\‚©
+		/// è«–ç†å’Œå¯èƒ½ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(LogicalOrPossible, || );
 
 		///<summary>
-		/// ¬‚È‚è”äŠr‰‰ŽZ ‚ð‚à‚Â‚©
+		/// å°ãªã‚Šæ¯”è¼ƒæ¼”ç®— ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(LessThanComparable, < );
 
 		///<summary>
-		/// ¬‚È‚è=”äŠr‰‰ŽZ ‚ð‚à‚Â‚©
+		/// å°ãªã‚Š=æ¯”è¼ƒæ¼”ç®— ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(LessEqualComparable, <= );
 
 		///<summary>
-		/// ‘å‚È‚è”äŠr‰‰ŽZ‚ð‚à‚Â‚©
+		/// å¤§ãªã‚Šæ¯”è¼ƒæ¼”ç®—ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(GreaterThanComparable, > );
 
 		///<summary>
-		/// ‘å‚È‚è=”äŠr‰‰ŽZ‚ð‚à‚Â‚©
+		/// å¤§ãªã‚Š=æ¯”è¼ƒæ¼”ç®—ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(GreaterEqualComparable, >= );
 
 		///<summary>
-		/// operator == ‚ð‚à‚Â‚©
+		/// operator == ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(EqualityComparable, == );
 
 		///<summary>
-		/// operator != ‚ð‚à‚Â‚©
+		/// operator != ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		TC_HAS_BINARY_OPERATOR(NotEqualityComparable, != );
 
@@ -244,7 +244,7 @@ TC_CONCEPT(className,Left,Right)\
 		//************************************************************************************************
 
 		///<summary>
-		/// operator =(copy) ‚ð‚à‚Â‚©
+		/// operator =(copy) ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		template< class To, class From = To> TC_CONCEPT(CopyAssignable, To, From)
 		{
@@ -255,7 +255,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		/// operator =(move) ‚ð‚à‚Â‚©
+		/// operator =(move) ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		template< class To, class From = To> TC_CONCEPT(MoveAssignable, To, From)
 		{
@@ -269,7 +269,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		/// Type( Args... ) ‚ÌŒ`Ž®‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^ŒÄ‚Ño‚µ‚ª‰Â”\‚©
+		/// Type( Args... ) ã®å½¢å¼ã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿å‘¼ã³å‡ºã—ãŒå¯èƒ½ã‹
 		///</summary>
 		template< class Type, class... Args> TC_CONCEPT(Constructible, Type, Args...)
 		{
@@ -280,7 +280,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		/// ƒfƒtƒHƒ‹ƒgƒRƒ“ƒXƒgƒ‰ƒNƒ^ ‚ð‚à‚Â‚©
+		/// ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		template< class Type > TC_CONCEPT(DefaultConstructible, Type)
 		{
@@ -290,7 +290,7 @@ TC_CONCEPT(className,Left,Right)\
 				);
 		};
 		///<summary>
-		/// ƒRƒs[ƒRƒ“ƒXƒgƒ‰ƒNƒ^ ‚ð‚à‚Â‚©
+		/// ã‚³ãƒ”ãƒ¼ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		template< class Type > TC_CONCEPT(CopyConstructible, Type)
 		{
@@ -300,7 +300,7 @@ TC_CONCEPT(className,Left,Right)\
 				);
 		};
 		///<summary>
-		/// ƒ€[ƒuƒRƒ“ƒXƒgƒ‰ƒNƒ^ ‚ð‚à‚Â‚©
+		/// ãƒ ãƒ¼ãƒ–ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		template< class Type > TC_CONCEPT(MoveConstructible, Type)
 		{
@@ -310,7 +310,7 @@ TC_CONCEPT(className,Left,Right)\
 				);
 		};
 		///<summary>
-		/// ƒfƒXƒgƒ‰ƒNƒ^ ‚ð‚à‚Â‚©
+		/// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		template< class Type > TC_CONCEPT(Destructible, Type)
 		{
@@ -320,7 +320,7 @@ TC_CONCEPT(className,Left,Right)\
 				);
 		};
 		///<summary>
-		/// ‰¼‘zƒfƒXƒgƒ‰ƒNƒ^ ‚ð‚à‚Â‚©
+		/// ä»®æƒ³ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		template< class Type > TC_CONCEPT(HasVirtualDestructor, Type)
 		{
@@ -331,7 +331,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///T‚ÆU‚ª“¯‚¶‚©
+		///Tã¨UãŒåŒã˜ã‹
 		///</summary>
 		template<class T, class U> TC_CONCEPT(IsSame, T, U)
 		{
@@ -342,7 +342,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///Type‚ªBase,‚à‚µ‚­‚ÍBase‚ðŒp³‚µ‚Ä‚¢‚é‚©
+		///TypeãŒBase,ã‚‚ã—ãã¯Baseã‚’ç¶™æ‰¿ã—ã¦ã„ã‚‹ã‹
 		///</summary>
 		template<class Type, class Base> TC_CONCEPT(Extended, Type, Base)
 		{
@@ -353,7 +353,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///ƒXƒJƒ‰[‚©‚Ç‚¤‚©
+		///ã‚¹ã‚«ãƒ©ãƒ¼ã‹ã©ã†ã‹
 		///</summary>
 		template< class Type > TC_CONCEPT(Scalar, Type)
 		{
@@ -364,7 +364,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///‰¼‘zƒNƒ‰ƒX‚©‚Ç‚¤‚©
+		///ä»®æƒ³ã‚¯ãƒ©ã‚¹ã‹ã©ã†ã‹
 		///</summary>
 		template< class Type > TC_CONCEPT(Abstract, Type)
 		{
@@ -375,7 +375,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///enumŒ^‚©
+		///enumåž‹ã‹
 		///</summary>
 		template< class Type > TC_CONCEPT(Enum, Type)
 		{
@@ -386,7 +386,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///class(struct)Œ^‚©
+		///class(struct)åž‹ã‹
 		///</summary>
 		template< class Type > TC_CONCEPT(Class, Type)
 		{
@@ -397,7 +397,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///unionŒ^‚©
+		///unionåž‹ã‹
 		///</summary>
 		template< class Type > TC_CONCEPT(Union, Type)
 		{
@@ -408,7 +408,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///ŠÖ”Œ^t(...)‚©
+		///é–¢æ•°åž‹t(...)ã‹
 		///</summary>
 		template< class Type > TC_CONCEPT(Function, Type)
 		{
@@ -426,7 +426,7 @@ TC_CONCEPT(className,Left,Right)\
 
 
 		///<summary>
-		///ƒAƒƒP[ƒ^[‚©
+		///ã‚¢ãƒ­ã‚±ãƒ¼ã‚¿ãƒ¼ã‹
 		///</summary>
 		template<class Type> TC_CONCEPT(Allocator, Type)
 		{
@@ -445,7 +445,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///T‚ÌƒIƒuƒWƒFƒNƒg‚ÆU‚ÌƒIƒuƒWƒFƒNƒg‚ª“ü‚ê‘Ö‚¦‰Â”\‚©
+		///Tã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã¨Uã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒå…¥ã‚Œæ›¿ãˆå¯èƒ½ã‹
 		///</summary>
 		template<class T, class U = T> TC_CONCEPT(Swappable, T, U)
 		{
@@ -458,7 +458,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		/// From‚ªTo‚ÉƒLƒƒƒXƒg‚Å‚«‚é‚©
+		/// FromãŒToã«ã‚­ãƒ£ã‚¹ãƒˆã§ãã‚‹ã‹
 		///</summary>
 		template< class From, class To > TC_CONCEPT(Convertible, From, To)
 		{
@@ -469,7 +469,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		/// null‹–—e‚©
+		/// nullè¨±å®¹ã‹
 		///</summary>
 		template<class Type> TC_CONCEPT(NullablePointer, Type)
 		{
@@ -495,7 +495,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///ŠÖ”ŒÄ‚Ño‚µ‰Â”\‚ÈŒ^‚©
+		///é–¢æ•°å‘¼ã³å‡ºã—å¯èƒ½ãªåž‹ã‹
 		///</summary>
 		template <class F, class... Args>TC_CONCEPT(Invocable, F, Args...)
 		{
@@ -507,7 +507,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///ŠÖ”ƒIƒuƒWƒFƒNƒg‚©
+		///é–¢æ•°ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‹
 		///</summary>
 		template <class Type> TC_CONCEPT(FunctionObject, Type)
 		{
@@ -518,7 +518,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///ƒƒ^ŠÖ”‚©
+		///ãƒ¡ã‚¿é–¢æ•°ã‹
 		///</summary>
 		template <class Type> TC_CONCEPT(MetaFunc, Type)
 		{
@@ -529,7 +529,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///ƒnƒbƒVƒ…ŠÖ”ƒIƒuƒWƒFƒNƒg‚©
+		///ãƒãƒƒã‚·ãƒ¥é–¢æ•°ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‹
 		///</summary>
 		template <class Type, class Key> TC_CONCEPT(Hash, Type, Key)
 		{
@@ -545,7 +545,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///ŠúŠÔAŽžAŒ»Ý‚ÌŽž‚ðŽæ“¾‰Â”\‚©
+		///æœŸé–“ã€æ™‚åˆ»ã€ç¾åœ¨ã®æ™‚åˆ»ã‚’å–å¾—å¯èƒ½ã‹
 		///</summary>
 		template <class Type> TC_CONCEPT(Clock, Type)
 		{
@@ -568,7 +568,7 @@ TC_CONCEPT(className,Left,Right)\
 		//************************************************************************************************
 
 		///<summary>
-		///ƒgƒŠƒrƒAƒ‹ƒRƒs[‰Â”\‚©
+		///ãƒˆãƒªãƒ“ã‚¢ãƒ«ã‚³ãƒ”ãƒ¼å¯èƒ½ã‹
 		///</summary>
 		template< class Type > TC_CONCEPT(TriviallyCopyable, Type)
 		{
@@ -579,7 +579,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///ƒgƒŠƒrƒAƒ‹Œ^‚©
+		///ãƒˆãƒªãƒ“ã‚¢ãƒ«åž‹ã‹
 		///</summary>
 		template< class Type > TC_CONCEPT(TrivialType, Type)
 		{
@@ -589,7 +589,7 @@ TC_CONCEPT(className,Left,Right)\
 				);
 		};
 		///<summary>
-		///•W€ƒŒƒCƒAƒEƒgŒ^‚©
+		///æ¨™æº–ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆåž‹ã‹
 		///</summary>
 		template<class Type>TC_CONCEPT(StandardLayoutType, Type)
 		{
@@ -600,7 +600,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///PODŒ^‚©
+		///PODåž‹ã‹
 		///</summary>
 		template<class Type>TC_CONCEPT(PODType, Type)
 		{
@@ -618,7 +618,7 @@ TC_CONCEPT(className,Left,Right)\
 
 
 		///<summary>
-		///ƒCƒeƒŒ[ƒ^[‚©‚Ç‚¤‚©
+		///ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ãƒ¼ã‹ã©ã†ã‹
 		///</summary>
 		template<class It> TC_CONCEPT(Iterator, It)
 		{
@@ -641,7 +641,7 @@ TC_CONCEPT(className,Left,Right)\
 
 
 		///<summary>
-		///“ü—ÍƒCƒeƒŒ[ƒ^[‚©‚Ç‚¤‚©
+		///å…¥åŠ›ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ãƒ¼ã‹ã©ã†ã‹
 		///</summary>
 		template<class It> TC_CONCEPT(InputIterator, It)
 		{
@@ -663,7 +663,7 @@ TC_CONCEPT(className,Left,Right)\
 
 
 		///<summary>
-		///o—ÍƒCƒeƒŒ[ƒ^[‚©‚Ç‚¤‚©
+		///å‡ºåŠ›ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ãƒ¼ã‹ã©ã†ã‹
 		///</summary>
 		template<class It> TC_CONCEPT(OutputIterator, It)
 		{
@@ -682,7 +682,7 @@ TC_CONCEPT(className,Left,Right)\
 
 
 		///<summary>
-		///‘O•ûƒCƒeƒŒ[ƒ^[‚©‚Ç‚¤‚©
+		///å‰æ–¹ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ãƒ¼ã‹ã©ã†ã‹
 		///</summary>
 		template<class It> TC_CONCEPT(ForwardIterator, It)
 		{
@@ -699,7 +699,7 @@ TC_CONCEPT(className,Left,Right)\
 
 
 		///<summary>
-		///‘o•ûŒüƒCƒeƒŒ[ƒ^[‚©‚Ç‚¤‚©
+		///åŒæ–¹å‘ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ãƒ¼ã‹ã©ã†ã‹
 		///</summary>
 		template<class It> TC_CONCEPT(BidirectionalIterator, It)
 		{
@@ -716,7 +716,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///ƒ‰ƒ“ƒ_ƒ€ƒAƒNƒZƒXƒCƒeƒŒ[ƒ^[‚©‚Ç‚¤‚©
+		///ãƒ©ãƒ³ãƒ€ãƒ ã‚¢ã‚¯ã‚»ã‚¹ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ãƒ¼ã‹ã©ã†ã‹
 		///</summary>
 		template<class It> TC_CONCEPT(RandomAccessIterator, It)
 		{
@@ -744,7 +744,7 @@ TC_CONCEPT(className,Left,Right)\
 
 
 		///<summary>
-		///ƒCƒeƒŒ[ƒ^[‚Ì’lŒ^‚ªƒXƒƒbƒv‰Â”\‚©
+		///ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ãƒ¼ã®å€¤åž‹ãŒã‚¹ãƒ¯ãƒƒãƒ—å¯èƒ½ã‹
 		///</summary>
 		template<class It> TC_CONCEPT(ValueSwappable, It)
 		{
@@ -759,7 +759,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///ƒCƒeƒŒ[ƒ^[‚ð‚à‚Â‚©
+		///ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ãƒ¼ã‚’ã‚‚ã¤ã‹
 		///</summary>
 		template<class Type> TC_CONCEPT(HasIterator, Type)
 		{
@@ -772,13 +772,13 @@ TC_CONCEPT(className,Left,Right)\
 
 		//************************************************************************************************
 		//
-		//ƒRƒ“ƒeƒi
+		//ã‚³ãƒ³ãƒ†ãƒŠ
 		//
 		//************************************************************************************************
 
 
 		///<summary>
-		///ƒRƒ“ƒeƒi‚©‚Ç‚¤‚©
+		///ã‚³ãƒ³ãƒ†ãƒŠã‹ã©ã†ã‹
 		///</summary>
 		template<class X> TC_CONCEPT(Container, X)
 		{
@@ -813,7 +813,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///‘O•ûƒCƒeƒŒ[ƒ^[‚ð‚à‚ÂƒRƒ“ƒeƒi‚©‚Ç‚¤‚©
+		///å‰æ–¹ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ãƒ¼ã‚’ã‚‚ã¤ã‚³ãƒ³ãƒ†ãƒŠã‹ã©ã†ã‹
 		///</summary>
 		template<class X> TC_CONCEPT(ForwardContainer, X)
 		{
@@ -825,7 +825,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///ƒ‰ƒ“ƒ_ƒ€ƒAƒNƒZƒXƒCƒeƒŒ[ƒ^[‚ð‚à‚ÂƒRƒ“ƒeƒi‚©‚Ç‚¤‚©
+		///ãƒ©ãƒ³ãƒ€ãƒ ã‚¢ã‚¯ã‚»ã‚¹ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ãƒ¼ã‚’ã‚‚ã¤ã‚³ãƒ³ãƒ†ãƒŠã‹ã©ã†ã‹
 		///</summary>
 		template<class X> TC_CONCEPT(RandomAccessContainer, X)
 		{
@@ -837,7 +837,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///ƒŠƒo[ƒXƒCƒeƒŒ[ƒ^[‚ð‚à‚ÂƒRƒ“ƒeƒi‚©‚Ç‚¤‚©
+		///ãƒªãƒãƒ¼ã‚¹ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ãƒ¼ã‚’ã‚‚ã¤ã‚³ãƒ³ãƒ†ãƒŠã‹ã©ã†ã‹
 		///</summary>
 		template<class X> TC_CONCEPT(ReversibleContainer, X)
 		{
@@ -857,7 +857,7 @@ TC_CONCEPT(className,Left,Right)\
 
 
 		///<summary>
-		///”CˆÓ‚ÌƒRƒ“ƒeƒiX‚É‘Î‚µ‚ÄA‚»‚Ì—v‘fŒ^‚ðƒfƒtƒHƒ‹ƒg‚Å‘}“ü‰Â”\‚©
+		///ä»»æ„ã®ã‚³ãƒ³ãƒ†ãƒŠXã«å¯¾ã—ã¦ã€ãã®è¦ç´ åž‹ã‚’ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã§æŒ¿å…¥å¯èƒ½ã‹
 		///</summary>
 		template<class X> TC_CONCEPT(DefaultInsertable, X)
 		{
@@ -869,7 +869,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///”CˆÓ‚ÌƒRƒ“ƒeƒiX‚É‘Î‚µ‚ÄA‚»‚Ì—v‘fŒ^‚ÌƒRƒs[‘}“ü‰Â”\‚©
+		///ä»»æ„ã®ã‚³ãƒ³ãƒ†ãƒŠXã«å¯¾ã—ã¦ã€ãã®è¦ç´ åž‹ã®ã‚³ãƒ”ãƒ¼æŒ¿å…¥å¯èƒ½ã‹
 		///</summary>
 		template<class X> TC_CONCEPT(CopyInsertable, X)
 		{
@@ -882,7 +882,7 @@ TC_CONCEPT(className,Left,Right)\
 
 
 		///<summary>
-		///”CˆÓ‚ÌƒRƒ“ƒeƒiX‚É‘Î‚µ‚ÄA‚»‚Ì—v‘fŒ^‚Ì‰E•Ó’lƒIƒuƒWƒFƒNƒg‚ðƒ€[ƒu‘}“ü‰Â”\‚©
+		///ä»»æ„ã®ã‚³ãƒ³ãƒ†ãƒŠXã«å¯¾ã—ã¦ã€ãã®è¦ç´ åž‹ã®å³è¾ºå€¤ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ãƒ ãƒ¼ãƒ–æŒ¿å…¥å¯èƒ½ã‹
 		///</summary>
 		template<class X> TC_CONCEPT(MoveInsertable, X)
 		{
@@ -895,7 +895,7 @@ TC_CONCEPT(className,Left,Right)\
 
 
 		///<summary>
-		///”CˆÓ‚ÌƒRƒ“ƒeƒiX‚É‘Î‚µ‚ÄA—v‘fŒ^‚ÌƒRƒ“ƒXƒgƒ‰ƒNƒ^ˆø”—ñArgs‚©‚ç’¼Ú\’z‰Â”\‚©
+		///ä»»æ„ã®ã‚³ãƒ³ãƒ†ãƒŠXã«å¯¾ã—ã¦ã€è¦ç´ åž‹ã®ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿å¼•æ•°åˆ—Argsã‹ã‚‰ç›´æŽ¥æ§‹ç¯‰å¯èƒ½ã‹
 		///</summary>
 		template<class X, class... Args> TC_CONCEPT(EmplaceConstructible, X,Args...)
 		{
@@ -907,7 +907,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///”CˆÓ‚ÌƒRƒ“ƒeƒiX‚É‘Î‚µ‚ÄA—v‘fŒ^‚Ì”jŠü‚ª‰Â”\‚©
+		///ä»»æ„ã®ã‚³ãƒ³ãƒ†ãƒŠXã«å¯¾ã—ã¦ã€è¦ç´ åž‹ã®ç ´æ£„ãŒå¯èƒ½ã‹
 		///</summary>
 		template<class X> TC_CONCEPT(Erasable, X)
 		{
@@ -920,7 +920,7 @@ TC_CONCEPT(className,Left,Right)\
 
 
 		///<summary>
-		///ƒAƒƒP[ƒ^[‚ð”FŽ¯‚·‚éƒRƒ“ƒeƒi‚©
+		///ã‚¢ãƒ­ã‚±ãƒ¼ã‚¿ãƒ¼ã‚’èªè­˜ã™ã‚‹ã‚³ãƒ³ãƒ†ãƒŠã‹
 		///</summary>
 		template<class X> TC_CONCEPT(AllocatorAwareContainer, X)
 		{
@@ -937,7 +937,7 @@ TC_CONCEPT(className,Left,Right)\
 		};
 
 		///<summary>
-		///ƒŒƒ“ƒW‚©‚Ç‚¤‚©
+		///ãƒ¬ãƒ³ã‚¸ã‹ã©ã†ã‹
 		///</summary>
 		template<class Type> TC_CONCEPT(Range, Type)
 		{
@@ -950,11 +950,11 @@ TC_CONCEPT(className,Left,Right)\
 
 		//************************************************************************************************
 		//
-		//‚»‚Ì‘¼
+		//ãã®ä»–
 		//
 		//************************************************************************************************
 		///<summary>
-		///ðŒŽ®conditional‚ð‚Ý‚½‚·‚© concept_map•s‰Â
+		///æ¡ä»¶å¼conditionalã‚’ã¿ãŸã™ã‹ concept_mapä¸å¯
 		///</summary>
 		template<bool conditional>
 		struct Condition : std::bool_constant<conditional>
@@ -962,7 +962,7 @@ TC_CONCEPT(className,Left,Right)\
 
 
 		///<summary>
-		///Type‚ªTemplateŒ^‚Å‚ ‚é‚©
+		///TypeãŒTemplateåž‹ã§ã‚ã‚‹ã‹
 		///</summary>
 		template<template <class...>class Template, class Type>
 		struct is_template : std::false_type

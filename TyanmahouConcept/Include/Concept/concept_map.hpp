@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include"utility.hpp"
 #include<tuple>
 
@@ -53,7 +53,7 @@ namespace tc
 
 
 	 ///<summary>
-	 ///ƒCƒ“ƒXƒ^ƒ“ƒX‚ÉƒRƒ“ƒZƒvƒgƒ}ƒbƒv‚ğ“K‰‚³‚¹‚é
+	 ///ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã«ã‚³ãƒ³ã‚»ãƒ—ãƒˆãƒãƒƒãƒ—ã‚’é©å¿œã•ã›ã‚‹
 	 ///</summary>
 	template<class Concept, class Type>
 	auto concept_mapping(Type&& value)->decltype(detail::concept_mapping_impl<Concept, Type>() = value)
@@ -62,7 +62,7 @@ namespace tc
 		return detail::concept_mapping_impl<Concept, Type>() = value;
 	}
 	///<summary>
-	///ƒCƒ“ƒXƒ^ƒ“ƒX‚ÉƒRƒ“ƒZƒvƒgƒ}ƒbƒv‚ğ“K‰‚³‚¹‚é •Ô‚è’ltuple
+	///ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã«ã‚³ãƒ³ã‚»ãƒ—ãƒˆãƒãƒƒãƒ—ã‚’é©å¿œã•ã›ã‚‹ è¿”ã‚Šå€¤tuple
 	///</summary>
 	template<template<class...>class Concept, class ...Type>
 	decltype(auto) concept_mapping(Type&&... value)
@@ -81,14 +81,14 @@ namespace tc
 
 	}
 	///<summary>
-	///ƒRƒ“ƒZƒvƒgƒ}ƒbƒvŒã‚ÌŒ^
+	///ã‚³ãƒ³ã‚»ãƒ—ãƒˆãƒãƒƒãƒ—å¾Œã®å‹
 	///</summary>
 	template<class Concept, class Arg>
 	using concept_mapped_t = typename detail::concept_mapped<Concept, Arg>::type;
 
 
 	///<summary>
-	///ƒRƒ“ƒZƒvƒgƒ}ƒbƒvŒã“K—pŒã‚ÌŒ^‚Æ‚µ‚Ä”»’è
+	///ã‚³ãƒ³ã‚»ãƒ—ãƒˆãƒãƒƒãƒ—å¾Œé©ç”¨å¾Œã®å‹ã¨ã—ã¦åˆ¤å®š
 	///</summary>
 	template<class Type>
 	struct as_mapped
