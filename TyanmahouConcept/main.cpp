@@ -1,109 +1,67 @@
-#include<iostream>
+﻿#include<iostream>
 #include<vector>
+#include<stack>
 #include<list>
 #include<unordered_map>
 #include<memory>
 #include<chrono>
 
 #include<Concept.hpp>
-#include<cassert>
 
-template<class N>
-struct Number : tc::to_concept_ex<Number, struct __Number_c, N> 
-{
-	template<class... Args>
-	static bool axion(Args&&...args)
-	{
-		return __Number_c::axion<N>(args...);
-	}
-}; 
-struct __Number_c 
-{
-	template<class N>
-	auto require()->decltype(
-		tc::extends<tc::concept::Plusable>::require<N, int>(),
-		tc::extends<tc::concept::Plusable>::require<int, N>(),
-		tc::extends<tc::concept::EqualityComparable>::require<N>()
-		);
-	template<class N>
-	static const bool axion()
-	{
 
-		static N a, b;
-		static bool check =
-			(a + 0 == a)&
-			(0 + a == a)&
-			(a + b == b + a);
-		return check;
-	}
-};
-
-struct A
-{
-	int v = 0;
-
-	A operator+(A o)
-	{
-		return { this->v + o.v };
-	}
-
-	A operator+(int a)
-	{
-		return { this->v + a + 2 };
-	}
-	friend A operator+(int a, A b)
-	{
-		return { b.v + a };
-	}
-	bool operator==(const A& o)
-	{
-		return this->v == o.v;
-	}
-
-};
-
-class axion_exception
-	: public std::exception
-{
-public:
-
-	axion_exception() throw() :
-		std::exception("bad allocation", 1)
-	{
-	}
-	axion_exception(char const* const _Message) throw() :
-		std::exception(_Message, 1)
-	{
-	}
-};
-
-#define TC_AXION_CHECK(...)\
-if (!__VA_ARGS__)\
-{\
-	throw axion_exception(#__VA_ARGS__);\
-}
 template<class T>
-void test()
+TC_CONCEPT(Stack, T)
 {
-	try
-	{
-		TC_AXION_CHECK(Number<T>::axion())
+	template<class T>
+	auto require(T t)->decltype(
+		tc::associated_type<typename T::value_type>(),
+		t.pop()
+		);
+};
 
-	}
-	catch (axion_exception e)
+
+template<class T>
+struct tc::concept_map<Stack<std::vector<T>>>
+	:std::vector<T>
+{
+	auto pop()
 	{
-		std::cout<<e.what();
+		this->pop_back();
 	}
+
+	auto& operator=(std::vector<T>& a)
+	{
+		return static_cast<tc::concept_map<Stack<std::vector<T>>>&>(a);
+	}
+};
+
+template<class It>
+auto advance(It it)->tc::where<void, tc::concept::RandomAccessIterator<It>>
+{
 
 }
-#include<any>
+template<class It>
+auto advance(It it)->tc::where<void, tc::concept::BidirectionalIterator<It>,
+	tc::Not<tc::concept::RandomAccessIterator<It>>>
+{
+
+}
+template<class It>
+auto advance(It it)->tc::where<void, tc::concept::ForwardIterator<It>,
+	tc::Not<tc::concept::BidirectionalIterator<It>>>
+{
+
+}
 int main()
 {
-	Number<int>::value;
+	int a;
+	std::list<int> s;
+	std::vector<int> v;
 
-	test<A>();
-	std::any a = 0;
+	advance(s.begin());
+	advance(v.begin());
 
-	std::cout << "Test";
 	return 0;
 }
+
+

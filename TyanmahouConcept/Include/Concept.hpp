@@ -437,9 +437,9 @@ TC_CONCEPT(className,Left,Right)\
 			template<class Type>
 			auto require(Type& alloc, typename Type::value_type* ptr, const typename Type::value_type* cptr)->decltype(
 				ex::require<Type>(),
-				vailed_expr< typename Type::value_type& >(*ptr),
-				vailed_expr< const typename Type::value_type& >(*cptr),
-				vailed_expr< typename Type::value_type* >(alloc.allocate(n)),
+				valid_expr< typename Type::value_type& >(*ptr),
+				valid_expr< const typename Type::value_type& >(*cptr),
+				valid_expr< typename Type::value_type* >(alloc.allocate(n)),
 				alloc.deallocate(ptr, n)
 				);
 		};
@@ -524,7 +524,7 @@ TC_CONCEPT(className,Left,Right)\
 		{
 			template <class Type>
 			auto require()->decltype(
-				vailed_expr<const bool&>(Type::value)
+				valid_expr<const bool&>(Type::value)
 				);
 		};
 
@@ -539,7 +539,7 @@ TC_CONCEPT(className,Left,Right)\
 			template <class Type, class Key>
 			auto require(Type&& t, Key&& key)->decltype(
 				ex::require<Type>(),
-				vailed_expr<size_t>(t(key))
+				valid_expr<size_t>(t(key))
 				);
 
 		};
@@ -555,8 +555,8 @@ TC_CONCEPT(className,Left,Right)\
 				tc::associated_type<typename Type::period>(),
 				tc::associated_type<typename Type::duration>(),
 				tc::associated_type<typename Type::time_point>(),
-				vailed_expr<const bool&>(t.is_steady),
-				vailed_expr<typename Type::time_point>(t.now())
+				valid_expr<const bool&>(t.is_steady),
+				valid_expr<typename Type::time_point>(t.now())
 				);
 
 		};
@@ -634,7 +634,7 @@ TC_CONCEPT(className,Left,Right)\
 			template<class It>
 			auto require(It it, typename std::iterator_traits<It>::value_type v)->decltype(
 				ex::require<It>(),
-				vailed_expr<It&>(++it)
+				valid_expr<It&>(++it)
 				);
 
 		};
@@ -655,9 +655,9 @@ TC_CONCEPT(className,Left,Right)\
 			template<class It>
 			auto require(It&& it)->decltype(
 				ex::require<It>(),
-				tc::convertible_expr<typename std::iterator_traits<It>::value_type>(*it),
-				tc::convertible_expr<typename std::iterator_traits<It>::value_type>(*it++),
-				tc::vailed_expr<typename std::iterator_traits<It>::reference>(*it)
+				tc::valid_expr<typename std::iterator_traits<It>::value_type>(*it),
+				tc::valid_expr<typename std::iterator_traits<It>::value_type>(*it++),
+				tc::valid_expr<typename std::iterator_traits<It>::reference>(*it)
 				);
 		};
 
@@ -673,8 +673,8 @@ TC_CONCEPT(className,Left,Right)\
 			template<class It>
 			auto require(It&& it)->decltype(
 				ex::require<It>(),
-				tc::convertible_expr<const It&>(it++),
-				tc::vailed_expr<It&>(++it),
+				tc::valid_expr<const It&>(it++),
+				tc::valid_expr<It&>(++it),
 				*it = *it,
 				*it++ = *it
 				);
@@ -692,8 +692,8 @@ TC_CONCEPT(className,Left,Right)\
 			template<class It>
 			auto require(It&& it)->decltype(
 				ex::require<It>(),
-				tc::vailed_expr<It>(it++),
-				tc::vailed_expr<typename std::iterator_traits<It>::reference>(*it++)
+				tc::valid_expr<It>(it++),
+				tc::valid_expr<typename std::iterator_traits<It>::reference>(*it++)
 				);
 		};
 
@@ -709,9 +709,9 @@ TC_CONCEPT(className,Left,Right)\
 			template<class It>
 			auto require(It&& it)->decltype(
 				ex::require<It>(),
-				tc::convertible_expr<const It&>(it--),
-				tc::vailed_expr<It&>(--it),
-				tc::vailed_expr<typename std::iterator_traits<It>::reference>(*it--)
+				tc::valid_expr<const It&>(it--),
+				tc::valid_expr<It&>(--it),
+				tc::valid_expr<typename std::iterator_traits<It>::reference>(*it--)
 				);
 		};
 
@@ -732,11 +732,11 @@ TC_CONCEPT(className,Left,Right)\
 			template<class It>
 			auto require(It&& it, typename std::iterator_traits<It>::difference_type n)->decltype(
 				ex::require<It>(),
-				tc::vailed_expr<It&>(it += n),
-				tc::vailed_expr<It>(it + n), tc::vailed_expr<It>(n + it),
-				tc::vailed_expr<It&>(it -= n),
-				tc::vailed_expr<It>(it - n),
-				tc::convertible_expr<typename std::iterator_traits<It>::reference>(it[n])
+				tc::valid_expr<It&>(it += n),
+				tc::valid_expr<It>(it + n), tc::valid_expr<It>(n + it),
+				tc::valid_expr<It&>(it -= n),
+				tc::valid_expr<It>(it - n),
+				tc::valid_expr<typename std::iterator_traits<It>::reference>(it[n])
 				);
 
 		};
@@ -800,15 +800,15 @@ TC_CONCEPT(className,Left,Right)\
 				>
 			>
 				auto require(X&& x)->decltype(
-					tc::vailed_expr<itr>(x.begin()),
-					tc::vailed_expr<itr>(x.end()),
-					tc::vailed_expr<citr>(x.cbegin()),
-					tc::vailed_expr<citr>(x.cend()),
-					tc::vailed_expr<void>((x.swap(x), _void)),
-					tc::vailed_expr<void>((std::swap(x, x), _void)),
-					tc::vailed_expr<size>(x.size()),
-					tc::vailed_expr<size>(x.max_size()),
-					tc::convertible_expr<bool>(x.empty())
+					tc::valid_expr<itr>(x.begin()),
+					tc::valid_expr<itr>(x.end()),
+					tc::valid_expr<citr>(x.cbegin()),
+					tc::valid_expr<citr>(x.cend()),
+					tc::valid_expr<void>((x.swap(x), _void)),
+					tc::valid_expr<void>((std::swap(x, x), _void)),
+					tc::valid_expr<size>(x.size()),
+					tc::valid_expr<size>(x.max_size()),
+					tc::valid_expr<bool>(x.empty())
 					);
 		};
 
@@ -848,10 +848,10 @@ TC_CONCEPT(className,Left,Right)\
 				auto require(X&& x)->decltype(
 					tc::extends<Container>::require<X>(),
 					tc::extends<BidirectionalIterator>::require<typename X::iterator>(),
-					tc::vailed_expr<ritr>(x.rbegin()),
-					tc::vailed_expr<ritr>(x.rend()),
-					tc::vailed_expr<critr>(x.crbegin()),
-					tc::vailed_expr<critr>(x.crend())
+					tc::valid_expr<ritr>(x.rbegin()),
+					tc::valid_expr<ritr>(x.rend()),
+					tc::valid_expr<critr>(x.crbegin()),
+					tc::valid_expr<critr>(x.crend())
 					);
 		};
 
@@ -931,8 +931,8 @@ TC_CONCEPT(className,Left,Right)\
 					tc::extends<Constructible>::require<X, std::allocator<typename X::value_type>>(),
 					tc::extends<Constructible>::require<X, std::add_lvalue_reference_t<X>, std::allocator<typename X::value_type >>(),
 					tc::extends<Constructible>::require<X, std::add_rvalue_reference_t<X>, std::allocator<typename X::value_type >>(),
-					tc::vailed_expr<alloc_t>(x.get_allocator()),
-					tc::vailed_expr<void>((x.swap(x), _void))
+					tc::valid_expr<alloc_t>(x.get_allocator()),
+					tc::valid_expr<void>((x.swap(x), _void))
 					);
 		};
 

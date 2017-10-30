@@ -123,12 +123,4 @@ namespace tc
 		template<class Arg>
 		using remove_mapped_t = typename remove_mapped<Arg>::type;
 	}
-
-	///<summary>
-	///Typeがas_mappedだった場合マッピング後の型に
-	///</summary>
-	template<class Type, template<class...>class Concept, class ... Args>
-	using as_mapped_if_t = typename tc::detail::as_mapped_if_t<Concept<typename tc::detail::remove_mapped_t<Args>...>, Type>;
-
-
 }//namespace tc

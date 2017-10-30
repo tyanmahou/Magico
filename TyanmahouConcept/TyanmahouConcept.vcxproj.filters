@@ -41,5 +41,8 @@
     <ClInclude Include="Include\Concept\require.hpp">
       <Filter>ヘッダー ファイル\Concept</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Concept\axiom.hpp">
+      <Filter>ヘッダー ファイル\Concept</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -10,13 +10,14 @@ namespace tc
 {
 
 	///<summary>
-	///Conceptがすべて条件を満たすか
+	///Conceptがすべて条件を満たす場合　nullptr型になる
 	///</summary>
 	template < class... Concept >
 	using require = std::enable_if_t<And<Concept...>::value, std::nullptr_t >;
 
 	///<summary>
-	///制約チェック　Ret：返り値の型　Concept 制約
+	///制約チェック
+	///[Ret]：返り値の型　[Concept] 制約
 	///</summary>
 	template<class Ret, class ...Concept>
 	using where = std::enable_if_t<
