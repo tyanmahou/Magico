@@ -1,6 +1,10 @@
-﻿#pragma once
+#pragma once
 #include"Concept/concept.hpp"
+#include"Concept/concept_any.hpp"
+#include"Concept/priority.hpp"
+
 #include<functional>
+
 //************************************************************************************************
 //
 //concept example 

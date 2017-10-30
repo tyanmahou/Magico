@@ -1,4 +1,4 @@
-﻿#include<iostream>
+#include<iostream>
 #include<vector>
 #include<stack>
 #include<list>
@@ -8,7 +8,7 @@
 
 #include<Concept.hpp>
 
-
+using namespace tc;
 template<class T>
 TC_CONCEPT(Stack, T)
 {
@@ -35,31 +35,41 @@ struct tc::concept_map<Stack<std::vector<T>>>
 	}
 };
 
-template<class It>
-auto advance(It it)->tc::where<void, tc::concept::RandomAccessIterator<It>>
+namespace test
 {
+	template<class It>
+	auto advance(It it, priority<2>)
+		->tc::where<void, tc::concept::RandomAccessIterator<It>>
+	{
+		std::cout << "Random";
+	}
+	template<class It>
+	auto advance(It it, priority<1>)
+		->tc::where<void, tc::concept::BidirectionalIterator<It>>
+	{
+		std::cout << "Bidirectional";
 
-}
-template<class It>
-auto advance(It it)->tc::where<void, tc::concept::BidirectionalIterator<It>,
-	tc::Not<tc::concept::RandomAccessIterator<It>>>
-{
+	}
+	template<class It>
+	auto advance(It it, priority<0>)
+		->tc::where<void, tc::concept::ForwardIterator<It>>
+	{
+		std::cout << "Forward";
 
-}
-template<class It>
-auto advance(It it)->tc::where<void, tc::concept::ForwardIterator<It>,
-	tc::Not<tc::concept::BidirectionalIterator<It>>>
-{
-
+	}
+	template<class It>
+	auto advance(It it)->tc::where<void, tc::concept::ForwardIterator<It>>
+	{
+		test::advance(it, priority_v<2>);
+	}
 }
 int main()
 {
 	int a;
 	std::list<int> s;
 	std::vector<int> v;
-
-	advance(s.begin());
-	advance(v.begin());
+	test::advance(s.begin());
+	test::advance(v.begin());
 
 	return 0;
 }

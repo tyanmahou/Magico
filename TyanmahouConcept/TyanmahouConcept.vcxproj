@@ -136,6 +136,7 @@
     <ClInclude Include="Include\Concept\concept.hpp" />
     <ClInclude Include="Include\Concept\concept_any.hpp" />
     <ClInclude Include="Include\Concept\concept_map.hpp" />
+    <ClInclude Include="Include\Concept\priority.hpp" />
     <ClInclude Include="Include\Concept\require.hpp" />
     <ClInclude Include="Include\Concept\utility.hpp" />
   </ItemGroup>
