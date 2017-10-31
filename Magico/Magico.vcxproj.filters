@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Include\Magico\priority.hpp">
+      <Filter>Include\Magico</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Magico\require.hpp">
+      <Filter>Include\Magico</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Magico\utility.hpp">
+      <Filter>Include\Magico</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Magico\axiom.hpp">
+      <Filter>Include\Magico</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Magico\concept.hpp">
+      <Filter>Include\Magico</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Magico\concept_any.hpp">
+      <Filter>Include\Magico</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Magico\concept_map.hpp">
+      <Filter>Include\Magico</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Magico.hpp">
+      <Filter>Include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Include">
+      <UniqueIdentifier>{30fb003e-4ca7-47cd-b63d-357db41792f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Magico">
+      <UniqueIdentifier>{b8c29d60-7e26-4014-be02-f65bef7b4699}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

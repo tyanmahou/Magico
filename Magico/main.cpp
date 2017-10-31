@@ -10,7 +10,7 @@
 #include<memory>
 #include<chrono>
 #include<string>
-#include<Concept.hpp>
+#include<Magico.hpp>
 
 
 template<class T>

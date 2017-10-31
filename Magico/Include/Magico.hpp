@@ -1,7 +1,7 @@
 #pragma once
-#include"Concept/concept.hpp"
-#include"Concept/concept_any.hpp"
-#include"Concept/priority.hpp"
+#include"Magico/concept.hpp"
+#include"Magico/concept_any.hpp"
+#include"Magico/priority.hpp"
 
 #include<functional>
 #include<unordered_map>
