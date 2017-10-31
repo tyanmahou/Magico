@@ -4,7 +4,7 @@
 #include"Concept/priority.hpp"
 
 #include<functional>
-
+#include<unordered_map>
 //************************************************************************************************
 //
 //concept example 
@@ -1016,6 +1016,7 @@ TC_CONCEPT(className,Left,Right)\
 		{
 			template<class X, class alloc_t = typename X::allocator_type>
 			auto require(X&& x)->decltype(
+				tc::extends<Container>::require<X>(),
 				tc::extends<CopyAssignable, MoveAssignable, CopyInsertable, MoveInsertable>::require<X>(),
 				tc::extends<DefaultConstructible>::require<std::allocator<typename X::value_type>>(),
 				tc::extends<Constructible>::require<X, std::allocator<typename X::value_type>>(),
@@ -1024,6 +1025,101 @@ TC_CONCEPT(className,Left,Right)\
 				tc::valid_expr<alloc_t>(x.get_allocator()),
 				tc::valid_expr<void>((x.swap(x), _void))
 				);
+		};
+		///<summary>
+		///線形保管するコンテナか
+		///</summary>
+		template<class X> TC_CONCEPT(SequenceContainer, X)
+		{
+			//アロケーターの型
+			template<class X, class = void>
+			struct GetAllocator
+			{
+				using type = std::allocator<typename X::value_type>;
+			};
+			template<class X>
+			struct GetAllocator<X, tc::void_t<typename X::allocator_type>>
+			{
+				using type = typename X::allocator_type;
+			};
+
+			template<class X,
+				class A = typename GetAllocator<X>::type,
+				class Value = typename X::value_type,
+				class Size = typename X::size_type,
+				class It = typename X::iterator,
+				class CIt = typename X::const_iterator,
+				class... Args
+			>
+				auto require(X a, Value t, Size n, It it, CIt cit, std::initializer_list<Value> il, Args&&... args)->decltype(
+					tc::extends<Container>::require<X>(),
+					X(n, t), X(it, it), X(il),
+					tc::valid_expr<X&>(a = il),
+					tc::valid_expr<It>(a.insert(cit, t)), tc::valid_expr<It>(a.insert(cit, n, t)),
+					tc::valid_expr<It>(a.insert(cit, it, it)), tc::valid_expr<It>(a.insert(cit, il)),
+					tc::valid_expr<It>(a.erase(cit)), tc::valid_expr<It>(a.erase(cit, cit)),
+					tc::valid_expr<void>((a.clear(), _void)),
+					a.assign(it, it), a.assign(il), a.assign(n, t)
+					);
+		};
+		///<summary>
+		///キーに基づいて順序付けられたデータを検索するコンテナか
+		///</summary>
+		template<class X> TC_CONCEPT(AssociativeContainer, X)
+		{
+			template<class X,
+				class Key = typename X::key_type,
+				class Compare = typename X::key_compare,
+				class Value = typename X::value_type,
+				class ValueCompare = typename X::value_compare,
+				class It = typename X::iterator
+			>
+				auto require(X a, Compare c, Value t, It it, std::initializer_list<Value> il)->decltype(
+					tc::extends<BinaryPredicate>::require<ValueCompare, Value>(),
+					X(), X(c), X(it, it, c), X(it, it), X(il),
+					tc::valid_expr<X&>(a = il),
+					tc::valid_expr<Compare>(a.key_comp()),
+					tc::valid_expr<ValueCompare>(a.value_comp())
+					);
+		};
+		///<summary>
+		///キーに基づいて順序付けられていないデータを検索するコンテナか
+		///</summary>
+		template<class X> TC_CONCEPT(UnorderedAssociativeContainer, X)
+		{
+			template<class X>
+			struct GetValueType
+			{
+				using type = typename X::key_type;
+			};
+			template<class Key,class T, class Hash, class KeyEqual, class Allocator>
+			struct GetValueType <std::unordered_map<Key,T,Hash,KeyEqual,Allocator> >
+			{
+				using type = std::pair<const Key,T>;
+			};
+			template<class Key, class T, class Hash, class KeyEqual, class Allocator>
+			struct GetValueType <std::unordered_multimap<Key, T, Hash, KeyEqual, Allocator> >
+			{
+				using type = std::pair<const Key, T>;
+			};
+			template<class X,
+				class Key = typename X::key_type,
+				class Value = typename X::value_type,
+				class Pred = typename X::key_equal,
+				class Hash = typename X::hasher,
+				class It = typename X::iterator,
+				class LIt = typename X::local_iterator,
+				class CLIt = typename X::const_local_iterator,
+				class Size = typename X::size_type
+			>
+				auto require(X a, const X& b,const Hash& hf, const Pred& eq,
+					Value t, It it, std::initializer_list<Value> il, Size n)->decltype(
+						tc::extends<IsSame>::require<Value,typename GetValueType<X>::type>(),
+						X(), X(n), X(n, hf, eq), X(n, hf), X(it, it, n, hf, eq), X(it, it, n, hf),
+						X(it, it, n), X(it, it), X(il), X(il,n), X(il, n,hf), X(il, n, hf, eq),X(b),
+						tc::valid_expr<X&>(a = il),
+						tc::valid_expr<X&>(a = b)
+						);
 		};
 
 		///<summary>
@@ -1040,7 +1136,7 @@ TC_CONCEPT(className,Left,Right)\
 
 		//************************************************************************************************
 		//
-		//その他
+		//Other
 		//
 		//************************************************************************************************
 		///<summary>
