@@ -8,7 +8,7 @@
 //
 //************************************************************************************************
 
-namespace mc
+namespace magico
 {
 
 
@@ -62,4 +62,4 @@ namespace mc
 	struct And :Not < Or  < Not < Args >... > >
 	{};
 
-}//namesapce mc
+}//namesapce magico

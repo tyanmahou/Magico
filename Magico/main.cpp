@@ -14,7 +14,7 @@
 
 
 template<class T>
-MC_CONCEPT(Test, T)
+MAGICO_CONCEPT(Test, T)
 {
 	template<class T>
 	auto require(T t)->decltype(t.begain())

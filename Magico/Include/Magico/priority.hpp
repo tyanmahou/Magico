@@ -1,6 +1,6 @@
 #pragma once
 
-namespace mc
+namespace magico
 {
 	namespace detail
 	{
@@ -26,4 +26,4 @@ namespace mc
 	constexpr priority<N> priority_v = nullptr;
 
 
-}//namespace mc
+}//namespace magico

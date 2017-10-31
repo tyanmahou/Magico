@@ -9,7 +9,7 @@
 //
 //************************************************************************************************
 
-namespace mc
+namespace magico
 {
 
 	template<class Concept>
@@ -33,7 +33,7 @@ namespace mc
 			using concept_map<void>::operator=;
 		};
 		template<class Concept, class Type>
-		struct concept_mapping_impl<Concept, Type, void_t<decltype(concept_map<Concept>() = mc::val<Type>())>> :concept_map<Concept>
+		struct concept_mapping_impl<Concept, Type, void_t<decltype(concept_map<Concept>() = magico::val<Type>())>> :concept_map<Concept>
 		{
 			using concept_map<Concept>::operator=;
 		};
@@ -76,7 +76,7 @@ namespace mc
 		template<class Concept, class Arg>
 		struct concept_mapped
 		{
-			using type = std::decay_t<decltype(mc::concept_mapping<Concept>(mc::val<Arg&>()))>;
+			using type = std::decay_t<decltype(magico::concept_mapping<Concept>(magico::val<Arg&>()))>;
 		};
 
 	}
@@ -123,4 +123,4 @@ namespace mc
 		template<class Arg>
 		using remove_mapped_t = typename remove_mapped<Arg>::type;
 	}
-}//namespace mc
+}//namespace magico

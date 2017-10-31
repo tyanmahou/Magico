@@ -6,7 +6,7 @@
 //requires
 //
 //************************************************************************************************
-namespace mc
+namespace magico
 {
 
 	///<summary>
@@ -21,7 +21,7 @@ namespace mc
 	///</summary>
 	template<class Ret, class ...Concept>
 	using where = std::enable_if_t<
-		std::is_same<mc::require<Concept...>, std::nullptr_t>::value,
+		std::is_same<magico::require<Concept...>, std::nullptr_t>::value,
 		Ret>;
 
 	///<summary>
@@ -30,4 +30,4 @@ namespace mc
 	template<class Ret, bool Exp>
 	using where_bool = std::enable_if_t<Exp, Ret>;
 
-}//namesapce mc
+}//namesapce magico
