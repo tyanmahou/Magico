@@ -5,7 +5,7 @@
 #include<unordered_map>
 #include<memory>
 #include<chrono>
-
+#include<string>
 #include<Concept.hpp>
 
 using namespace tc;
@@ -63,9 +63,16 @@ namespace test
 		test::advance(it, priority_v<2>);
 	}
 }
-int main()
+struct Test
 {
 	int a;
+	Test(int) :a(0) {}
+
+};
+
+
+int main()
+{
 	std::list<int> s;
 	std::vector<int> v;
 	test::advance(s.begin());

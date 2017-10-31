@@ -31,34 +31,34 @@ template<class Type> TC_CONCEPT(className,Type)\
 		///<summary>
 		/// operator ! をもつか
 		///</summary>
-		TC_HAS_UNARY_OPERATOR(Negatable, !);
+		TC_HAS_UNARY_OPERATOR(HasLogicalNot, !);
 
 
 		///<summary>
 		/// 単項operator + をもつか
 		///</summary>
-		TC_HAS_UNARY_OPERATOR(UnaryPlusable, +);
+		TC_HAS_UNARY_OPERATOR(HasUnaryPlus, +);
 
 		///<summary>
 		/// 単項operator - をもつか
 		///</summary>
-		TC_HAS_UNARY_OPERATOR(UnaryMinusable, -);
+		TC_HAS_UNARY_OPERATOR(HasNegate, -);
 
 		///<summary>
 		/// 前置インクリメント可能か
 		///</summary>
-		TC_HAS_UNARY_OPERATOR(PreIncrementable, ++);
+		TC_HAS_UNARY_OPERATOR(HasPreIncrement, ++);
 
 		///<summary>
 		/// 前置デクリメント可能か
 		///</summary>
-		TC_HAS_UNARY_OPERATOR(PreDecrementable, --);
+		TC_HAS_UNARY_OPERATOR(HasPreDecrement, --);
 
 		///<summary>
 		/// 後置インクリメント可能か
 		///</summary>
 		template<class Type>
-		TC_CONCEPT(PostIncrementable, Type)
+		TC_CONCEPT(HasPostIncrement, Type)
 		{
 			template<class Type>
 			auto require(Type&& t)->decltype(t++);
@@ -68,7 +68,7 @@ template<class Type> TC_CONCEPT(className,Type)\
 		/// 後置デクリメント可能か
 		///</summary>
 		template<class Type>
-		TC_CONCEPT(PostDecrementable, Type)
+		TC_CONCEPT(HasPostDecrement, Type)
 		{
 			template<class Type>
 			auto require(Type&& t)->decltype(t--);
@@ -76,17 +76,17 @@ template<class Type> TC_CONCEPT(className,Type)\
 		///<summary>
 		/// 単項operator ~ をもつか
 		///</summary>
-		TC_HAS_UNARY_OPERATOR(Complementable, ~);
+		TC_HAS_UNARY_OPERATOR(HasComplement, ~);
 
 		///<summary>
 		/// アドレス取得可能か
 		///</summary>
-		TC_HAS_UNARY_OPERATOR(AddressObtainable, &);
+		TC_HAS_UNARY_OPERATOR(HasAddressOf, &);
 
 		///<summary>
 		/// 関接演算可能か
 		///</summary>
-		TC_HAS_UNARY_OPERATOR(Indirectable, *);
+		TC_HAS_UNARY_OPERATOR(HasIndirect, *);
 
 
 #undef TC_HAS_UNARY_OPERATOR
@@ -100,146 +100,173 @@ TC_CONCEPT(className,Left,Right)\
 }
 
 		///<summary>
+		/// 代入演算可能か
+		///</summary>
+		TC_HAS_BINARY_OPERATOR(HasAssign, =);
+
+		///<summary>
 		/// 加算可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(Plusable, +);
+		TC_HAS_BINARY_OPERATOR(HasPlus, +);
 
 		///<summary>
 		/// 減算可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(Minusable, -);
+		TC_HAS_BINARY_OPERATOR(HasMinus, -);
 
 		///<summary>
 		/// 乗算可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(Multipliable, *);
+		TC_HAS_BINARY_OPERATOR(HasMultiply, *);
 
 		///<summary>
 		/// 除算可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(Dividable, / );
+		TC_HAS_BINARY_OPERATOR(HasDivide, / );
 
 		///<summary>
 		/// 剰余可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(Modulable, %);
+		TC_HAS_BINARY_OPERATOR(HasModulus, %);
 
 		///<summary>
 		/// 加算代入可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(PlusAssignable, +=);
+		TC_HAS_BINARY_OPERATOR(HasPlusAssign, +=);
 
 		///<summary>
 		/// 減算代入可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(MinusAssignable, -=);
+		TC_HAS_BINARY_OPERATOR(HasMinusAssign, -=);
 
 		///<summary>
 		/// 乗算代入可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(MultiplyAssignable, *=);
+		TC_HAS_BINARY_OPERATOR(HasMultiplyAssign, *=);
 
 		///<summary>
 		/// 除算代入可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(DivideAssignable, /=);
+		TC_HAS_BINARY_OPERATOR(HasDivideAssign, /=);
 
 		///<summary>
 		/// 剰余代入可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(ModulusAssignable, %=);
+		TC_HAS_BINARY_OPERATOR(HasModulusAssign, %=);
 
 		///<summary>
 		/// 左シフト可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(LeftShiftable, << );
+		TC_HAS_BINARY_OPERATOR(HasLeftShift, << );
 
 		///<summary>
 		/// 右シフト可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(RightShiftable, >> );
+		TC_HAS_BINARY_OPERATOR(HasRightShift, >> );
 
 		///<summary>
 		/// 左シフト代入可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(LeftShiftAssignable, <<=);
+		TC_HAS_BINARY_OPERATOR(HasLeftShiftAssign, <<=);
 
 		///<summary>
 		/// 右シフト可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(RightShifAssignable, >>=);
+		TC_HAS_BINARY_OPERATOR(HasRightShiftAssign, >>=);
 
 		///<summary>
 		/// ビットごとのAND演算可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(BitAndPossible, &);
+		TC_HAS_BINARY_OPERATOR(HasBitAnd, &);
 
 		///<summary>
 		/// ビットごとのOR演算可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(BitOrPossible, | );
+		TC_HAS_BINARY_OPERATOR(HasBitOr, | );
 
 		///<summary>
 		/// ビットごとの排他的OR演算可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(BitXorPossible, ^);
+		TC_HAS_BINARY_OPERATOR(HasBitXor, ^);
 
 		///<summary>
 		/// ビットごとのAND演算代入可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(BitAndAssignable, &=);
+		TC_HAS_BINARY_OPERATOR(HasBitAndAssign, &=);
 
 		///<summary>
 		/// ビットごとのOR演算代入可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(BitOrAssignable, |=);
+		TC_HAS_BINARY_OPERATOR(HasBitOrAssign, |=);
 
 		///<summary>
 		/// ビットごとの排他的OR演算代入可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(BitXorAssignable, ^=);
+		TC_HAS_BINARY_OPERATOR(HasBitXorAssign, ^=);
 
 		///<summary>
 		/// 論理積可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(LogicalAndPossible, &&);
+		TC_HAS_BINARY_OPERATOR(HasLogicalAnd, &&);
 
 		///<summary>
 		/// 論理和可能か
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(LogicalOrPossible, || );
+		TC_HAS_BINARY_OPERATOR(HasLogicalOr, || );
 
 		///<summary>
 		/// 小なり比較演算 をもつか
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(LessThanComparable, < );
+		TC_HAS_BINARY_OPERATOR(HasLess, < );
 
 		///<summary>
 		/// 小なり=比較演算 をもつか
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(LessEqualComparable, <= );
+		TC_HAS_BINARY_OPERATOR(HasLessEqual, <= );
 
 		///<summary>
 		/// 大なり比較演算をもつか
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(GreaterThanComparable, > );
+		TC_HAS_BINARY_OPERATOR(HasGreater, > );
 
 		///<summary>
 		/// 大なり=比較演算をもつか
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(GreaterEqualComparable, >= );
+		TC_HAS_BINARY_OPERATOR(HasGreaterEqual, >= );
 
 		///<summary>
 		/// operator == をもつか
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(EqualityComparable, == );
+		TC_HAS_BINARY_OPERATOR(HasEqualTo, == );
 
 		///<summary>
 		/// operator != をもつか
 		///</summary>
-		TC_HAS_BINARY_OPERATOR(NotEqualityComparable, != );
+		TC_HAS_BINARY_OPERATOR(HasNotEqualTo, != );
+
+		///<summary>
+		/// operator , をもつか
+		///</summary>
+		template<class Left, class Right = Left>
+		TC_CONCEPT(HasComma, Left, Right)
+		{
+			template<class Left, class Right>
+			auto require(Left&& l, Right&& r)->decltype(l, r);
+		};
+
+		///<summary>
+		/// operator [] をもつか
+		///</summary>
+		template<class Type, class Key = std::size_t>
+		TC_CONCEPT(HasSubscript, Type, Key)
+		{
+			template<class Type, class Key>
+			auto require(Type t, Key key)->decltype(t[key]);
+		};
 
 #undef TC_HAS_BINARY_OPERATOR
+
+
 
 		//************************************************************************************************
 		//
@@ -428,6 +455,27 @@ TC_CONCEPT(className,Left,Right)\
 		//
 		//************************************************************************************************
 
+		///<summary>
+		///　<　演算子で大小関係にあるか
+		///</summary>
+		template<class Type> TC_CONCEPT(LessThanComparable, Type)
+		{
+			template<class Type>
+			auto require(Type a, Type b)->decltype(
+				tc::valid_expr<bool>(a < b)
+				);
+		};
+
+		///<summary>
+		///　==演算子で等価関係にあるか
+		///</summary>
+		template<class Type> TC_CONCEPT(EqualityComparable, Type)
+		{
+			template<class Type>
+			auto require(Type a, Type b)->decltype(
+				tc::valid_expr<bool>(a == b)
+				);
+		};
 
 		///<summary>
 		///アロケーターか
@@ -436,7 +484,7 @@ TC_CONCEPT(className,Left,Right)\
 		{
 		private:
 			size_t n;
-			using ex = tc::extends<EqualityComparable, NotEqualityComparable, CopyConstructible, MoveConstructible>;
+			using ex = tc::extends<EqualityComparable, CopyConstructible, MoveConstructible>;
 		public:
 			template<class Type>
 			auto require(Type& alloc, typename Type::value_type* ptr, const typename Type::value_type* cptr)->decltype(
@@ -444,6 +492,7 @@ TC_CONCEPT(className,Left,Right)\
 				valid_expr< typename Type::value_type& >(*ptr),
 				valid_expr< const typename Type::value_type& >(*cptr),
 				valid_expr< typename Type::value_type* >(alloc.allocate(n)),
+				valid_expr< bool >(alloc != alloc),
 				alloc.deallocate(ptr, n)
 				);
 		};
@@ -468,7 +517,7 @@ TC_CONCEPT(className,Left,Right)\
 		{
 			template< class From, class To >
 			auto require()->decltype(
-				tc::extends<std::is_convertible>::require<From,To>()
+				tc::extends<std::is_convertible>::require<From, To>()
 				);
 		};
 
@@ -480,7 +529,6 @@ TC_CONCEPT(className,Left,Right)\
 		private:
 			using ex = tc::extends<
 				EqualityComparable,
-				NotEqualityComparable,
 				DefaultConstructible,
 				CopyConstructible,
 				CopyAssignable,
@@ -491,9 +539,12 @@ TC_CONCEPT(className,Left,Right)\
 			auto require(Type&& null)->decltype(
 				ex::require<Type>(),
 				tc::extends<Constructible>::require<Type, std::nullptr_t>(),
-				null = nullptr,
-				null == nullptr, nullptr == null,
-				null != nullptr, nullptr != null
+				tc::valid_expr< bool >(null != null),
+				tc::valid_expr< bool >(null = nullptr),
+				tc::valid_expr< bool >(null == nullptr),
+				tc::valid_expr< bool >(nullptr == null),
+				tc::valid_expr< bool >(null != nullptr),
+				tc::valid_expr< bool >(nullptr != null)
 				);
 
 		};
@@ -513,14 +564,49 @@ TC_CONCEPT(className,Left,Right)\
 		///<summary>
 		///関数オブジェクトか
 		///</summary>
-		template <class Type> TC_CONCEPT(FunctionObject, Type)
+		template <class Type, class... Args> TC_CONCEPT(FunctionObject, Type, Args...)
 		{
-			template <class Type>
+			template <class Type, class... Args>
 			auto require()->decltype(
-				&Type::operator()
+				tc::extends<Invocable>::require<Type, Args...>(),
+				tc::extends<std::is_object>::require<Type>()
+				);
+		};
+		///<summary>
+		///bool型になる関数オブジェクトか
+		///</summary>
+		template <class Type, class... Args> TC_CONCEPT(Predicate, Type, Args...)
+		{
+			template <class Type, class... Args>
+			auto require(Type t, Args&&... args)->decltype(
+				tc::extends<FunctionObject>::require<Type, Args...>(),
+				tc::valid_expr<bool>(t(args...))
 				);
 		};
 
+		///<summary>
+		///bool型になる関数オブジェクトか
+		///</summary>
+		template <class Type, class T, class U = T> TC_CONCEPT(BinaryPredicate, Type, T, U)
+		{
+			template <class Type, class T, class U>
+			auto require(Type t, T a, U b)->decltype(
+				tc::extends<CopyConstructible>::require<Type>(),
+				tc::extends<Predicate>::require<Type, T, U>()
+				);
+		};
+
+		///<summary>
+		///比較関数オブジェクトか
+		///</summary>
+		template <class Type, class T, class U = T> TC_CONCEPT(Compare, Type, T, U)
+		{
+			template <class Type, class T, class U>
+			auto require(Type t, T a, U b)->decltype(
+				tc::extends<BinaryPredicate>::require<Type, T, U>(),
+				tc::valid_expr<bool>(!t(a, b) && !t(b, a))
+				);
+		};
 		///<summary>
 		///メタ関数か
 		///</summary>
@@ -632,7 +718,7 @@ TC_CONCEPT(className,Left,Right)\
 				CopyAssignable,
 				Destructible,
 				Swappable,
-				Indirectable
+				HasIndirect
 			>;
 		public:
 			template<class It>
@@ -652,13 +738,13 @@ TC_CONCEPT(className,Left,Right)\
 		private:
 			using ex = tc::extends<
 				Iterator,
-				EqualityComparable,
-				NotEqualityComparable
+				EqualityComparable
 			>;
 		public:
 			template<class It>
 			auto require(It&& it)->decltype(
 				ex::require<It>(),
+				tc::valid_expr<bool>(it != it),
 				tc::valid_expr<typename std::iterator_traits<It>::value_type>(*it),
 				tc::valid_expr<typename std::iterator_traits<It>::value_type>(*it++),
 				tc::valid_expr<typename std::iterator_traits<It>::reference>(*it)
@@ -727,15 +813,15 @@ TC_CONCEPT(className,Left,Right)\
 		private:
 			using ex = tc::extends<
 				BidirectionalIterator,
-				LessThanComparable,
-				LessEqualComparable,
-				GreaterThanComparable,
-				GreaterEqualComparable
+				LessThanComparable
 			>;
 		public:
 			template<class It>
 			auto require(It&& it, typename std::iterator_traits<It>::difference_type n)->decltype(
 				ex::require<It>(),
+				tc::valid_expr<bool>(it <= it),
+				tc::valid_expr<bool>(it > it),
+				tc::valid_expr<bool>(it >= it),
 				tc::valid_expr<It&>(it += n),
 				tc::valid_expr<It>(it + n), tc::valid_expr<It>(n + it),
 				tc::valid_expr<It&>(it -= n),
@@ -776,7 +862,7 @@ TC_CONCEPT(className,Left,Right)\
 
 		//************************************************************************************************
 		//
-		//コンテナ
+		//Container
 		//
 		//************************************************************************************************
 
@@ -799,11 +885,11 @@ TC_CONCEPT(className,Left,Right)\
 				CopyConstructible<X>,
 				Destructible<X>,
 				EqualityComparable<X>,
-				NotEqualityComparable<X>,
 				CopyAssignable<X>
 				>
 			>
 				auto require(X&& x)->decltype(
+					tc::valid_expr<bool>(x != x),
 					tc::valid_expr<itr>(x.begin()),
 					tc::valid_expr<itr>(x.end()),
 					tc::valid_expr<citr>(x.cbegin()),
@@ -901,7 +987,7 @@ TC_CONCEPT(className,Left,Right)\
 		///<summary>
 		///任意のコンテナXに対して、要素型のコンストラクタ引数列Argsから直接構築可能か
 		///</summary>
-		template<class X, class... Args> TC_CONCEPT(EmplaceConstructible, X,Args...)
+		template<class X, class... Args> TC_CONCEPT(EmplaceConstructible, X, Args...)
 		{
 			template<class X, class... Args>
 			auto require(X&& x)->decltype(
@@ -928,16 +1014,16 @@ TC_CONCEPT(className,Left,Right)\
 		///</summary>
 		template<class X> TC_CONCEPT(AllocatorAwareContainer, X)
 		{
-			template<class X,class alloc_t = typename X::allocator_type>
-				auto require(X&& x)->decltype(
-					tc::extends<CopyAssignable, MoveAssignable, CopyInsertable, MoveInsertable>::require<X>(),
-					tc::extends<DefaultConstructible>::require<std::allocator<typename X::value_type>>(),
-					tc::extends<Constructible>::require<X, std::allocator<typename X::value_type>>(),
-					tc::extends<Constructible>::require<X, std::add_lvalue_reference_t<X>, std::allocator<typename X::value_type >>(),
-					tc::extends<Constructible>::require<X, std::add_rvalue_reference_t<X>, std::allocator<typename X::value_type >>(),
-					tc::valid_expr<alloc_t>(x.get_allocator()),
-					tc::valid_expr<void>((x.swap(x), _void))
-					);
+			template<class X, class alloc_t = typename X::allocator_type>
+			auto require(X&& x)->decltype(
+				tc::extends<CopyAssignable, MoveAssignable, CopyInsertable, MoveInsertable>::require<X>(),
+				tc::extends<DefaultConstructible>::require<std::allocator<typename X::value_type>>(),
+				tc::extends<Constructible>::require<X, std::allocator<typename X::value_type>>(),
+				tc::extends<Constructible>::require<X, std::add_lvalue_reference_t<X>, std::allocator<typename X::value_type >>(),
+				tc::extends<Constructible>::require<X, std::add_rvalue_reference_t<X>, std::allocator<typename X::value_type >>(),
+				tc::valid_expr<alloc_t>(x.get_allocator()),
+				tc::valid_expr<void>((x.swap(x), _void))
+				);
 		};
 
 		///<summary>
