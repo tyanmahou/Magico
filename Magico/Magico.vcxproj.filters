@@ -28,6 +28,21 @@
     <ClInclude Include="Include\Magico.hpp">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Magico\concepts\basic.hpp">
+      <Filter>Include\Magico\concepts</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Magico\concepts\operator.hpp">
+      <Filter>Include\Magico\concepts</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Magico\concepts\iterator.hpp">
+      <Filter>Include\Magico\concepts</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Magico\concepts\container.hpp">
+      <Filter>Include\Magico\concepts</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Magico\concepts\other.hpp">
+      <Filter>Include\Magico\concepts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -35,6 +50,9 @@
     </Filter>
     <Filter Include="Include\Magico">
       <UniqueIdentifier>{b8c29d60-7e26-4014-be02-f65bef7b4699}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Magico\concepts">
+      <UniqueIdentifier>{bddb3edd-5270-4c83-a7a2-ab869ff36694}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

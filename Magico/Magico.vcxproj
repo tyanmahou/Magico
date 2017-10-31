@@ -140,6 +140,11 @@
     <ClInclude Include="Include\Magico.hpp" />
     <ClInclude Include="Include\Magico\axiom.hpp" />
     <ClInclude Include="Include\Magico\concept.hpp" />
+    <ClInclude Include="Include\Magico\concepts\basic.hpp" />
+    <ClInclude Include="Include\Magico\concepts\container.hpp" />
+    <ClInclude Include="Include\Magico\concepts\iterator.hpp" />
+    <ClInclude Include="Include\Magico\concepts\operator.hpp" />
+    <ClInclude Include="Include\Magico\concepts\other.hpp" />
     <ClInclude Include="Include\Magico\concept_any.hpp" />
     <ClInclude Include="Include\Magico\concept_map.hpp" />
     <ClInclude Include="Include\Magico\priority.hpp" />

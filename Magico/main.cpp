@@ -25,7 +25,6 @@ int main()
 {
 	std::list<int> s;
 	std::vector<int> v;
-
 	return 0;
 }
 
