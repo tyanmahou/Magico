@@ -6,7 +6,7 @@ Magicoはメタ関数としてC++11時代のconcept風に型制約を提供す�
 
 
 ## How to
-'Include'ディレクトリのヘッダーインクルードのみ
+`Include`ディレクトリのヘッダーインクルードのみ
 
 ## License
 MIT
