@@ -39,8 +39,8 @@ namespace magico {
 					magico::valid_expr<itr>(x.end()),
 					magico::valid_expr<citr>(x.cbegin()),
 					magico::valid_expr<citr>(x.cend()),
-					magico::valid_expr<void>((x.swap(x), _void)),
-					magico::valid_expr<void>((std::swap(x, x), _void)),
+					magico::valid_expr<void>((x.swap(x), is_void)),
+					magico::valid_expr<void>((std::swap(x, x), is_void)),
 					magico::valid_expr<size>(x.size()),
 					magico::valid_expr<size>(x.max_size()),
 					magico::valid_expr<bool>(x.empty())
@@ -168,7 +168,7 @@ namespace magico {
 				magico::extends<Constructible>::require<X, std::add_lvalue_reference_t<X>, std::allocator<typename X::value_type >>(),
 				magico::extends<Constructible>::require<X, std::add_rvalue_reference_t<X>, std::allocator<typename X::value_type >>(),
 				magico::valid_expr<alloc_t>(x.get_allocator()),
-				magico::valid_expr<void>((x.swap(x), _void))
+				magico::valid_expr<void>((x.swap(x), is_void))
 				);
 		};
 		///<summary>
@@ -203,7 +203,7 @@ namespace magico {
 					magico::valid_expr<It>(a.insert(cit, t)), magico::valid_expr<It>(a.insert(cit, n, t)),
 					magico::valid_expr<It>(a.insert(cit, it, it)), magico::valid_expr<It>(a.insert(cit, il)),
 					magico::valid_expr<It>(a.erase(cit)), magico::valid_expr<It>(a.erase(cit, cit)),
-					magico::valid_expr<void>((a.clear(), _void)),
+					magico::valid_expr<void>((a.clear(), is_void)),
 					a.assign(it, it), a.assign(il), a.assign(n, t)
 					);
 		};
@@ -266,5 +266,5 @@ namespace magico {
 						magico::valid_expr<X&>(a = b)
 						);
 		};
-	}//namespace concept
+	}//namespace concepts
 }//namespace magico

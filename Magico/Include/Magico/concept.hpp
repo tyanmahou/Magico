@@ -79,7 +79,7 @@ namespace magico
 	auto valid_expr(Exp&& exp)->magico::require<std::is_convertible<Exp, Type>>;
 
 
-	constexpr detail::void_tester _void;
+	constexpr detail::void_tester is_void;
 
 	template<class T>
 	auto valid_expr(detail::void_tester)->magico::require<std::is_void<T>>;

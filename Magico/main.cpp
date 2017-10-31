@@ -1,16 +1,13 @@
 #include<iostream>
 
 #include<Magico.hpp>
-#include<mutex>
-#include<thread>
-#include<shared_mutex>
-
+#include<random>
 int main()
 {
+	std::seed_seq a;
+	
 	std::list<int> s;
 	std::vector<int> v{11,22,33};
-	std::mutex a;
-	
 	return 0;
 }
 
