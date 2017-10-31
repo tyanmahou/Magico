@@ -8,7 +8,7 @@
 //
 //************************************************************************************************
 
-namespace tc
+namespace mc
 {
 
 
@@ -62,4 +62,4 @@ namespace tc
 	struct And :Not < Or  < Not < Args >... > >
 	{};
 
-}//namesapce tc
+}//namesapce mc

@@ -6,7 +6,7 @@
 //requires
 //
 //************************************************************************************************
-namespace tc
+namespace mc
 {
 
 	///<summary>
@@ -21,7 +21,7 @@ namespace tc
 	///</summary>
 	template<class Ret, class ...Concept>
 	using where = std::enable_if_t<
-		std::is_same<tc::require<Concept...>, std::nullptr_t>::value,
+		std::is_same<mc::require<Concept...>, std::nullptr_t>::value,
 		Ret>;
 
 	///<summary>
@@ -30,4 +30,4 @@ namespace tc
 	template<class Ret, bool Exp>
 	using where_bool = std::enable_if_t<Exp, Ret>;
 
-}//namesapce tc
+}//namesapce mc

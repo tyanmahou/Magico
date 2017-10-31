@@ -1,6 +1,6 @@
 #pragma once
 
-namespace tc
+namespace mc
 {
 	namespace detail
 	{
@@ -26,4 +26,4 @@ namespace tc
 	constexpr priority<N> priority_v = nullptr;
 
 
-}//namespace tc
+}//namespace mc

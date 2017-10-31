@@ -8,13 +8,13 @@
 //
 //************************************************************************************************
 
-namespace tc
+namespace mc
 {
 
 	namespace detail
 	{
 		template<class Concept, class ... Args>
-		using ConceptCheck = decltype(&Concept::template require<Args...>);
+		using Concepmcheck = decltype(&Concept::template require<Args...>);
 
 		struct void_tester
 		{
@@ -29,7 +29,7 @@ namespace tc
 	///</summary>
 	template<template<class...>class SubConcept, class Constraint, class ...Args>
 	struct to_concept : is_detected<
-		detail::ConceptCheck,
+		detail::Concepmcheck,
 		Constraint,
 		detail::as_mapped_if_t<
 		SubConcept<detail::remove_mapped_t<Args>...>,
@@ -57,9 +57,9 @@ namespace tc
 	struct extends
 	{
 		template<class... Args>
-		static auto require(Args&&...)->tc::require<Concepts<Args...>...>;
+		static auto require(Args&&...)->mc::require<Concepts<Args...>...>;
 		template<class... Args>
-		static auto require()->tc::require<Concepts<Args...>...>;
+		static auto require()->mc::require<Concepts<Args...>...>;
 
 	};
 
@@ -76,17 +76,17 @@ namespace tc
 	///評価する式
 	///</param>
 	template<class Type, class Exp>
-	auto valid_expr(Exp&& exp)->tc::require<std::is_convertible<Exp, Type>>;
+	auto valid_expr(Exp&& exp)->mc::require<std::is_convertible<Exp, Type>>;
 
 
 	constexpr detail::void_tester _void;
 
 	template<class T>
-	auto valid_expr(detail::void_tester)->tc::require<std::is_void<T>>;
+	auto valid_expr(detail::void_tester)->mc::require<std::is_void<T>>;
 
 
 
-}//namespace tc
+}//namespace mc
 //************************************************************************************************
 //
 //macro
@@ -96,17 +96,17 @@ namespace tc
 ///<summary>
 ///条件をみたさないとアサート
 ///</summary>
-#define TC_CONCEPT_ASSERT( ... ) static_assert(tc::And<__VA_ARGS__>::value,#__VA_ARGS__ )
+#define MC_CONCEPT_ASSERT( ... ) static_assert(mc::And<__VA_ARGS__>::value,#__VA_ARGS__ )
 
 ///<summary>
 ///条件をみたさないとアサート(bool)
 ///</summary>
-#define TC_CONCEPT_ASSERT_BOOL( ... ) static_assert(static_cast<bool>(__VA_ARGS__),#__VA_ARGS__ )
+#define MC_CONCEPT_ASSERT_BOOL( ... ) static_assert(static_cast<bool>(__VA_ARGS__),#__VA_ARGS__ )
 
 ///<summary>
 ///コンセプト生成
 ///</summary>
-#define TC_CONCEPT(name,...)\
+#define MC_CONCEPT(name,...)\
 struct name : \
-tc::to_concept<name,struct __##name##_c,__VA_ARGS__>{};\
+mc::to_concept<name,struct __##name##_c,__VA_ARGS__>{};\
 struct __##name##_c

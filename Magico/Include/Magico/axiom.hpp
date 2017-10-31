@@ -2,7 +2,7 @@
 #include<exception>
 #include"utility.hpp"
 #include<string>
-namespace tc
+namespace mc
 {
 	class axiom_exception : public std::exception
 	{
@@ -29,7 +29,7 @@ namespace tc
 		using HasAxiom_impl = decltype(&Concept::template axiom<Args...>);
 
 		template<class Concept, class... Args>
-		using HasAxiom = tc::is_detected<HasAxiom_impl, Concept, Args...>;
+		using HasAxiom = mc::is_detected<HasAxiom_impl, Concept, Args...>;
 
 		template<class Concept, class... Types>
 		class axiom_check
@@ -51,17 +51,17 @@ namespace tc
 						if (!result)
 						{
 							static std::string message = std::string(typeid(Concept).name()) += " dose't satisfy axion";
-							throw tc::axiom_exception(message.c_str());
+							throw mc::axiom_exception(message.c_str());
 						}
 					}
 					else
 					{
 						static std::string message = std::string(typeid(Concept).name()) += " dose't satisfy require";
-						throw tc::axiom_exception(message.c_str());
+						throw mc::axiom_exception(message.c_str());
 					}
 				}
 			}
 		};
 	}//namespace detail
 
-}//namespace tc
+}//namespace mc

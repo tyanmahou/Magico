@@ -9,7 +9,7 @@
 //
 //************************************************************************************************
 
-namespace tc
+namespace mc
 {
 	namespace detail
 	{
@@ -80,15 +80,15 @@ namespace tc
 
 		concept_any() = default;
 
-		template<class T, tc::require<Concept<tc::as_mapped<T>>> = nullptr>
+		template<class T, mc::require<Concept<mc::as_mapped<T>>> = nullptr>
 		concept_any(const T& v) :
 			std::any(v)
 		{}
-		template<class T, tc::require<Concept<tc::as_mapped<T>>> = nullptr>
+		template<class T, mc::require<Concept<mc::as_mapped<T>>> = nullptr>
 		concept_any(const std::reference_wrapper<T>& v) :
 			std::any(v)
 		{}
-		template<class T, tc::require<Concept<tc::as_mapped<T>>> = nullptr>
+		template<class T, mc::require<Concept<mc::as_mapped<T>>> = nullptr>
 		concept_any& operator=(const T& v)
 		{
 			return static_cast<concept_any&>(std::any::operator=(v));
@@ -107,7 +107,7 @@ namespace tc
 		decltype(auto) get()
 		{
 			decltype(auto) v = get_origin<T>();
-			return tc::concept_mapping<Concept<std::decay_t<T>>>(v);
+			return mc::concept_mapping<Concept<std::decay_t<T>>>(v);
 		}
 		template<class T>
 		decltype(auto) get_origin()
@@ -116,4 +116,4 @@ namespace tc
 		}
 	};
 
-}//namespace tc
+}//namespace mc
