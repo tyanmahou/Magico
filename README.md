@@ -1,8 +1,9 @@
 # Magico
+
+## About
 C++17 Concept Library
 
-
-ヘッダーインクルードのみ
+繝倥ャ繝繝ｼ繧､繝ｳ繧ｯ繝ｫ繝ｼ繝峨�ｮ縺ｿ
 
 ## License
 MIT

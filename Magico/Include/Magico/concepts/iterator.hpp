@@ -80,7 +80,7 @@ namespace magico {
 		template<class It> MAGICO_CONCEPT(ForwardIterator, It)
 		{
 		private:
-			using ex = magico::extends<InputIterator, Defaulmagicoonstructible>;
+			using ex = magico::extends<InputIterator, DefaultConstructible>;
 		public:
 			template<class It>
 			auto require(It&& it)->decltype(

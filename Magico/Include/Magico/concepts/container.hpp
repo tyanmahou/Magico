@@ -26,7 +26,7 @@ namespace magico {
 				class dif = typename X::difference_type,
 				class size = typename X::size_type,
 				class extends = magico::require<
-				Defaulmagicoonstructible<X>,
+				DefaultConstructible<X>,
 				CopyConstructible<X>,
 				Destructible<X>,
 				EqualityComparable<X>,
@@ -99,7 +99,7 @@ namespace magico {
 			template<class X>
 			auto require(X&& x)->decltype(
 				magico::extends<Container>::require<X>(),
-				magico::extends<Defaulmagicoonstructible>::require<typename X::value_type>()
+				magico::extends<DefaultConstructible>::require<typename X::value_type>()
 				);
 		};
 
@@ -163,7 +163,7 @@ namespace magico {
 			auto require(X&& x)->decltype(
 				magico::extends<Container>::require<X>(),
 				magico::extends<CopyAssignable, MoveAssignable, CopyInsertable, MoveInsertable>::require<X>(),
-				magico::extends<Defaulmagicoonstructible>::require<std::allocator<typename X::value_type>>(),
+				magico::extends<DefaultConstructible>::require<std::allocator<typename X::value_type>>(),
 				magico::extends<Constructible>::require<X, std::allocator<typename X::value_type>>(),
 				magico::extends<Constructible>::require<X, std::add_lvalue_reference_t<X>, std::allocator<typename X::value_type >>(),
 				magico::extends<Constructible>::require<X, std::add_rvalue_reference_t<X>, std::allocator<typename X::value_type >>(),

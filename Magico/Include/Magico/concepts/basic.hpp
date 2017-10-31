@@ -51,7 +51,7 @@ namespace magico {
 		///<summary>
 		/// デフォルトコンストラクタ をもつか
 		///</summary>
-		template< class Type > MAGICO_CONCEPT(Defaulmagicoonstructible, Type)
+		template< class Type > MAGICO_CONCEPT(DefaultConstructible, Type)
 		{
 			template<class Type>
 			auto require()->decltype(
@@ -267,7 +267,7 @@ namespace magico {
 		private:
 			using ex = magico::extends<
 				EqualityComparable,
-				Defaulmagicoonstructible,
+				DefaultConstructible,
 				CopyConstructible,
 				CopyAssignable,
 				Destructible
