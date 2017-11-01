@@ -8,6 +8,8 @@ Magicoはメタ関数としてC++11時代のconcept風に型制約を提供す�
 
 ## Example
 
+### concept
+
 ```cpp
 
 ///スタックコンセプト
@@ -91,6 +93,36 @@ int main()
 
 ```cpp
 	auto&&_v2 = concept_mapping<Stack<std::vector<int>>>(v);
+
+```
+#### 暗黙のconcept_mapを認めない場合
+
+MAGICO_CONCEPTの代わりにMAGICO_CONCEPT_NON_DEFAULTを使用します
+```cpp
+///Animal
+MAGICO_CONCEPT_NON_DEFAULT(Animal)
+{
+	template<class T>
+	auto require(T t)->void;
+};
+
+struct Cat {};
+struct Dog {};
+template<>
+struct concept_map<Animal<Cat>>
+{
+	decltype(auto) operator =(Cat& c)
+	{
+		return c;
+	}
+};
+
+int main()
+{
+	static_assert(Animal<as_mapped<Cat>>::value==true);
+	static_assert(Animal<as_mapped<Dog>>::value==false);
+	return 0;
+}
 
 ```
 

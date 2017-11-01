@@ -14,7 +14,7 @@ using namespace magico;
 
 
 ///スタックコンセプト
-MAGICO_CONCEPT(Stack)
+MAGICO_CONCEPT_NON_DEFAULT(Stack)
 {
 	template<class X>
 	using value_type = typename X::value_type;
@@ -57,24 +57,28 @@ struct concept_map<Stack<std::vector<T>>>:std::vector<T>
 int main()
 {
 
-	static_assert(Stack<std::vector<int>>::value == false);
+	static_assert(Stack_v<as_mapped<std::stack<int>>> == false);
 
 	//as_mappedを指定するとマッピング後で判定できる
-	static_assert(Stack<as_mapped<std::vector<int>>>::value == true);
+	static_assert(Stack_v<as_mapped<std::vector<int>>> == true);
+
 
 	//マッピング
 	std::vector<int> v{ 1,2,3 };
 
-	auto&&[_v] = concept_mapping<Stack>(v);
-
+	auto&&[_v] = concept_mapping<Stack>(v);//関数の型引数
 	_v.push(4);
-	_v.top();
 
 	auto&&_v2 = concept_mapping<Stack<std::vector<int>>>(v);
 
+
+	//auto&&[_a,_b] = concept_mapping<HasPlus>(0,0.5f);
+	//
+	//auto&& _a2 = concept_mapping<HasPlus<int,float>>(a);
+	//auto&& _b2 = concept_mapping<HasPlus<int,float>>(b);
+
+
 	return 0;
 }
-
-
 
 

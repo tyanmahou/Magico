@@ -112,3 +112,21 @@ struct name : magico::to_concept<name,struct __##name##_c,Args...>{};\
 template<class ...Args>\
 constexpr bool name##_v = name<Args...>::value;\
 struct __##name##_c
+
+
+///<summary>
+///暗黙のコンセプトマップを認めない場合
+///</summary>
+#define MAGICO_CONCEPT_NON_DEFAULT(name)\
+template<class ...Args>\
+struct name : magico::to_concept<name,struct __##name##_c,Args...>{};\
+template<class ...Args>\
+constexpr bool name##_v = name<Args...>::value;\
+template<class ...Args>\
+struct magico::concept_map<name<Args...>>\
+{\
+	template<class U>\
+	void operator =(U&& v)\
+	{}\
+};\
+struct __##name##_c

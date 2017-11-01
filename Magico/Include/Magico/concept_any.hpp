@@ -73,7 +73,7 @@ namespace magico
 	///<summary>
 	///コンセプトを満たす型
 	///</summary>
-	template<template<class>class Concept>
+	template<template<class...>class Concept>
 	class concept_any : protected std::any
 	{
 	public:
