@@ -40,41 +40,35 @@ int main()
 
 ### 型引数に制約をつける
 
+
+`where<Return,Concepts...>`はメタ関数として与えられた制約をすべて満たす場合返り値の型になります  
 ```cpp
-//function
 template<class T>
 auto Func(T& a)->where<void,Stack<T>>
-{
-	a.push(10);
-}
+{}
+```
+whereをbool値で行う`where_bool<Return,Test>`もあります
+```cpp
+template<class T>
+auto Func2(T& a)->where_bool<void, Stack_v<T>>
+{}
+```
+`require<Concepts...>`は制約を満たす場合のみ`std::nullptr_t`型になります
 
-//class
+```cpp
+template<class T, require<Stack<T>> = nullptr>
+void Func3(T& a)
+{}
+```
+`MAGICO_CONCEPT_ASSERT(Concepts...)`は制約を満たさない場合アサートをするマクロです
+```cpp
 template<class T>
 struct Class
 {
 	MAGICO_CONCEPT_ASSERT(Stack<T>);
 };
-int main()
-{
-	std::vector<int> v;
-	std::stack<int> s;
 
-//	Func(v);  error
-	Func(s);
-
-//	Class<std::vector<int>> hogeV; error
-	Class<std::stack<int>> hogeS;
-
-	return 0;
-}
 ```
-
-`where<Return,Concepts...>`はメタ関数として与えられた制約をすべて満たす場合返り値の型になります  
-
-`MAGICO_CONCEPT_ASSERT(Concepts...)`は制約を満たさない場合アサートをするマクロです  
-他にも  
-whereをbool値で行う`where_bool<Return,Test>`や
-制約を満たす場合のみ`std::nullptr_t`型になる`require<Concepts...>`などがあります
 
 ### concept_map
 
@@ -134,6 +128,18 @@ int main()
 	auto&&_v2 = concept_mapping<Stack<std::vector<int>>>(v);
 
 ```
+#### 使用例
+```cpp
+template<class T>
+auto Func(T& _a)->where<void, Stack<as_mapped<T>>>
+{
+	auto[a] = concept_mapping<Stack>(_a);
+	/*
+	処理
+	*/
+}
+```
+
 #### 暗黙のconcept_mapを認めない場合
 
 `MAGICO_CONCEPT`の代わりに`MAGICO_CONCEPT_NONE_DEFAULT`を使用します
@@ -160,6 +166,36 @@ int main()
 {
 	static_assert(Animal<as_mapped<Cat>>::value==true);
 	static_assert(Animal<as_mapped<Dog>>::value==false);
+	return 0;
+}
+
+```
+###Concept Base Overload
+```cpp
+template<class T>
+auto _Func(priority<0>,T& a)
+{
+	std::cout << "Bidirectional" << std::endl;
+}
+template<class T>
+auto _Func(priority<1>,T& a)->where<void, concepts::RandomAccessIterator<T>>
+{
+	std::cout << "RandomAccess" << std::endl;
+}
+template<class T>
+auto Func(T a)->where<void, concepts::BidirectionalIterator<T>>
+{
+	_Func(priority_v<1>, a);
+}
+
+int main()
+{
+	std::vector<int> v;
+	std::list<int> l;
+
+	Func(v.begin());//RandomAccess
+	Func(l.begin());//Bidirectional
+
 	return 0;
 }
 

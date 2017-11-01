@@ -55,43 +55,31 @@ struct concept_map<Stack<std::vector<T>>>:std::vector<T>
 };
 
 
-//function
 template<class T>
-auto Func(T& a)->where<void,Stack<T>>
+auto _Func(priority<0>,T& a)
 {
-	a.push(10);
+	std::cout << "Bidirectional" << std::endl;
+}
+template<class T>
+auto _Func(priority<1>,T& a)->where<void, concepts::RandomAccessIterator<T>>
+{
+	std::cout << "RandomAccess" << std::endl;
+}
+template<class T>
+auto Func(T a)->where<void, concepts::BidirectionalIterator<T>>
+{
+	_Func(priority_v<1>, a);
 }
 
-//class
-template<class T>
-struct Class
-{
-	MAGICO_CONCEPT_ASSERT(Stack<T>);
-};
 int main()
 {
 	std::vector<int> v;
-	std::stack<int> s;
+	std::list<int> l;
 
-//	Func(v);  error
-	Func(s);
-
-//	Class<std::vector<int>> hogeV; error
-	Class<std::stack<int>> hogeS;
+	Func(v.begin());//RandomAccess
+	Func(l.begin());//Bidirectional
 
 	return 0;
 }
 
-//where_bool
-template<class T>
-auto Func2(T& a)->where_bool<void, Stack_v<T>>
-{
-	a.push(10);
-}
-//require
-template<class T, require<Stack<T>> = nullptr>
-void Func3(T& a)
-{
-	a.push(10);
-}
 
