@@ -12,7 +12,8 @@ namespace magico {
 		//************************************************************************************************
 
 		///<summary>
-		///スレッドの排他制御を提供するか
+		///<para>スレッドの排他制御を提供するか</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(BasicLockable)
 		{
@@ -24,7 +25,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///試行されたロックをサポートする排他制御を提供するか
+		///<para>試行されたロックをサポートする排他制御を提供するか</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Lockable)
 		{
@@ -36,7 +38,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///時限排他的な制御を提供するか
+		///<para>時限排他的な制御を提供するか</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(TimedLockable)
 		{
@@ -49,7 +52,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///ミューテックスか
+		///<para>ミューテックスか</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Mutex)
 		{
@@ -61,7 +65,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///時限排他的なミューテックスか
+		///<para>時限排他的なミューテックスか</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(TimedMutex)
 		{
@@ -72,7 +77,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///共有ミューテックスか
+		///<para>共有ミューテックスか</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(SharedMutex)
 		{
@@ -86,7 +92,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///時限排他的な共有ミューテックスか
+		///<para>時限排他的な共有ミューテックスか</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(SharedTimedMutex)
 		{

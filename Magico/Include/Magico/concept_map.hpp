@@ -18,10 +18,8 @@ namespace magico
 		using is_default = void;
 
 		template<class T>
-		decltype(auto) operator =(T&& other)
-		{
-			return std::forward<T>(other);
-		}
+		void operator =(T&& other)
+		{}
 	};
 
 	namespace detail

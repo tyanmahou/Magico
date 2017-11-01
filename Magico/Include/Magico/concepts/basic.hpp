@@ -13,7 +13,8 @@ namespace magico {
 		//************************************************************************************************
 
 		///<summary>
-		/// operator =(copy) をもつか
+		///<para>operator =(copy) をもつか</para>
+		///<para>[ To,From = To ]</para>
 		///</summary>
 		MAGICO_CONCEPT(CopyAssignable)
 		{
@@ -24,7 +25,8 @@ namespace magico {
 		};
 
 		///<summary>
-		/// operator =(move) をもつか
+		///<para>operator =(move) をもつか</para>
+		///<para>[ To,From = To ]</para>
 		///</summary>
 		MAGICO_CONCEPT(MoveAssignable)
 		{
@@ -38,7 +40,8 @@ namespace magico {
 		};
 
 		///<summary>
-		/// Type( Args... ) の形式のコンストラクタ呼び出しが可能か
+		///<para>Type( Args... ) の形式のコンストラクタ呼び出しが可能か</para>
+		///<para>[ Type,Args... ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Constructible)
 		{
@@ -49,7 +52,8 @@ namespace magico {
 		};
 
 		///<summary>
-		/// デフォルトコンストラクタ をもつか
+		///<para>デフォルトコンストラクタ をもつか</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(DefaultConstructible)
 		{
@@ -59,7 +63,8 @@ namespace magico {
 				);
 		};
 		///<summary>
-		/// コピーコンストラクタ をもつか
+		///<para>コピーコンストラクタ をもつか</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(CopyConstructible)
 		{
@@ -69,7 +74,8 @@ namespace magico {
 				);
 		};
 		///<summary>
-		/// ムーブコンストラクタ をもつか
+		///<para>ムーブコンストラクタ をもつか</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(MoveConstructible)
 		{
@@ -79,7 +85,8 @@ namespace magico {
 				);
 		};
 		///<summary>
-		/// デストラクタ をもつか
+		///<para>デストラクタ をもつか</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Destructible)
 		{
@@ -89,7 +96,8 @@ namespace magico {
 				);
 		};
 		///<summary>
-		/// 仮想デストラクタ をもつか
+		///<para>仮想デストラクタ をもつか</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(HasVirtualDestructor)
 		{
@@ -100,7 +108,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///TとUが同じか
+		///<para>TとUが同じか</para>
+		///<para>[ T,U ]</para>
 		///</summary>
 		MAGICO_CONCEPT(IsSame)
 		{
@@ -111,7 +120,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///TypeがBase,もしくはBaseを継承しているか
+		///<para>TypeがBase,もしくはBaseを継承しているか</para>
+		///<para>[ Type,Base ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Extended)
 		{
@@ -122,7 +132,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///スカラーかどうか
+		///<para>スカラーかどうか</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Scalar)
 		{
@@ -133,7 +144,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///仮想クラスかどうか
+		///<para>仮想クラスかどうか</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Abstract)
 		{
@@ -144,7 +156,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///enum型か
+		///<para>enum型か</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Enum)
 		{
@@ -155,7 +168,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///class(struct)型か
+		///<para>class(struct)型か</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Class)
 		{
@@ -166,7 +180,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///union型か
+		///<para>union型か</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Union)
 		{
@@ -177,7 +192,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///関数型t(...)か
+		///<para>関数型t(...)か</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Function)
 		{
@@ -194,7 +210,8 @@ namespace magico {
 		//************************************************************************************************
 
 		///<summary>
-		///　<　演算子で大小関係にあるか
+		///<para>小なり比較演算子で大小関係にあるか</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(LessThanComparable)
 		{
@@ -205,7 +222,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///　==演算子で等価関係にあるか
+		///<para>==演算子で等価関係にあるか</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(EqualityComparable)
 		{
@@ -216,7 +234,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///アロケーターか
+		///<para>アロケーターか</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Allocator)
 		{
@@ -236,7 +255,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///TのオブジェクトとUのオブジェクトが入れ替え可能か
+		///<para>TのオブジェクトとUのオブジェクトが入れ替え可能か</para>
+		///<para>[ T,U=T ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Swappable)
 		{
@@ -249,7 +269,8 @@ namespace magico {
 		};
 
 		///<summary>
-		/// FromがToにキャストできるか
+		///<para> FromがToにキャストできるか</para>
+		///<para>[ From,To ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Convertible)
 		{
@@ -260,7 +281,8 @@ namespace magico {
 		};
 
 		///<summary>
-		/// null許容か
+		///<para> null許容か</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(NullablePointer)
 		{
@@ -288,7 +310,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///関数呼び出し可能な型か
+		///<para>関数呼び出し可能な型か</para>
+		///<para>[ F,Args... ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Invocable)
 		{
@@ -300,7 +323,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///関数オブジェクトか
+		///<para>関数オブジェクトか</para>
+		///<para>[ Type,Args... ]</para>
 		///</summary>
 		MAGICO_CONCEPT(FunctionObject)
 		{
@@ -311,7 +335,8 @@ namespace magico {
 				);
 		};
 		///<summary>
-		///bool型になる関数オブジェクトか
+		///<para>bool型になる関数オブジェクトか</para>
+		///<para>[ Type,Args... ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Predicate)
 		{
@@ -323,7 +348,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///bool型になる2引数関数オブジェクトか
+		///<para>bool型になる2引数関数オブジェクトか</para>
+		///<para>[ Type,T,U=T ]</para>
 		///</summary>
 		MAGICO_CONCEPT(BinaryPredicate)
 		{
@@ -335,7 +361,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///比較関数オブジェクトか
+		///<para>比較関数オブジェクトか</para>
+		///<para>[ Type,T,U=T ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Compare)
 		{
@@ -346,7 +373,8 @@ namespace magico {
 				);
 		};
 		///<summary>
-		///メタ関数か
+		///<para>メタ関数か</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(MetaFunc)
 		{
@@ -357,7 +385,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///ハッシュ関数オブジェクトか
+		///<para>ハッシュ関数オブジェクトか</para>
+		///<para>[ Type,Key ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Hash)
 		{
@@ -373,7 +402,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///期間、時刻、現在の時刻を取得可能か
+		///<para>期間、時刻、現在の時刻を取得可能か</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Clock)
 		{
@@ -396,7 +426,8 @@ namespace magico {
 		//************************************************************************************************
 
 		///<summary>
-		///トリビアルコピー可能か
+		///<para>トリビアルコピー可能か</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(TriviallyCopyable)
 		{
@@ -407,7 +438,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///トリビアル型か
+		///<para>トリビアル型か</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(TrivialType)
 		{
@@ -417,7 +449,8 @@ namespace magico {
 				);
 		};
 		///<summary>
-		///標準レイアウト型か
+		///<para>標準レイアウト型か</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(StandardLayoutType)
 		{
@@ -428,7 +461,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///POD型か
+		///<para>POD型か</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(PODType)
 		{

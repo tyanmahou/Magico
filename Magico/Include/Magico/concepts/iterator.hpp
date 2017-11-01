@@ -11,7 +11,8 @@ namespace magico {
 		//************************************************************************************************
 
 		///<summary>
-		///イテレーターかどうか
+		///<para>イテレーターかどうか</para>
+		///<para>[ It ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Iterator)
 		{
@@ -34,7 +35,8 @@ namespace magico {
 
 
 		///<summary>
-		///入力イテレーターかどうか
+		///<para>入力イテレーターかどうか</para>
+		///<para>[ It ]</para>
 		///</summary>
 		MAGICO_CONCEPT(InputIterator)
 		{
@@ -56,7 +58,8 @@ namespace magico {
 
 
 		///<summary>
-		///出力イテレーターかどうか
+		///<para>出力イテレーターかどうか</para>
+		///<para>[ It ]</para>
 		///</summary>
 		MAGICO_CONCEPT(OutputIterator)
 		{
@@ -75,7 +78,8 @@ namespace magico {
 
 
 		///<summary>
-		///前方イテレーターかどうか
+		///<para>前方イテレーターかどうか</para>
+		///<para>[ It ]</para>
 		///</summary>
 		MAGICO_CONCEPT(ForwardIterator)
 		{
@@ -92,7 +96,8 @@ namespace magico {
 
 
 		///<summary>
-		///双方向イテレーターかどうか
+		///<para>双方向イテレーターかどうか</para>
+		///<para>[ It ]</para>
 		///</summary>
 		MAGICO_CONCEPT(BidirectionalIterator)
 		{
@@ -109,7 +114,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///ランダムアクセスイテレーターかどうか
+		///<para>ランダムアクセスイテレーターかどうか</para>
+		///<para>[ It ]</para>
 		///</summary>
 		MAGICO_CONCEPT(RandomAccessIterator)
 		{
@@ -135,7 +141,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///イテレーターの値型がスワップ可能か
+		///<para>イテレーターの値型がスワップ可能か</para>
+		///<para>[It]</para>
 		///</summary>
 		MAGICO_CONCEPT(ValueSwappable)
 		{
@@ -150,7 +157,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///イテレーターをもつか
+		///<para>イテレーターをもつか</para>
+		///<para>[Type]</para>
 		///</summary>
 		MAGICO_CONCEPT(HasIterator)
 		{
@@ -162,7 +170,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///レンジかどうか
+		///<para>レンジかどうか</para>
+		///<para>[Type]</para>
 		///</summary>
 		MAGICO_CONCEPT(Range)
 		{

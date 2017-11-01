@@ -50,13 +50,13 @@ namespace magico
 						result = Constraint{}.template axiom<Types...>(args...);
 						if (!result)
 						{
-							static std::string message = std::string(typeid(Concept).name()) += " dose't satisfy axion";
+							static const std::string message = std::string(typeid(Concept).name()) += " dose't satisfy axion";
 							throw magico::axiom_exception(message.c_str());
 						}
 					}
 					else
 					{
-						static std::string message = std::string(typeid(Concept).name()) += " dose't satisfy require";
+						static const std::string message = std::string(typeid(Concept).name()) += " dose't satisfy require";
 						throw magico::axiom_exception(message.c_str());
 					}
 				}

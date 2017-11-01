@@ -14,7 +14,7 @@ namespace magico {
 
 		///<summary>
 		///<para>32ビット符号なし整数値のシーケンスを生成するオブジェクトか</para>
-		///<para>[Type]</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(SeedSequence)
 		{
@@ -37,7 +37,7 @@ namespace magico {
 
 		///<summary>
 		///<para>一様分布の符号なし整数を生成するか</para>
-		///<para>[Type]</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(UniformRandomBitGenerator)
 		{
@@ -54,7 +54,7 @@ namespace magico {
 
 		///<summary>
 		///<para>与えられた数学的確率密度関数に従って分布した乱数を返すか</para>
-		///<para>[Type]</para>
+		///<para>[ Type ]</para>
 		///</summary>
 		MAGICO_CONCEPT(RandomNumberDistribution)
 		{

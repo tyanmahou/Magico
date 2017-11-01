@@ -13,7 +13,8 @@ namespace magico {
 
 
 		///<summary>
-		///コンテナかどうか
+		///<para>コンテナかどうか</para>
+		///<para>[ X ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Container)
 		{
@@ -53,7 +54,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///前方イテレーターをもつコンテナかどうか
+		///<para>前方イテレーターをもつコンテナかどうか</para>
+		///<para>[ X ]</para>
 		///</summary>
 		MAGICO_CONCEPT(ForwardContainer)
 		{
@@ -64,8 +66,23 @@ namespace magico {
 				);
 		};
 
+
 		///<summary>
-		///ランダムアクセスイテレーターをもつコンテナかどうか
+		///<para>双方向イテレーターをもつコンテナかどうか</para>
+		///<para>[ X ]</para>
+		///</summary>
+		MAGICO_CONCEPT(BidirectionalContainer)
+		{
+			template<class X>
+			auto require(X&& x)->decltype(
+				magico::extends<Container>::require<X>(),
+				magico::extends<BidirectionalIterator>::require<typename X::iterator>()
+				);
+		};
+
+		///<summary>
+		///<para>ランダムアクセスイテレーターをもつコンテナかどうか</para>
+		///<para>[ X ]</para>
 		///</summary>
 		MAGICO_CONCEPT(RandomAccessContainer)
 		{
@@ -77,7 +94,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///リバースイテレーターをもつコンテナかどうか
+		///<para>リバースイテレーターをもつコンテナかどうか</para>
+		///<para>[ X ]</para>
 		///</summary>
 		MAGICO_CONCEPT(ReversibleContainer)
 		{
@@ -95,7 +113,8 @@ namespace magico {
 
 
 		///<summary>
-		///任意のコンテナXに対して、要素型をデフォルトで挿入可能か
+		///<para>コンテナXに対して、要素型をデフォルトで挿入可能か</para>
+		///<para>[ X ]</para>
 		///</summary>
 		MAGICO_CONCEPT(DefaultInsertable)
 		{
@@ -107,7 +126,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///任意のコンテナXに対して、その要素型のコピー挿入可能か
+		///<para>コンテナXに対して、その要素型のコピー挿入可能か</para>
+		///<para>[ X ]</para>
 		///</summary>
 		MAGICO_CONCEPT(CopyInsertable)
 		{
@@ -120,7 +140,8 @@ namespace magico {
 
 
 		///<summary>
-		///任意のコンテナXに対して、その要素型の右辺値オブジェクトをムーブ挿入可能か
+		///<para>コンテナXに対して、その要素型の右辺値をムーブ挿入可能か</para>
+		///<para>[ X ]</para>
 		///</summary>
 		MAGICO_CONCEPT(MoveInsertable)
 		{
@@ -133,7 +154,8 @@ namespace magico {
 
 
 		///<summary>
-		///任意のコンテナXに対して、要素型のコンストラクタ引数列Argsから直接構築可能か
+		///<para>コンテナXに対して、要素型のコンストラクタ引数列Argsから直接構築可能か</para>
+		///<para>[ X ]</para>
 		///</summary>
 		MAGICO_CONCEPT(EmplaceConstructible)
 		{
@@ -145,7 +167,8 @@ namespace magico {
 		};
 
 		///<summary>
-		///任意のコンテナXに対して、要素型の破棄が可能か
+		///<para>コンテナXに対して、要素型の破棄が可能か</para>
+		///<para>[ X ]</para>
 		///</summary>
 		MAGICO_CONCEPT(Erasable)
 		{
@@ -158,7 +181,8 @@ namespace magico {
 
 
 		///<summary>
-		///アロケーターを認識するコンテナか
+		///<para>アロケーターを認識するコンテナか</para>
+		///<para>[ X ]</para>
 		///</summary>
 		MAGICO_CONCEPT(AllocatorAwareContainer)
 		{
@@ -175,7 +199,8 @@ namespace magico {
 				);
 		};
 		///<summary>
-		///線形保管するコンテナか
+		///<para>線形保管するコンテナか</para>
+		///<para>[ X ]</para>
 		///</summary>
 		MAGICO_CONCEPT(SequenceContainer)
 		{
@@ -212,8 +237,10 @@ namespace magico {
 			template<class X>
 			auto require()->decltype(&__SequenceContainer_c::_require<X>);
 		};
+
 		///<summary>
-		///キーに基づいて順序付けられたデータを検索するコンテナか
+		///<para>キーに基づいて順序付けられたデータを検索するコンテナか</para>
+		///<para>[ X ]</para>
 		///</summary>
 		MAGICO_CONCEPT(AssociativeContainer)
 		{
@@ -236,7 +263,8 @@ namespace magico {
 
 		};
 		///<summary>
-		///キーに基づいて順序付けられていないデータを検索するコンテナか
+		///<para>キーに基づいて順序付けられていないデータを検索するコンテナか</para>
+		///<para>[ X ]</para>
 		///</summary>
 		MAGICO_CONCEPT(UnorderedAssociativeContainer)
 		{
