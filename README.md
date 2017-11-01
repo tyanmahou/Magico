@@ -3,7 +3,7 @@ C++17 Concept Library
 ## About
 
 Magicoはメタ関数としてC++11時代のconcept風に型制約を提供するヘッダーのみのC++17向けライブラリです
-
+また、デフォルトでイテーレーターやコンテナなどを制約する多くのメタ関数を提供します。
 
 
 ## Example
@@ -97,10 +97,10 @@ int main()
 ```
 #### 暗黙のconcept_mapを認めない場合
 
-MAGICO_CONCEPTの代わりにMAGICO_CONCEPT_NON_DEFAULTを使用します
+`MAGICO_CONCEPT`の代わりに`MAGICO_CONCEPT_NONE_DEFAULT`を使用します
 ```cpp
 ///Animal
-MAGICO_CONCEPT_NON_DEFAULT(Animal)
+MAGICO_CONCEPT_NONE_DEFAULT(Animal)
 {
 	template<class T>
 	auto require(T t)->void;

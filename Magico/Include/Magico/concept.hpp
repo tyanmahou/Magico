@@ -117,7 +117,7 @@ struct __##name##_c
 ///<summary>
 ///暗黙のコンセプトマップを認めない場合
 ///</summary>
-#define MAGICO_CONCEPT_NON_DEFAULT(name)\
+#define MAGICO_CONCEPT_NONE_DEFAULT(name)\
 template<class ...Args>\
 struct name : magico::to_concept<name,struct __##name##_c,Args...>{};\
 template<class ...Args>\
