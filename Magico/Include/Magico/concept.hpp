@@ -123,10 +123,11 @@ struct name : magico::to_concept<name,struct __##name##_c,Args...>{};\
 template<class ...Args>\
 constexpr bool name##_v = name<Args...>::value;\
 template<class ...Args>\
-struct magico::concept_map<name<Args...>>\
+struct magico::concept_map< name <Args...>>\
 {\
 	template<class U>\
 	void operator =(U&& v)\
 	{}\
 };\
 struct __##name##_c
+

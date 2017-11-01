@@ -14,7 +14,7 @@ using namespace magico;
 
 
 ///スタックコンセプト
-MAGICO_CONCEPT_NON_DEFAULT(Stack)
+MAGICO_CONCEPT(Stack)
 {
 	template<class X>
 	using value_type = typename X::value_type;
@@ -54,31 +54,44 @@ struct concept_map<Stack<std::vector<T>>>:std::vector<T>
 	}
 };
 
+
+//function
+template<class T>
+auto Func(T& a)->where<void,Stack<T>>
+{
+	a.push(10);
+}
+
+//class
+template<class T>
+struct Class
+{
+	MAGICO_CONCEPT_ASSERT(Stack<T>);
+};
 int main()
 {
+	std::vector<int> v;
+	std::stack<int> s;
 
-	static_assert(Stack_v<as_mapped<std::stack<int>>> == false);
+//	Func(v);  error
+	Func(s);
 
-	//as_mappedを指定するとマッピング後で判定できる
-	static_assert(Stack_v<as_mapped<std::vector<int>>> == true);
-
-
-	//マッピング
-	std::vector<int> v{ 1,2,3 };
-
-	auto&&[_v] = concept_mapping<Stack>(v);//関数の型引数
-	_v.push(4);
-
-	auto&&_v2 = concept_mapping<Stack<std::vector<int>>>(v);
-
-
-	//auto&&[_a,_b] = concept_mapping<HasPlus>(0,0.5f);
-	//
-	//auto&& _a2 = concept_mapping<HasPlus<int,float>>(a);
-	//auto&& _b2 = concept_mapping<HasPlus<int,float>>(b);
-
+//	Class<std::vector<int>> hogeV; error
+	Class<std::stack<int>> hogeS;
 
 	return 0;
 }
 
+//where_bool
+template<class T>
+auto Func2(T& a)->where_bool<void, Stack_v<T>>
+{
+	a.push(10);
+}
+//require
+template<class T, require<Stack<T>> = nullptr>
+void Func3(T& a)
+{
+	a.push(10);
+}
 
