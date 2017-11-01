@@ -38,7 +38,7 @@ int main()
 
 ```
 
-###型引数に制約をつける
+### 型引数に制約をつける
 
 ```cpp
 //function
@@ -68,12 +68,13 @@ int main()
 	return 0;
 }
 ```
-メタ関数として与えられた制約をすべて満たす場合返り値の型になる  
 
-`where<Return,Concepts...>`  
-制約を満たさない場合アサートをするマクロ  
-`MAGICO_CONCEPT_ASSERT(Concepts...);`  
-制約を満たす場合のみ`std::nullptr_t`型になる'require<Concepts...>'などもあります
+`where<Return,Concepts...>`はメタ関数として与えられた制約をすべて満たす場合返り値の型になります  
+
+`MAGICO_CONCEPT_ASSERT(Concepts...)`は制約を満たさない場合アサートをするマクロです  
+他にも  
+whereをbool値で行う`where_bool<Return,Test>`や
+制約を満たす場合のみ`std::nullptr_t`型になる`require<Concepts...>`などがあります
 
 ### concept_map
 
