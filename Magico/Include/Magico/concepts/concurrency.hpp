@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"../concept.hpp"
 #include"basic.hpp"
 #include<chrono>
@@ -14,7 +14,7 @@ namespace magico {
 		///<summary>
 		///スレッドの排他制御を提供するか
 		///</summary>
-		template<class Type> MAGICO_CONCEPT(BasicLockable, Type)
+		MAGICO_CONCEPT(BasicLockable)
 		{
 			template<class Type>
 			auto require(Type m)->decltype(
@@ -26,7 +26,7 @@ namespace magico {
 		///<summary>
 		///試行されたロックをサポートする排他制御を提供するか
 		///</summary>
-		template<class Type> MAGICO_CONCEPT(Lockable, Type)
+		MAGICO_CONCEPT(Lockable)
 		{
 			template<class Type>
 			auto require(Type m)->decltype(
@@ -38,7 +38,7 @@ namespace magico {
 		///<summary>
 		///時限排他的な制御を提供するか
 		///</summary>
-		template<class Type> MAGICO_CONCEPT(TimedLockable, Type)
+		MAGICO_CONCEPT(TimedLockable)
 		{
 			template<class Type>
 			auto require(Type m, std::chrono::seconds duration, std::chrono::system_clock::time_point time_limit)->decltype(
@@ -51,7 +51,7 @@ namespace magico {
 		///<summary>
 		///ミューテックスか
 		///</summary>
-		template<class Type> MAGICO_CONCEPT(Mutex, Type)
+		MAGICO_CONCEPT(Mutex)
 		{
 			template<class Type>
 			auto require()->decltype(
@@ -63,7 +63,7 @@ namespace magico {
 		///<summary>
 		///時限排他的なミューテックスか
 		///</summary>
-		template<class Type> MAGICO_CONCEPT(TimedMutex, Type)
+		MAGICO_CONCEPT(TimedMutex)
 		{
 			template<class Type>
 			auto require()->decltype(
@@ -74,7 +74,7 @@ namespace magico {
 		///<summary>
 		///共有ミューテックスか
 		///</summary>
-		template<class Type> MAGICO_CONCEPT(SharedMutex, Type)
+		MAGICO_CONCEPT(SharedMutex)
 		{
 			template<class Type>
 			auto require(Type m)->decltype(
@@ -88,7 +88,7 @@ namespace magico {
 		///<summary>
 		///時限排他的な共有ミューテックスか
 		///</summary>
-		template<class Type> MAGICO_CONCEPT(SharedTimedMutex, Type)
+		MAGICO_CONCEPT(SharedTimedMutex)
 		{
 			template<class Type>
 			auto require(Type m, std::chrono::seconds duration, std::chrono::system_clock::time_point time_limit)->decltype(

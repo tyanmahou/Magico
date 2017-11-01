@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"../concept.hpp"
 #include<functional>
 
@@ -15,9 +15,9 @@ namespace magico {
 		///<summary>
 		/// operator =(copy) をもつか
 		///</summary>
-		template< class To, class From = To> MAGICO_CONCEPT(CopyAssignable, To, From)
+		MAGICO_CONCEPT(CopyAssignable)
 		{
-			template<class To, class From>
+			template<class To, class From = To>
 			auto require(To& t, const From& f)->decltype(
 				magico::extends<std::is_assignable>::require(t, f)
 				);
@@ -26,9 +26,9 @@ namespace magico {
 		///<summary>
 		/// operator =(move) をもつか
 		///</summary>
-		template< class To, class From = To> MAGICO_CONCEPT(MoveAssignable, To, From)
+		MAGICO_CONCEPT(MoveAssignable)
 		{
-			template<class To, class From>
+			template<class To, class From = To>
 			auto require(To t, From f)->decltype(
 				magico::extends<std::is_assignable>::require<
 				std::add_lvalue_reference_t<To>,
@@ -40,7 +40,7 @@ namespace magico {
 		///<summary>
 		/// Type( Args... ) の形式のコンストラクタ呼び出しが可能か
 		///</summary>
-		template< class Type, class... Args> MAGICO_CONCEPT(Constructible, Type, Args...)
+		MAGICO_CONCEPT(Constructible)
 		{
 			template<class Type, class... Args>
 			auto require()->decltype(
@@ -51,7 +51,7 @@ namespace magico {
 		///<summary>
 		/// デフォルトコンストラクタ をもつか
 		///</summary>
-		template< class Type > MAGICO_CONCEPT(DefaultConstructible, Type)
+		MAGICO_CONCEPT(DefaultConstructible)
 		{
 			template<class Type>
 			auto require()->decltype(
@@ -61,7 +61,7 @@ namespace magico {
 		///<summary>
 		/// コピーコンストラクタ をもつか
 		///</summary>
-		template< class Type > MAGICO_CONCEPT(CopyConstructible, Type)
+		MAGICO_CONCEPT(CopyConstructible)
 		{
 			template<class Type>
 			auto require()->decltype(
@@ -71,7 +71,7 @@ namespace magico {
 		///<summary>
 		/// ムーブコンストラクタ をもつか
 		///</summary>
-		template< class Type > MAGICO_CONCEPT(MoveConstructible, Type)
+		MAGICO_CONCEPT(MoveConstructible)
 		{
 			template<class Type>
 			auto require()->decltype(
@@ -81,7 +81,7 @@ namespace magico {
 		///<summary>
 		/// デストラクタ をもつか
 		///</summary>
-		template< class Type > MAGICO_CONCEPT(Destructible, Type)
+		MAGICO_CONCEPT(Destructible)
 		{
 			template<class Type>
 			auto require()->decltype(
@@ -91,7 +91,7 @@ namespace magico {
 		///<summary>
 		/// 仮想デストラクタ をもつか
 		///</summary>
-		template< class Type > MAGICO_CONCEPT(HasVirtualDestructor, Type)
+		MAGICO_CONCEPT(HasVirtualDestructor)
 		{
 			template<class Type>
 			auto require()->decltype(
@@ -102,7 +102,7 @@ namespace magico {
 		///<summary>
 		///TとUが同じか
 		///</summary>
-		template<class T, class U> MAGICO_CONCEPT(IsSame, T, U)
+		MAGICO_CONCEPT(IsSame)
 		{
 			template<class T, class U>
 			auto require()->decltype(
@@ -113,7 +113,7 @@ namespace magico {
 		///<summary>
 		///TypeがBase,もしくはBaseを継承しているか
 		///</summary>
-		template<class Type, class Base> MAGICO_CONCEPT(Extended, Type, Base)
+		MAGICO_CONCEPT(Extended)
 		{
 			template<class Type, class Base>
 			auto require()->decltype(
@@ -124,7 +124,7 @@ namespace magico {
 		///<summary>
 		///スカラーかどうか
 		///</summary>
-		template< class Type > MAGICO_CONCEPT(Scalar, Type)
+		MAGICO_CONCEPT(Scalar)
 		{
 			template<class Type>
 			auto require()->decltype(
@@ -135,7 +135,7 @@ namespace magico {
 		///<summary>
 		///仮想クラスかどうか
 		///</summary>
-		template< class Type > MAGICO_CONCEPT(Abstract, Type)
+		MAGICO_CONCEPT(Abstract)
 		{
 			template<class Type>
 			auto require()->decltype(
@@ -146,7 +146,7 @@ namespace magico {
 		///<summary>
 		///enum型か
 		///</summary>
-		template< class Type > MAGICO_CONCEPT(Enum, Type)
+		MAGICO_CONCEPT(Enum)
 		{
 			template<class Type>
 			auto require()->decltype(
@@ -157,7 +157,7 @@ namespace magico {
 		///<summary>
 		///class(struct)型か
 		///</summary>
-		template< class Type > MAGICO_CONCEPT(Class, Type)
+		MAGICO_CONCEPT(Class)
 		{
 			template<class Type>
 			auto require()->decltype(
@@ -168,7 +168,7 @@ namespace magico {
 		///<summary>
 		///union型か
 		///</summary>
-		template< class Type > MAGICO_CONCEPT(Union, Type)
+		MAGICO_CONCEPT(Union)
 		{
 			template<class Type>
 			auto require()->decltype(
@@ -179,7 +179,7 @@ namespace magico {
 		///<summary>
 		///関数型t(...)か
 		///</summary>
-		template< class Type > MAGICO_CONCEPT(Function, Type)
+		MAGICO_CONCEPT(Function)
 		{
 			template<class Type>
 			auto require()->decltype(
@@ -196,7 +196,7 @@ namespace magico {
 		///<summary>
 		///　<　演算子で大小関係にあるか
 		///</summary>
-		template<class Type> MAGICO_CONCEPT(LessThanComparable, Type)
+		MAGICO_CONCEPT(LessThanComparable)
 		{
 			template<class Type>
 			auto require(Type a, Type b)->decltype(
@@ -207,7 +207,7 @@ namespace magico {
 		///<summary>
 		///　==演算子で等価関係にあるか
 		///</summary>
-		template<class Type> MAGICO_CONCEPT(EqualityComparable, Type)
+		MAGICO_CONCEPT(EqualityComparable)
 		{
 			template<class Type>
 			auto require(Type a, Type b)->decltype(
@@ -218,7 +218,7 @@ namespace magico {
 		///<summary>
 		///アロケーターか
 		///</summary>
-		template<class Type> MAGICO_CONCEPT(Allocator, Type)
+		MAGICO_CONCEPT(Allocator)
 		{
 		private:
 			size_t n;
@@ -238,9 +238,9 @@ namespace magico {
 		///<summary>
 		///TのオブジェクトとUのオブジェクトが入れ替え可能か
 		///</summary>
-		template<class T, class U = T> MAGICO_CONCEPT(Swappable, T, U)
+		MAGICO_CONCEPT(Swappable)
 		{
-			template<class T, class U>
+			template<class T, class U = T>
 			auto require(T&& a, U&& b)->decltype(
 				std::swap(a, b),
 				std::swap(b, a)
@@ -251,7 +251,7 @@ namespace magico {
 		///<summary>
 		/// FromがToにキャストできるか
 		///</summary>
-		template< class From, class To > MAGICO_CONCEPT(Convertible, From, To)
+		MAGICO_CONCEPT(Convertible)
 		{
 			template< class From, class To >
 			auto require()->decltype(
@@ -262,7 +262,7 @@ namespace magico {
 		///<summary>
 		/// null許容か
 		///</summary>
-		template<class Type> MAGICO_CONCEPT(NullablePointer, Type)
+		MAGICO_CONCEPT(NullablePointer)
 		{
 		private:
 			using ex = magico::extends<
@@ -290,7 +290,7 @@ namespace magico {
 		///<summary>
 		///関数呼び出し可能な型か
 		///</summary>
-		template <class F, class... Args>MAGICO_CONCEPT(Invocable, F, Args...)
+		MAGICO_CONCEPT(Invocable)
 		{
 			template <class F, class... Args>
 			auto require(F&& func, Args&&... args)->decltype(
@@ -302,7 +302,7 @@ namespace magico {
 		///<summary>
 		///関数オブジェクトか
 		///</summary>
-		template <class Type, class... Args> MAGICO_CONCEPT(FunctionObject, Type, Args...)
+		MAGICO_CONCEPT(FunctionObject)
 		{
 			template <class Type, class... Args>
 			auto require()->decltype(
@@ -313,7 +313,7 @@ namespace magico {
 		///<summary>
 		///bool型になる関数オブジェクトか
 		///</summary>
-		template <class Type, class... Args> MAGICO_CONCEPT(Predicate, Type, Args...)
+		MAGICO_CONCEPT(Predicate)
 		{
 			template <class Type, class... Args>
 			auto require(Type t, Args&&... args)->decltype(
@@ -323,11 +323,11 @@ namespace magico {
 		};
 
 		///<summary>
-		///bool型になる関数オブジェクトか
+		///bool型になる2引数関数オブジェクトか
 		///</summary>
-		template <class Type, class T, class U = T> MAGICO_CONCEPT(BinaryPredicate, Type, T, U)
+		MAGICO_CONCEPT(BinaryPredicate)
 		{
-			template <class Type, class T, class U>
+			template <class Type, class T, class U = T>
 			auto require(Type t, T a, U b)->decltype(
 				magico::extends<CopyConstructible>::require<Type>(),
 				magico::extends<Predicate>::require<Type, T, U>()
@@ -337,9 +337,9 @@ namespace magico {
 		///<summary>
 		///比較関数オブジェクトか
 		///</summary>
-		template <class Type, class T, class U = T> MAGICO_CONCEPT(Compare, Type, T, U)
+		MAGICO_CONCEPT(Compare)
 		{
-			template <class Type, class T, class U>
+			template <class Type, class T, class U = T>
 			auto require(Type t, T a, U b)->decltype(
 				magico::extends<BinaryPredicate>::require<Type, T, U>(),
 				magico::valid_expr<bool>(!t(a, b) && !t(b, a))
@@ -348,7 +348,7 @@ namespace magico {
 		///<summary>
 		///メタ関数か
 		///</summary>
-		template <class Type> MAGICO_CONCEPT(MetaFunc, Type)
+		MAGICO_CONCEPT(MetaFunc)
 		{
 			template <class Type>
 			auto require()->decltype(
@@ -359,7 +359,7 @@ namespace magico {
 		///<summary>
 		///ハッシュ関数オブジェクトか
 		///</summary>
-		template <class Type, class Key> MAGICO_CONCEPT(Hash, Type, Key)
+		MAGICO_CONCEPT(Hash)
 		{
 		private:
 			using ex = magico::extends<CopyConstructible, Destructible>;
@@ -375,7 +375,7 @@ namespace magico {
 		///<summary>
 		///期間、時刻、現在の時刻を取得可能か
 		///</summary>
-		template <class Type> MAGICO_CONCEPT(Clock, Type)
+		MAGICO_CONCEPT(Clock)
 		{
 			template <class Type>
 			auto require(Type&& t)->decltype(
@@ -398,7 +398,7 @@ namespace magico {
 		///<summary>
 		///トリビアルコピー可能か
 		///</summary>
-		template< class Type > MAGICO_CONCEPT(TriviallyCopyable, Type)
+		MAGICO_CONCEPT(TriviallyCopyable)
 		{
 			template<class Type>
 			auto require()->decltype(
@@ -409,7 +409,7 @@ namespace magico {
 		///<summary>
 		///トリビアル型か
 		///</summary>
-		template< class Type > MAGICO_CONCEPT(TrivialType, Type)
+		MAGICO_CONCEPT(TrivialType)
 		{
 			template<class Type>
 			auto require()->decltype(
@@ -419,7 +419,7 @@ namespace magico {
 		///<summary>
 		///標準レイアウト型か
 		///</summary>
-		template<class Type>MAGICO_CONCEPT(StandardLayoutType, Type)
+		MAGICO_CONCEPT(StandardLayoutType)
 		{
 			template<class Type>
 			auto require()->decltype(
@@ -430,7 +430,7 @@ namespace magico {
 		///<summary>
 		///POD型か
 		///</summary>
-		template<class Type>MAGICO_CONCEPT(PODType, Type)
+		MAGICO_CONCEPT(PODType)
 		{
 			template<class Type>
 			auto require()->decltype(

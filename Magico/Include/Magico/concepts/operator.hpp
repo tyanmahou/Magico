@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"../concept.hpp"
 
 namespace magico {
@@ -13,7 +13,7 @@ namespace magico {
 
 
 #define MAGICO_HAS_UNARY_OPERATOR(className,symbol)\
-template<class Type> MAGICO_CONCEPT(className,Type)\
+MAGICO_CONCEPT(className)\
 {\
 	template<class Type>\
 	auto require(Type&& t)->decltype(symbol t);\
@@ -48,8 +48,7 @@ template<class Type> MAGICO_CONCEPT(className,Type)\
 		///<summary>
 		/// 後置インクリメント可能か
 		///</summary>
-		template<class Type>
-		MAGICO_CONCEPT(HasPostIncrement, Type)
+		MAGICO_CONCEPT(HasPostIncrement)
 		{
 			template<class Type>
 			auto require(Type&& t)->decltype(t++);
@@ -58,8 +57,7 @@ template<class Type> MAGICO_CONCEPT(className,Type)\
 		///<summary>
 		/// 後置デクリメント可能か
 		///</summary>
-		template<class Type>
-		MAGICO_CONCEPT(HasPostDecrement, Type)
+		MAGICO_CONCEPT(HasPostDecrement)
 		{
 			template<class Type>
 			auto require(Type&& t)->decltype(t--);
@@ -83,10 +81,9 @@ template<class Type> MAGICO_CONCEPT(className,Type)\
 #undef MAGICO_HAS_UNARY_OPERATOR
 
 #define MAGICO_HAS_BINARY_OPERATOR(className,symbol)\
-template<class Left,class Right=Left> \
-MAGICO_CONCEPT(className,Left,Right)\
+MAGICO_CONCEPT(className)\
 {\
-	template<class Left,class Right>\
+	template<class Left,class Right = Left>\
 	auto require(Left&& l,Right&& r)->decltype(l symbol r);\
 }
 
@@ -238,20 +235,18 @@ MAGICO_CONCEPT(className,Left,Right)\
 		///<summary>
 		/// operator , をもつか
 		///</summary>
-		template<class Left, class Right = Left>
-		MAGICO_CONCEPT(HasComma, Left, Right)
+		MAGICO_CONCEPT(HasOverloadedComma)
 		{
-			template<class Left, class Right>
-			auto require(Left&& l, Right&& r)->decltype(l, r);
+			template<class Left, class Right = Left>
+			auto require(Left&& l, Right&& r)->decltype(l.operator,(r));
 		};
 
 		///<summary>
 		/// operator [] をもつか
 		///</summary>
-		template<class Type, class Key = std::size_t>
-		MAGICO_CONCEPT(HasSubscript, Type, Key)
+		MAGICO_CONCEPT(HasSubscript)
 		{
-			template<class Type, class Key>
+			template<class Type, class Key = std::size_t>
 			auto require(Type t, Key key)->decltype(t[key]);
 		};
 

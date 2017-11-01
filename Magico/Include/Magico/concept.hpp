@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"concept_map.hpp"
 #include"require.hpp"
 #include"axiom.hpp"
@@ -106,7 +106,9 @@ namespace magico
 ///<summary>
 ///コンセプト生成
 ///</summary>
-#define MAGICO_CONCEPT(name,...)\
-struct name : \
-magico::to_concept<name,struct __##name##_c,__VA_ARGS__>{};\
+#define MAGICO_CONCEPT(name)\
+template<class ...Args>\
+struct name : magico::to_concept<name,struct __##name##_c,Args...>{};\
+template<class ...Args>\
+constexpr bool name##_v = name<Args...>::value;\
 struct __##name##_c

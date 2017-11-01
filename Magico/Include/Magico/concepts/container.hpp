@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include<unordered_map>
 #include"iterator.hpp"
@@ -15,42 +15,47 @@ namespace magico {
 		///<summary>
 		///コンテナかどうか
 		///</summary>
-		template<class X> MAGICO_CONCEPT(Container, X)
+		MAGICO_CONCEPT(Container)
 		{
 			template<class X,
-				class value_t = typename X::value_type,
-				class ref = typename X::reference,
-				class cref = typename X::const_reference,
-				class itr = typename X::iterator,
-				class citr = typename X::const_iterator,
-				class dif = typename X::difference_type,
-				class size = typename X::size_type,
-				class extends = magico::require<
-				DefaultConstructible<X>,
-				CopyConstructible<X>,
-				Destructible<X>,
-				EqualityComparable<X>,
-				CopyAssignable<X>
-				>
+				class _value_t = typename X::value_type,
+				class _ref = typename X::reference,
+				class _cref = typename X::const_reference,
+				class _itr = typename X::iterator,
+				class _citr = typename X::const_iterator,
+				class _dif = typename X::difference_type,
+				class _size = typename X::size_type
 			>
-				auto require(X&& x)->decltype(
-					magico::valid_expr<bool>(x != x),
-					magico::valid_expr<itr>(x.begin()),
-					magico::valid_expr<itr>(x.end()),
-					magico::valid_expr<citr>(x.cbegin()),
-					magico::valid_expr<citr>(x.cend()),
-					magico::valid_expr<void>((x.swap(x), is_void)),
-					magico::valid_expr<void>((std::swap(x, x), is_void)),
-					magico::valid_expr<size>(x.size()),
-					magico::valid_expr<size>(x.max_size()),
-					magico::valid_expr<bool>(x.empty())
-					);
+				struct GetType
+			{
+				using itr = _itr;
+				using citr = _citr;
+				using size = _size;
+			};
+
+			using ex = magico::extends<DefaultConstructible, CopyConstructible,
+				Destructible, EqualityComparable, CopyAssignable>;
+
+			template<class X>
+			auto require(X&& x)->decltype(
+				ex::require<X>(),
+				magico::valid_expr<bool>(x != x),
+				magico::valid_expr<typename GetType<X>::itr>(x.begin()),
+				magico::valid_expr<typename GetType<X>::itr>(x.end()),
+				magico::valid_expr<typename GetType<X>::citr>(x.cbegin()),
+				magico::valid_expr<typename GetType<X>::citr>(x.cend()),
+				magico::valid_expr<void>((x.swap(x), is_void)),
+				magico::valid_expr<void>((std::swap(x, x), is_void)),
+				magico::valid_expr<typename GetType<X>::size>(x.size()),
+				magico::valid_expr<typename GetType<X>::size>(x.max_size()),
+				magico::valid_expr<bool>(x.empty())
+				);
 		};
 
 		///<summary>
 		///前方イテレーターをもつコンテナかどうか
 		///</summary>
-		template<class X> MAGICO_CONCEPT(ForwardContainer, X)
+		MAGICO_CONCEPT(ForwardContainer)
 		{
 			template<class X>
 			auto require(X&& x)->decltype(
@@ -62,7 +67,7 @@ namespace magico {
 		///<summary>
 		///ランダムアクセスイテレーターをもつコンテナかどうか
 		///</summary>
-		template<class X> MAGICO_CONCEPT(RandomAccessContainer, X)
+		MAGICO_CONCEPT(RandomAccessContainer)
 		{
 			template<class X>
 			auto require(X&& x)->decltype(
@@ -74,27 +79,25 @@ namespace magico {
 		///<summary>
 		///リバースイテレーターをもつコンテナかどうか
 		///</summary>
-		template<class X> MAGICO_CONCEPT(ReversibleContainer, X)
+		MAGICO_CONCEPT(ReversibleContainer)
 		{
-			template<class X,
-				class ritr = typename X::reverse_iterator,
-				class critr = typename X::const_reverse_iterator
-			>
-				auto require(X&& x)->decltype(
-					magico::extends<Container>::require<X>(),
-					magico::extends<BidirectionalIterator>::require<typename X::iterator>(),
-					magico::valid_expr<ritr>(x.rbegin()),
-					magico::valid_expr<ritr>(x.rend()),
-					magico::valid_expr<critr>(x.crbegin()),
-					magico::valid_expr<critr>(x.crend())
-					);
+
+			template<class X>
+			auto require(X&& x)->decltype(
+				magico::extends<Container>::require<X>(),
+				magico::extends<BidirectionalIterator>::require<typename X::iterator>(),
+				magico::valid_expr<typename X::reverse_iterator>(x.rbegin()),
+				magico::valid_expr<typename X::reverse_iterator>(x.rend()),
+				magico::valid_expr<typename X::const_reverse_iterator>(x.crbegin()),
+				magico::valid_expr<typename X::const_reverse_iterator>(x.crend())
+				);
 		};
 
 
 		///<summary>
-		///任意のコンテナXに対して、その要素型をデフォルトで挿入可能か
+		///任意のコンテナXに対して、要素型をデフォルトで挿入可能か
 		///</summary>
-		template<class X> MAGICO_CONCEPT(DefaultInsertable, X)
+		MAGICO_CONCEPT(DefaultInsertable)
 		{
 			template<class X>
 			auto require(X&& x)->decltype(
@@ -106,7 +109,7 @@ namespace magico {
 		///<summary>
 		///任意のコンテナXに対して、その要素型のコピー挿入可能か
 		///</summary>
-		template<class X> MAGICO_CONCEPT(CopyInsertable, X)
+		MAGICO_CONCEPT(CopyInsertable)
 		{
 			template<class X>
 			auto require(X&& x)->decltype(
@@ -119,7 +122,7 @@ namespace magico {
 		///<summary>
 		///任意のコンテナXに対して、その要素型の右辺値オブジェクトをムーブ挿入可能か
 		///</summary>
-		template<class X> MAGICO_CONCEPT(MoveInsertable, X)
+		MAGICO_CONCEPT(MoveInsertable)
 		{
 			template<class X>
 			auto require(X&& x)->decltype(
@@ -132,7 +135,7 @@ namespace magico {
 		///<summary>
 		///任意のコンテナXに対して、要素型のコンストラクタ引数列Argsから直接構築可能か
 		///</summary>
-		template<class X, class... Args> MAGICO_CONCEPT(EmplaceConstructible, X, Args...)
+		MAGICO_CONCEPT(EmplaceConstructible)
 		{
 			template<class X, class... Args>
 			auto require(X&& x)->decltype(
@@ -144,7 +147,7 @@ namespace magico {
 		///<summary>
 		///任意のコンテナXに対して、要素型の破棄が可能か
 		///</summary>
-		template<class X> MAGICO_CONCEPT(Erasable, X)
+		MAGICO_CONCEPT(Erasable)
 		{
 			template<class X>
 			auto require(X&& x)->decltype(
@@ -157,9 +160,9 @@ namespace magico {
 		///<summary>
 		///アロケーターを認識するコンテナか
 		///</summary>
-		template<class X> MAGICO_CONCEPT(AllocatorAwareContainer, X)
+		MAGICO_CONCEPT(AllocatorAwareContainer)
 		{
-			template<class X, class alloc_t = typename X::allocator_type>
+			template<class X>
 			auto require(X&& x)->decltype(
 				magico::extends<Container>::require<X>(),
 				magico::extends<CopyAssignable, MoveAssignable, CopyInsertable, MoveInsertable>::require<X>(),
@@ -167,14 +170,14 @@ namespace magico {
 				magico::extends<Constructible>::require<X, std::allocator<typename X::value_type>>(),
 				magico::extends<Constructible>::require<X, std::add_lvalue_reference_t<X>, std::allocator<typename X::value_type >>(),
 				magico::extends<Constructible>::require<X, std::add_rvalue_reference_t<X>, std::allocator<typename X::value_type >>(),
-				magico::valid_expr<alloc_t>(x.get_allocator()),
+				magico::valid_expr<typename X::allocator_type>(x.get_allocator()),
 				magico::valid_expr<void>((x.swap(x), is_void))
 				);
 		};
 		///<summary>
 		///線形保管するコンテナか
 		///</summary>
-		template<class X> MAGICO_CONCEPT(SequenceContainer, X)
+		MAGICO_CONCEPT(SequenceContainer)
 		{
 			//アロケーターの型
 			template<class X, class = void>
@@ -196,7 +199,7 @@ namespace magico {
 				class CIt = typename X::const_iterator,
 				class... Args
 			>
-				auto require(X a, Value t, Size n, It it, CIt cit, std::initializer_list<Value> il, Args&&... args)->decltype(
+				auto _require(X a, Value t, Size n, It it, CIt cit, std::initializer_list<Value> il, Args&&... args)->decltype(
 					magico::extends<Container>::require<X>(),
 					X(n, t), X(it, it), X(il),
 					magico::valid_expr<X&>(a = il),
@@ -206,11 +209,13 @@ namespace magico {
 					magico::valid_expr<void>((a.clear(), is_void)),
 					a.assign(it, it), a.assign(il), a.assign(n, t)
 					);
+			template<class X>
+			auto require()->decltype(&__SequenceContainer_c::_require<X>);
 		};
 		///<summary>
 		///キーに基づいて順序付けられたデータを検索するコンテナか
 		///</summary>
-		template<class X> MAGICO_CONCEPT(AssociativeContainer, X)
+		MAGICO_CONCEPT(AssociativeContainer)
 		{
 			template<class X,
 				class Key = typename X::key_type,
@@ -219,18 +224,21 @@ namespace magico {
 				class ValueCompare = typename X::value_compare,
 				class It = typename X::iterator
 			>
-				auto require(X a, Compare c, Value t, It it, std::initializer_list<Value> il)->decltype(
+				auto _require(X a, Compare c, Value t, It it, std::initializer_list<Value> il)->decltype(
 					magico::extends<BinaryPredicate>::require<ValueCompare, Value>(),
 					X(), X(c), X(it, it, c), X(it, it), X(il),
 					magico::valid_expr<X&>(a = il),
 					magico::valid_expr<Compare>(a.key_comp()),
 					magico::valid_expr<ValueCompare>(a.value_comp())
 					);
+			template<class X>
+			auto require()->decltype(&__AssociativeContainer_c::_require<X>);
+
 		};
 		///<summary>
 		///キーに基づいて順序付けられていないデータを検索するコンテナか
 		///</summary>
-		template<class X> MAGICO_CONCEPT(UnorderedAssociativeContainer, X)
+		MAGICO_CONCEPT(UnorderedAssociativeContainer)
 		{
 			template<class X>
 			struct GetValueType
@@ -257,7 +265,7 @@ namespace magico {
 				class CLIt = typename X::const_local_iterator,
 				class Size = typename X::size_type
 			>
-				auto require(X a, const X& b, const Hash& hf, const Pred& eq,
+				auto _require(X a, const X& b, const Hash& hf, const Pred& eq,
 					Value t, It it, std::initializer_list<Value> il, Size n)->decltype(
 						magico::extends<IsSame>::require<Value, typename GetValueType<X>::type>(),
 						X(), X(n), X(n, hf, eq), X(n, hf), X(it, it, n, hf, eq), X(it, it, n, hf),
@@ -265,6 +273,9 @@ namespace magico {
 						magico::valid_expr<X&>(a = il),
 						magico::valid_expr<X&>(a = b)
 						);
+
+			template<class X>
+			auto require()->decltype(&__UnorderedAssociativeContainer_c::_require<X>);
 		};
 	}//namespace concepts
 }//namespace magico

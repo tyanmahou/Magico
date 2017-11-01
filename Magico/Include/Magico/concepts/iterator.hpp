@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include"basic.hpp"
 #include"operator.hpp"
 namespace magico {
@@ -13,7 +13,7 @@ namespace magico {
 		///<summary>
 		///イテレーターかどうか
 		///</summary>
-		template<class It> MAGICO_CONCEPT(Iterator, It)
+		MAGICO_CONCEPT(Iterator)
 		{
 		private:
 			using ex = magico::extends<
@@ -36,7 +36,7 @@ namespace magico {
 		///<summary>
 		///入力イテレーターかどうか
 		///</summary>
-		template<class It> MAGICO_CONCEPT(InputIterator, It)
+		MAGICO_CONCEPT(InputIterator)
 		{
 		private:
 			using ex = magico::extends<
@@ -58,7 +58,7 @@ namespace magico {
 		///<summary>
 		///出力イテレーターかどうか
 		///</summary>
-		template<class It> MAGICO_CONCEPT(OutputIterator, It)
+		MAGICO_CONCEPT(OutputIterator)
 		{
 		private:
 			using ex = magico::extends<Iterator>;
@@ -77,7 +77,7 @@ namespace magico {
 		///<summary>
 		///前方イテレーターかどうか
 		///</summary>
-		template<class It> MAGICO_CONCEPT(ForwardIterator, It)
+		MAGICO_CONCEPT(ForwardIterator)
 		{
 		private:
 			using ex = magico::extends<InputIterator, DefaultConstructible>;
@@ -94,7 +94,7 @@ namespace magico {
 		///<summary>
 		///双方向イテレーターかどうか
 		///</summary>
-		template<class It> MAGICO_CONCEPT(BidirectionalIterator, It)
+		MAGICO_CONCEPT(BidirectionalIterator)
 		{
 		private:
 			using ex = magico::extends<ForwardIterator>;
@@ -111,7 +111,7 @@ namespace magico {
 		///<summary>
 		///ランダムアクセスイテレーターかどうか
 		///</summary>
-		template<class It> MAGICO_CONCEPT(RandomAccessIterator, It)
+		MAGICO_CONCEPT(RandomAccessIterator)
 		{
 		private:
 			using ex = magico::extends<
@@ -137,7 +137,7 @@ namespace magico {
 		///<summary>
 		///イテレーターの値型がスワップ可能か
 		///</summary>
-		template<class It> MAGICO_CONCEPT(ValueSwappable, It)
+		MAGICO_CONCEPT(ValueSwappable)
 		{
 		private:
 			using ex = magico::extends<Iterator>;
@@ -152,7 +152,7 @@ namespace magico {
 		///<summary>
 		///イテレーターをもつか
 		///</summary>
-		template<class Type> MAGICO_CONCEPT(HasIterator, Type)
+		MAGICO_CONCEPT(HasIterator)
 		{
 
 			template<class Type>
@@ -164,7 +164,7 @@ namespace magico {
 		///<summary>
 		///レンジかどうか
 		///</summary>
-		template<class Type> MAGICO_CONCEPT(Range, Type)
+		MAGICO_CONCEPT(Range)
 		{
 			template<class Type>
 			auto require(Type&& range)->decltype(
