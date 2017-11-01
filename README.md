@@ -11,7 +11,7 @@ Magicoはメタ関数としてC++11時代のconcept風に型制約を提供す�
 ## License
 MIT
 
-##Example
+## Example
 
 ```cpp
 
