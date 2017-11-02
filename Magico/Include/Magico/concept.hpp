@@ -93,6 +93,7 @@ namespace magico
 //
 //************************************************************************************************
 
+
 ///<summary>
 ///条件をみたさないとアサート
 ///</summary>
@@ -111,25 +112,17 @@ template<class ...Args>\
 struct name : magico::to_concept<name,struct __##name##_c,Args...>{};\
 template<class ...Args>\
 constexpr bool name##_v = name<Args...>::value;\
-template<class ...Args>\
-struct magico::concept_map< name <Args...>>\
-{\
-	template<class T>\
-	decltype(auto) operator =(T&& other)\
-	{\
-		return std::forward<T>(other);\
-	}\
-};\
 struct __##name##_c
 
 
 ///<summary>
 ///暗黙のコンセプトマップを認めない場合
 ///</summary>
-#define MAGICO_CONCEPT_NONE_DEFAULT(name)\
+#define MAGICO_CONCEPT_MAP_NONE_DEFAULT(name)\
 template<class ...Args>\
-struct name : magico::to_concept<name,struct __##name##_c,Args...>{};\
-template<class ...Args>\
-constexpr bool name##_v = name<Args...>::value;\
-struct __##name##_c
-
+struct magico::concept_map<name<Args...>>\
+{\
+	template<class T>\
+	void operator =(T&& other)\
+	{}\
+}

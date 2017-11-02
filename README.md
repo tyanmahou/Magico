@@ -1,4 +1,4 @@
-# Magico
+﻿# Magico
 C++17 Concept Library
 ## About
 
@@ -142,19 +142,21 @@ auto Func(T& _a)->where<void, Stack<as_mapped<T>>>
 
 #### 暗黙のconcept_mapを認めない場合
 
-`MAGICO_CONCEPT`の代わりに`MAGICO_CONCEPT_NONE_DEFAULT`を使用します
+`MAGICO_CONCEPT_MAP_NONE_DEFAULT`を**グローバル空間**に使用します
 ```cpp
 ///Animal
-MAGICO_CONCEPT_NONE_DEFAULT(Animal)
+MAGICO_CONCEPT(Animal)
 {
 	template<class T>
 	auto require(T t)->void;
 };
 
+MAGICO_CONCEPT_MAP_NONE_DEFAULT(Animal);
+
 struct Cat {};
 struct Dog {};
 template<>
-struct concept_map<Animal<Cat>>
+struct magico::concept_map<Animal<Cat>>
 {
 	decltype(auto) operator =(Cat& c)
 	{

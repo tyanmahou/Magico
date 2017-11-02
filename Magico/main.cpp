@@ -9,10 +9,7 @@ MAGICO_CONCEPT(Test)
 	template<class T>
 	auto require(T t)->void;
 };
-#include<future>
 
-#include<locale>
-#include<valarray>
 int main()
 {
 	std::vector<int> v;
