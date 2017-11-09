@@ -2,8 +2,8 @@
 C++17 Concept Library
 ## About
 
-「Magico」はメタ関数としてC++11時代のconcept風に型制約を提供するヘッダーのみのC++17向けライブラリです。  
-また、デフォルトでイテレーターやコンテナなどを制約する多くのメタ関数を提供します。
+"Magico" is a library for C ++ 17 only with headers that provides type constraints as meta functions like C++11's concept.    
+It also provides many meta functions that constrain iterators, containers, etc by default.
 
 
 ## Example
@@ -12,7 +12,7 @@ C++17 Concept Library
 
 ```cpp
 
-///スタックコンセプト
+//Stack concept
 MAGICO_CONCEPT(Stack)
 {
 	template<class X>
@@ -38,29 +38,29 @@ int main()
 
 ```
 
-### 型引数に制約をつける
+### Constraint on template parameters
 
 
-`where<Return,Concepts...>`はメタ関数として与えられた制約をすべて満たす場合返り値の型になります  
+`where<Return,Concepts...>`will be `Return` type if it satisfies all `Concepts` given as a meta function    
 ```cpp
 template<class T>
 auto Func(T& a)->where<void,Stack<T>>
 {}
 ```
-whereをbool値で行う`where_bool<Return,Test>`もあります
+`where_bool <Return, bool>` can test `where` with a bool value  
 ```cpp
 template<class T>
 auto Func2(T& a)->where_bool<void, Stack_v<T>>
 {}
 ```
-`require<Concepts...>`は制約を満たす場合のみ`std::nullptr_t`型になります
+`require <Concepts ...>` is of type `std :: nullptr_t` only if it satisfies` Concepts`
 
 ```cpp
 template<class T, require<Stack<T>> = nullptr>
 void Func3(T& a)
 {}
 ```
-`MAGICO_CONCEPT_ASSERT(Concepts...)`は制約を満たさない場合アサートをするマクロです
+`MAGICO_CONCEPT_ASSERT (Concepts ...)` is a macro that asserts if it does not satisfy `Concepts`  
 ```cpp
 template<class T>
 struct Class
@@ -92,7 +92,7 @@ struct concept_map<Stack<std::vector<T>>>:std::vector<T>
 	}
 	//vector has empty
 
-	//operator = で割り当て
+	//Assign with operator =
 	decltype(auto) operator =(std::vector<T>& v)
 	{
 		return static_cast<concept_map&>(v);
@@ -104,17 +104,17 @@ int main()
 
 	static_assert(Stack<std::vector<int>>::value == false);
 
-	//as_mappedを指定するとマッピング後で判定できる
+	//Using "as_mapped" will result in a mapped type
 	static_assert(Stack<as_mapped<std::vector<int>>>::value == true);
 
 	return 0;
 }
 ```
 
-### マッピングの方法
+### How to mapping
 
 ```cpp
-	//マッピング
+	//mapping
 	std::vector<int> v{ 1,2,3 };
 
 	auto&&[_v] = concept_mapping<Stack>(v);
@@ -122,27 +122,27 @@ int main()
 	_v.push(4);
 	_v.top();
 ```
-もしくは
+or
 
 ```cpp
 	auto&&_v2 = concept_mapping<Stack<std::vector<int>>>(v);
 
 ```
-#### 使用例
+#### example
 ```cpp
 template<class T>
 auto Func(T& _a)->where<void, Stack<as_mapped<T>>>
 {
 	auto[a] = concept_mapping<Stack>(_a);
 	/*
-	処理
+	something...
 	*/
 }
 ```
 
-#### 暗黙のconcept_mapを認めない場合
+#### If you don't approve an implicit concept_map
 
-`MAGICO_CONCEPT_MAP_NONE_DEFAULT`を**グローバル空間**に使用します
+Use `MAGICO_CONCEPT_MAP_NONE_DEFAULT` for ** global space **
 ```cpp
 ///Animal
 MAGICO_CONCEPT(Animal)
@@ -204,7 +204,7 @@ int main()
 ```
 
 ## How to
-`Include`ディレクトリのヘッダーインクルードのみ
+Header Include Only in `Include` Directory
 
 ## License
 MIT
