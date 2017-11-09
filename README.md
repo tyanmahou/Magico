@@ -53,7 +53,7 @@ template<class T>
 auto Func2(T& a)->where_bool<void, Stack_v<T>>
 {}
 ```
-`require <Concepts ...>` is of type `std :: nullptr_t` only if it satisfies` Concepts`
+`require <Concepts ...>` is  `std :: nullptr_t` only if it satisfies` Concepts`
 
 ```cpp
 template<class T, require<Stack<T>> = nullptr>
@@ -114,18 +114,18 @@ int main()
 ### How to mapping
 
 ```cpp
-	//mapping
-	std::vector<int> v{ 1,2,3 };
+//mapping
+std::vector<int> v{ 1,2,3 };
 
-	auto&&[_v] = concept_mapping<Stack>(v);
+auto&&[_v] = concept_mapping<Stack>(v);
 
-	_v.push(4);
-	_v.top();
+_v.push(4);
+_v.top();
 ```
 or
 
 ```cpp
-	auto&&_v2 = concept_mapping<Stack<std::vector<int>>>(v);
+auto&&_v2 = concept_mapping<Stack<std::vector<int>>>(v);
 
 ```
 #### example
@@ -142,7 +142,7 @@ auto Func(T& _a)->where<void, Stack<as_mapped<T>>>
 
 #### If you don't approve an implicit concept_map
 
-Use `MAGICO_CONCEPT_MAP_NONE_DEFAULT` for ** global space **
+Use `MAGICO_CONCEPT_MAP_NONE_DEFAULT` for **global space**
 ```cpp
 ///Animal
 MAGICO_CONCEPT(Animal)
