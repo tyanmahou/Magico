@@ -38,29 +38,35 @@ int main()
 
 ```
 
+`valid_expr <Return> (exp)` checks if the `exp` can convert to `Return` type.  
+If the expression requires a void type, use `valid_expr <void> ((exp, is _ void))`.  
+  
+`associated_type <Type> ()` is used to check related types.
+This is the same for `std :: declval <Type> ()`.
+
 ### Constraint on template parameters
 
 
-`where<Return,Concepts...>`will be `Return` type if it satisfies all `Concepts` given as a meta function    
+`where<Return,Concepts...>`will be `Return` type if it satisfies all `Concepts` given as a meta function.    
 ```cpp
 template<class T>
 auto Func(T& a)->where<void,Stack<T>>
 {}
 ```
-`where_bool <Return, bool>` can test `where` with a bool value  
+`where_bool <Return, bool>` can test `where` with a bool value.  
 ```cpp
 template<class T>
 auto Func2(T& a)->where_bool<void, Stack_v<T>>
 {}
 ```
-`require <Concepts ...>` is  `std :: nullptr_t` only if it satisfies` Concepts`
+`require <Concepts ...>` is  `std :: nullptr_t` only if it satisfies` Concepts`.
 
 ```cpp
 template<class T, require<Stack<T>> = nullptr>
 void Func3(T& a)
 {}
 ```
-`MAGICO_CONCEPT_ASSERT (Concepts ...)` is a macro that asserts if it does not satisfy `Concepts`  
+`MAGICO_CONCEPT_ASSERT (Concepts ...)` is a macro that asserts if it doesn't satisfy `Concepts`.  
 ```cpp
 template<class T>
 struct Class
@@ -142,7 +148,7 @@ auto Func(T& _a)->where<void, Stack<as_mapped<T>>>
 
 #### If you don't approve an implicit concept_map
 
-Use `MAGICO_CONCEPT_MAP_NONE_DEFAULT` for **global space**
+Use `MAGICO_CONCEPT_MAP_NONE_DEFAULT` for **global space**.
 ```cpp
 ///Animal
 MAGICO_CONCEPT(Animal)
@@ -204,7 +210,7 @@ int main()
 ```
 
 ## How to
-Header Include Only in `Include` Directory
+Header Include Only in `Include` Directory.
 
 ## License
 MIT
