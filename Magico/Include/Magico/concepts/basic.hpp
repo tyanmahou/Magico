@@ -142,6 +142,39 @@ namespace magico {
 				magico::extends<std::is_scalar>::require<Type>()
 				);
 		};
+		///<summary>
+		///<para>整数型かどうか</para>
+		///<para>[ Type ]</para>
+		///</summary>
+		MAGICO_CONCEPT(Integral)
+		{
+			template<class Type>
+			auto require()->decltype(
+				magico::extends<std::is_integral>::require<Type>()
+				);
+		};
+		///<summary>
+		///<para>符号付整数型かどうか</para>
+		///<para>[ Type ]</para>
+		///</summary>
+		MAGICO_CONCEPT(SignedIntegral)
+		{
+			template<class Type>
+			auto require()->decltype(
+				magico::extends<std::is_signed,Integral>::require<Type>()
+				);
+		};
+		///<summary>
+		///<para>符号なし整数型かどうか</para>
+		///<para>[ Type ]</para>
+		///</summary>
+		MAGICO_CONCEPT(UnsignedIntegral)
+		{
+			template<class Type>
+			auto require()->decltype(
+				magico::extends<std::is_unsigned, Integral>::require<Type>()
+				);
+		};
 
 		///<summary>
 		///<para>仮想クラスかどうか</para>

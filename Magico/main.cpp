@@ -15,7 +15,7 @@ int main()
 {
 	std::vector<int> v;
 	std::list<int> l;
-	concepts::Comparable<int>::value;
+	concepts::UnsignedIntegral<unsigned int>::value;
 	return 0;
 }
 
