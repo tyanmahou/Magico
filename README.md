@@ -150,7 +150,7 @@ auto Func(T& _a)->where<void, Stack<as_mapped<T>>>
 
 Use `MAGICO_CONCEPT_MAP_NONE_DEFAULT` for **global space**.
 ```cpp
-///Animal
+//Animal
 MAGICO_CONCEPT(Animal)
 {
 	template<class T>

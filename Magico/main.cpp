@@ -10,10 +10,12 @@ MAGICO_CONCEPT(Test)
 	auto require(T t)->void;
 };
 
+
 int main()
 {
 	std::vector<int> v;
 	std::list<int> l;
+	concepts::Comparable<int>::value;
 	return 0;
 }
 

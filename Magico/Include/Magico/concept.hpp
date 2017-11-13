@@ -15,7 +15,7 @@ namespace magico
 	namespace detail
 	{
 		template<class Concept, class ... Args>
-		using Concepmagicoheck = decltype(&Concept::template require<Args...>);
+		using Conceptcoheck = decltype(&Concept::template require<Args...>);
 
 		struct void_tester
 		{
@@ -30,7 +30,7 @@ namespace magico
 	///</summary>
 	template<template<class...>class SubConcept, class Constraint, class ...Args>
 	struct to_concept : is_detected<
-		detail::Concepmagicoheck,
+		detail::Conceptcoheck,
 		Constraint,
 		detail::as_mapped_if_t<
 		SubConcept<detail::remove_mapped_t<Args>...>,

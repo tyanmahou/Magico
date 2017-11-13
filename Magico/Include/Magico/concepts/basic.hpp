@@ -210,6 +210,31 @@ namespace magico {
 		//************************************************************************************************
 
 		///<summary>
+		///<para>Bool型の性質をもつか</para>
+		///<para>[ Type ]</para>
+		///</summary>
+		MAGICO_CONCEPT(Boolean)
+		{
+			template<class Type>
+			auto require(const Type& v1, const Type& v2, const bool b)->decltype(
+				magico::valid_expr<bool>(v1),
+				magico::valid_expr<bool>(!v1),
+				magico::valid_expr<bool>(v1&&v2),
+				magico::valid_expr<bool>(v1&&b),
+				magico::valid_expr<bool>(b&&v2),
+				magico::valid_expr<bool>(v1 || v2),
+				magico::valid_expr<bool>(v1 || b),
+				magico::valid_expr<bool>(b || v2),
+				magico::valid_expr<bool>(v1 == v2),
+				magico::valid_expr<bool>(v1 == b),
+				magico::valid_expr<bool>(b == v2),
+				magico::valid_expr<bool>(v1 != v2),
+				magico::valid_expr<bool>(v1 != b),
+				magico::valid_expr<bool>(b != v2)
+				);
+		};
+
+		///<summary>
 		///<para>小なり比較演算子で大小関係にあるか</para>
 		///<para>[ Type ]</para>
 		///</summary>
@@ -222,6 +247,21 @@ namespace magico {
 		};
 
 		///<summary>
+		///<para>比較演算可能か</para>
+		///<para>[ Type ]</para>
+		///</summary>
+		MAGICO_CONCEPT(Comparable)
+		{
+			template<class Type>
+			auto require(Type a, Type b)->decltype(
+				magico::valid_expr<bool>(a < b),
+				magico::valid_expr<bool>(a <= b),
+				magico::valid_expr<bool>(a > b),
+				magico::valid_expr<bool>(a >= b)
+				);
+		};
+
+		///<summary>
 		///<para>==演算子で等価関係にあるか</para>
 		///<para>[ Type ]</para>
 		///</summary>
@@ -229,7 +269,8 @@ namespace magico {
 		{
 			template<class Type>
 			auto require(Type a, Type b)->decltype(
-				magico::valid_expr<bool>(a == b)
+				magico::valid_expr<bool>(a == b),
+				magico::valid_expr<bool>(a != b)
 				);
 		};
 
@@ -419,6 +460,32 @@ namespace magico {
 
 		};
 
+		///<summary>
+		///<para>セミレギュラー</para>
+		///<para>[ Type ]</para>
+		///</summary>
+		MAGICO_CONCEPT(Semiregular)
+		{
+			template<class Type>
+			auto require()->decltype(
+				magico::extends<
+				CopyAssignable,CopyConstructible,
+				MoveAssignable, MoveConstructible,
+				Swappable,
+				DefaultConstructible>::require<Type>()
+				);
+		};
+		///<summary>
+		///<para>レギュラー</para>
+		///<para>[ Type ]</para>
+		///</summary>
+		MAGICO_CONCEPT(Regular)
+		{
+			template<class Type>
+			auto require()->decltype(
+				magico::extends<Semiregular,EqualityComparable>::require<Type>()
+				);
+		};
 		//************************************************************************************************
 		//
 		//Layout
