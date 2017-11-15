@@ -1,21 +1,29 @@
 #include<iostream>
 #include<Magico.hpp>
 #include<stack>
-#include<forward_list>
+#include<string>
 using namespace magico;
 
-MAGICO_CONCEPT(Test)
+template<class T>
+auto Println(const T& v)->where<void,concepts::OutputStreamable<T>>
 {
-	template<class T>
-	auto require(T t)->void;
-};
+	std::cout << v << std::endl;
+}
 
+struct A{};
+
+std::ostream& operator <<(std::ostream& os, const A& a)
+{
+	os << "A";
+	return os;
+}
 
 int main()
 {
-	std::vector<int> v;
-	std::list<int> l;
-	concepts::UnsignedIntegral<unsigned int>::value;
+	std::string s = "a";
+	A a;
+	Println(a);
+	Println(s);
 	return 0;
 }
 

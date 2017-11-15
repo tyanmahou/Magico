@@ -49,6 +49,9 @@
     <ClInclude Include="Include\Magico\concepts\random.hpp">
       <Filter>Include\Magico\concepts</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Magico\concepts\stream.hpp">
+      <Filter>Include\Magico\concepts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
