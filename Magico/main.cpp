@@ -4,37 +4,24 @@
 #include<string>
 //using namespace magico;
 
+#include<map>
+#include<set>
+
 MAGICO_CONCEPT(Test)
 {
-private:
-	template<class T, class U, class Ret>
-	auto require_(T& a, U& b)->decltype(
-		magico::valid_expr<Ret>(a + b)
-		);
-	template<class T, class U = T>
-	auto require_(T& a, U& b)->decltype(
-		a + b
-		);
-public:
-	template<class T, class U = T, class... Ret>
-	auto require(T&a, U& b)->decltype(
-		this->require_<T, U, Ret...>(a, b)
-		);
+
+	template<class T>
+	auto _r(T a)->decltype(-a);
+
+	template<class T>
+	auto require(T a)->decltype(&__Test_c::template _r<T>);
+
 };
 
-struct A {
-	int operator+()
-	{
-		return 0;
-	}
-};
 int main()
 {
-	int a;
-	std::cout << magico::concepts::HasPlus<int, int&>::value;
-	std::cout << magico::concepts::HasPlus<int, int&, int&>::value;
-	std::cout << magico::concepts::HasPlus<int, int&, int>::value;
 
+	magico::concepts::SequenceContainer<int>::value;
 	return 0;
 }
 

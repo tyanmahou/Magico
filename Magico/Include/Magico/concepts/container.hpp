@@ -204,38 +204,41 @@ namespace magico {
 		///</summary>
 		MAGICO_CONCEPT(SequenceContainer)
 		{
-			//アロケーターの型
-			template<class X, class = void>
-			struct GetAllocator
+			struct Tmp
 			{
-				using type = std::allocator<typename X::value_type>;
-			};
-			template<class X>
-			struct GetAllocator<X, magico::void_t<typename X::allocator_type>>
-			{
-				using type = typename X::allocator_type;
-			};
+				//アロケーターの型
+				template<class X, class = void>
+				struct GetAllocator
+				{
+					using type = std::allocator<typename X::value_type>;
+				};
+				template<class X>
+				struct GetAllocator<X, magico::void_t<typename X::allocator_type>>
+				{
+					using type = typename X::allocator_type;
+				};
 
-			template<class X,
-				class A = typename GetAllocator<X>::type,
-				class Value = typename X::value_type,
-				class Size = typename X::size_type,
-				class It = typename X::iterator,
-				class CIt = typename X::const_iterator,
-				class... Args
-			>
-				auto _require(X a, Value t, Size n, It it, CIt cit, std::initializer_list<Value> il, Args&&... args)->decltype(
-					magico::extends<Container>::require<X>(),
-					X(n, t), X(it, it), X(il),
-					magico::valid_expr<X&>(a = il),
-					magico::valid_expr<It>(a.insert(cit, t)), magico::valid_expr<It>(a.insert(cit, n, t)),
-					magico::valid_expr<It>(a.insert(cit, it, it)), magico::valid_expr<It>(a.insert(cit, il)),
-					magico::valid_expr<It>(a.erase(cit)), magico::valid_expr<It>(a.erase(cit, cit)),
-					magico::valid_expr<void>((a.clear(), is_void)),
-					a.assign(it, it), a.assign(il), a.assign(n, t)
-					);
+				template<class X,
+					class A = typename GetAllocator<X>::type,
+					class Value = typename X::value_type,
+					class Size = typename X::size_type,
+					class It = typename X::iterator,
+					class CIt = typename X::const_iterator,
+					class... Args
+				>
+					auto require(X a, Value t, Size n, It it, CIt cit, std::initializer_list<Value> il, Args&&... args)->decltype(
+						magico::extends<Container>::require<X>(),
+						X(n, t), X(it, it), X(il),
+						magico::valid_expr<X&>(a = il),
+						magico::valid_expr<It>(a.insert(cit, t)), magico::valid_expr<It>(a.insert(cit, n, t)),
+						magico::valid_expr<It>(a.insert(cit, it, it)), magico::valid_expr<It>(a.insert(cit, il)),
+						magico::valid_expr<It>(a.erase(cit)), magico::valid_expr<It>(a.erase(cit, cit)),
+						magico::valid_expr<void>((a.clear(), is_void)),
+						a.assign(it, it), a.assign(il), a.assign(n, t)
+						);
+			};
 			template<class X>
-			auto require()->decltype(&__SequenceContainer_c::_require<X>);
+			auto require()->decltype(&Tmp::require<X>);
 		};
 
 		///<summary>
@@ -244,22 +247,25 @@ namespace magico {
 		///</summary>
 		MAGICO_CONCEPT(AssociativeContainer)
 		{
-			template<class X,
-				class Key = typename X::key_type,
-				class Compare = typename X::key_compare,
-				class Value = typename X::value_type,
-				class ValueCompare = typename X::value_compare,
-				class It = typename X::iterator
-			>
-				auto _require(X a, Compare c, Value t, It it, std::initializer_list<Value> il)->decltype(
-					magico::extends<BinaryPredicate>::require<ValueCompare, Value>(),
-					X(), X(c), X(it, it, c), X(it, it), X(il),
-					magico::valid_expr<X&>(a = il),
-					magico::valid_expr<Compare>(a.key_comp()),
-					magico::valid_expr<ValueCompare>(a.value_comp())
-					);
+			struct Tmp
+			{
+				template<class X,
+					class Key = typename X::key_type,
+					class Compare = typename X::key_compare,
+					class Value = typename X::value_type,
+					class ValueCompare = typename X::value_compare,
+					class It = typename X::iterator
+				>
+					auto require(X a, Compare c, Value t, It it, std::initializer_list<Value> il)->decltype(
+						magico::extends<BinaryPredicate>::require<ValueCompare, Value>(),
+						X(), X(c), X(it, it, c), X(it, it), X(il),
+						magico::valid_expr<X&>(a = il),
+						magico::valid_expr<Compare>(a.key_comp()),
+						magico::valid_expr<ValueCompare>(a.value_comp())
+						);
+			};
 			template<class X>
-			auto require()->decltype(&__AssociativeContainer_c::_require<X>);
+			auto require()->decltype(&Tmp::template require<X>);
 
 		};
 		///<summary>
@@ -268,42 +274,28 @@ namespace magico {
 		///</summary>
 		MAGICO_CONCEPT(UnorderedAssociativeContainer)
 		{
+			struct Tmp
+			{
+				template<class X,
+					class Key = typename X::key_type,
+					class Value = typename X::value_type,
+					class Pred = typename X::key_equal,
+					class Hash = typename X::hasher,
+					class It = typename X::iterator,
+					class LIt = typename X::local_iterator,
+					class CLIt = typename X::const_local_iterator,
+					class Size = typename X::size_type
+				>
+					auto require(X a, const X& b, const Hash& hf, const Pred& eq,
+						Value t, It it, std::initializer_list<Value> il, Size n)->decltype(
+							X(), X(n), X(n, hf, eq), X(n, hf), X(it, it, n, hf, eq), X(it, it, n, hf),
+							X(it, it, n), X(it, it), X(il), X(il, n), X(il, n, hf), X(il, n, hf, eq), X(b),
+							magico::valid_expr<X&>(a = il),
+							magico::valid_expr<X&>(a = b)
+							);
+			};
 			template<class X>
-			struct GetValueType
-			{
-				using type = typename X::key_type;
-			};
-			template<class Key, class T, class Hash, class KeyEqual, class Allocator>
-			struct GetValueType <std::unordered_map<Key, T, Hash, KeyEqual, Allocator> >
-			{
-				using type = std::pair<const Key, T>;
-			};
-			template<class Key, class T, class Hash, class KeyEqual, class Allocator>
-			struct GetValueType <std::unordered_multimap<Key, T, Hash, KeyEqual, Allocator> >
-			{
-				using type = std::pair<const Key, T>;
-			};
-			template<class X,
-				class Key = typename X::key_type,
-				class Value = typename X::value_type,
-				class Pred = typename X::key_equal,
-				class Hash = typename X::hasher,
-				class It = typename X::iterator,
-				class LIt = typename X::local_iterator,
-				class CLIt = typename X::const_local_iterator,
-				class Size = typename X::size_type
-			>
-				auto _require(X a, const X& b, const Hash& hf, const Pred& eq,
-					Value t, It it, std::initializer_list<Value> il, Size n)->decltype(
-						magico::extends<IsSame>::require<Value, typename GetValueType<X>::type>(),
-						X(), X(n), X(n, hf, eq), X(n, hf), X(it, it, n, hf, eq), X(it, it, n, hf),
-						X(it, it, n), X(it, it), X(il), X(il, n), X(il, n, hf), X(il, n, hf, eq), X(b),
-						magico::valid_expr<X&>(a = il),
-						magico::valid_expr<X&>(a = b)
-						);
-
-			template<class X>
-			auto require()->decltype(&__UnorderedAssociativeContainer_c::_require<X>);
+			auto require()->decltype(&Tmp::template require<X>);
 		};
 	}//namespace concepts
 }//namespace magico
