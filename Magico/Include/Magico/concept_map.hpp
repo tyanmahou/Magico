@@ -15,10 +15,10 @@ namespace magico
 	template<class Concept>
 	struct concept_map
 	{
-		using is_default = void;
-
 		template<class T>
-		decltype(auto) operator =(T&& other)
+		using return_type = std::conditional_t<std::is_rvalue_reference_v<T>, std::remove_reference_t<T>, T>;
+		template<class T>
+		return_type<T> operator =(T&& other)
 		{
 			return std::forward<T>(other);
 		}

@@ -115,8 +115,7 @@ namespace magico
 		template<class T>
 		decltype(auto) get()
 		{
-			T v = get_origin<T>();
-			return magico::concept_mapping<Concept<std::decay_t<T>>>(std::forward<T>(v));
+			return magico::concept_mapping<Concept<std::decay_t<T>>>(get_origin<T>());
 		}
 		template<class T>
 		decltype(auto) get_origin()
