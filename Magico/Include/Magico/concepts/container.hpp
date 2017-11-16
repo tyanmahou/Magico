@@ -1,6 +1,4 @@
 ﻿#pragma once
-
-#include<unordered_map>
 #include"iterator.hpp"
 
 namespace magico {

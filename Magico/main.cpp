@@ -7,21 +7,13 @@
 #include<map>
 #include<set>
 
-MAGICO_CONCEPT(Test)
-{
-
-	template<class T>
-	auto _r(T a)->decltype(-a);
-
-	template<class T>
-	auto require(T a)->decltype(&__Test_c::template _r<T>);
-
-};
-
 int main()
 {
 
-	magico::concepts::SequenceContainer<int>::value;
+	magico::concept_any<magico::concepts::RandomAccessContainer> rc;
+	std::list<int> l;
+	std::vector<int> v;
+
 	return 0;
 }
 

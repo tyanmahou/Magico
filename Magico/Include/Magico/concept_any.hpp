@@ -69,6 +69,19 @@ namespace magico
 			return AnyCastImpl<T>::Func(_any);
 		}
 
+		//reference_wrapper をはずす
+		template<class T>
+		struct remove_reference_wrapper 
+		{
+			using type = T;
+		};
+		template<class T>
+		struct remove_reference_wrapper<std::reference_wrapper<T>>
+		{
+			using type = T;
+		};
+		template<class T>
+		using remove_reference_wrapper_t = typename remove_reference_wrapper<T>::type;
 	}
 	///<summary>
 	///コンセプトを満たす型
@@ -80,15 +93,11 @@ namespace magico
 
 		concept_any() = default;
 
-		template<class T, magico::require<Concept<magico::as_mapped<T>>> = nullptr>
+		template<class T, magico::require<Concept<magico::as_mapped<detail::remove_reference_wrapper_t<T>>>> = nullptr>
 		concept_any(const T& v) :
 			std::any(v)
 		{}
-		template<class T, magico::require<Concept<magico::as_mapped<T>>> = nullptr>
-		concept_any(const std::reference_wrapper<T>& v) :
-			std::any(v)
-		{}
-		template<class T, magico::require<Concept<magico::as_mapped<T>>> = nullptr>
+		template<class T, magico::require<Concept<magico::as_mapped<detail::remove_reference_wrapper_t<T>>>> = nullptr>
 		concept_any& operator=(const T& v)
 		{
 			return static_cast<concept_any&>(std::any::operator=(v));
