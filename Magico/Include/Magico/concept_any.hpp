@@ -97,12 +97,12 @@ namespace magico
 		concept_any(const T& v) :
 			std::any(v)
 		{}
+
 		template<class T, magico::require<Concept<magico::as_mapped<detail::remove_reference_wrapper_t<T>>>> = nullptr>
 		concept_any& operator=(const T& v)
 		{
 			return static_cast<concept_any&>(std::any::operator=(v));
 		}
-
 		using std::any::emplace;
 		using std::any::has_value;
 		using std::any::reset;
@@ -115,8 +115,8 @@ namespace magico
 		template<class T>
 		decltype(auto) get()
 		{
-			decltype(auto) v = get_origin<T>();
-			return magico::concept_mapping<Concept<std::decay_t<T>>>(v);
+			T v = get_origin<T>();
+			return magico::concept_mapping<Concept<std::decay_t<T>>>(std::forward<T>(v));
 		}
 		template<class T>
 		decltype(auto) get_origin()

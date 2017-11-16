@@ -3,16 +3,17 @@
 #include<stack>
 #include<string>
 //using namespace magico;
-
+#include<unordered_map>
 #include<map>
 #include<set>
 
+template<class T>
+T clone(const T& a)
+{
+	return a;
+}
 int main()
 {
-
-	magico::concept_any<magico::concepts::RandomAccessContainer> rc;
-	std::list<int> l;
-	std::vector<int> v;
 
 	return 0;
 }

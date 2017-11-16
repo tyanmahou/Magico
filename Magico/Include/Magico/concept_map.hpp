@@ -47,7 +47,7 @@ namespace magico
 		template<class Concept, class ...Type>
 		decltype(auto)  make_mapping_tuple(Type&&... value)
 		{
-			return ref_make_tuple((concept_mapping_impl<Concept, Type>() = value)...);
+			return ref_make_tuple((concept_mapping_impl<Concept, Type>() = std::forward<Type>(value))...);
 		}
 	}//namespace detail
 
@@ -56,10 +56,10 @@ namespace magico
 	 ///インスタンスにコンセプトマップを適応させる
 	 ///</summary>
 	template<class Concept, class Type>
-	auto concept_mapping(Type&& value)->decltype(detail::concept_mapping_impl<Concept, Type>() = value)
+	auto concept_mapping(Type&& value)->decltype(detail::concept_mapping_impl<Concept, Type>() = std::forward<Type>(value))
 	{
 
-		return detail::concept_mapping_impl<Concept, Type>() = value;
+		return detail::concept_mapping_impl<Concept, Type>() = std::forward<Type>(value);
 	}
 	///<summary>
 	///インスタンスにコンセプトマップを適応させる 返り値tuple
@@ -68,7 +68,7 @@ namespace magico
 	decltype(auto) concept_mapping(Type&&... value)
 	{
 		using C = Concept<std::decay_t<Type>...>;
-		return detail::make_mapping_tuple<C>(value...);
+		return detail::make_mapping_tuple<C>(std::forward<Type>(value)...);
 	}
 
 	namespace detail
