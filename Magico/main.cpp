@@ -2,28 +2,39 @@
 #include<Magico.hpp>
 #include<stack>
 #include<string>
-using namespace magico;
+//using namespace magico;
 
-template<class T>
-auto Println(const T& v)->where<void,concepts::OutputStreamable<T>>
+MAGICO_CONCEPT(Test)
 {
-	std::cout << v << std::endl;
-}
+private:
+	template<class T, class U, class Ret>
+	auto require_(T& a, U& b)->decltype(
+		magico::valid_expr<Ret>(a + b)
+		);
+	template<class T, class U = T>
+	auto require_(T& a, U& b)->decltype(
+		a + b
+		);
+public:
+	template<class T, class U = T, class... Ret>
+	auto require(T&a, U& b)->decltype(
+		this->require_<T, U, Ret...>(a, b)
+		);
+};
 
-struct A{};
-
-std::ostream& operator <<(std::ostream& os, const A& a)
-{
-	os << "A";
-	return os;
-}
-
+struct A {
+	int operator+()
+	{
+		return 0;
+	}
+};
 int main()
 {
-	std::string s = "a";
-	A a;
-	Println(a);
-	Println(s);
+	int a;
+	std::cout << magico::concepts::HasPlus<int, int&>::value;
+	std::cout << magico::concepts::HasPlus<int, int&, int&>::value;
+	std::cout << magico::concepts::HasPlus<int, int&, int>::value;
+
 	return 0;
 }
 
