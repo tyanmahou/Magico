@@ -18,7 +18,7 @@ namespace magico
 		template<class T>
 		using return_type = std::conditional_t<std::is_rvalue_reference_v<T>, std::remove_reference_t<T>, T>;
 		template<class T>
-		return_type<T> operator =(T&& other)
+		static return_type<T> apply(T&& other)
 		{
 			return std::forward<T>(other);
 		}
@@ -33,7 +33,7 @@ namespace magico
 			using concept_map<void>::operator=;
 		};
 		template<class Concept, class Type>
-		struct concept_mapping_impl<Concept, Type, void_t<decltype(concept_map<Concept>() = magico::val<Type>())>> :concept_map<Concept>
+		struct concept_mapping_impl<Concept, Type, void_t<decltype(concept_map<Concept>::apply(magico::val<Type>()))>> :concept_map<Concept>
 		{
 			using concept_map<Concept>::operator=;
 		};
@@ -47,7 +47,7 @@ namespace magico
 		template<class Concept, class ...Type>
 		decltype(auto)  make_mapping_tuple(Type&&... value)
 		{
-			return ref_make_tuple((concept_mapping_impl<Concept, Type>() = std::forward<Type>(value))...);
+			return ref_make_tuple((concept_mapping_impl<Concept, Type>::apply(std::forward<Type>(value)))...);
 		}
 	}//namespace detail
 
@@ -56,10 +56,10 @@ namespace magico
 	 ///インスタンスにコンセプトマップを適応させる
 	 ///</summary>
 	template<class Concept, class Type>
-	auto concept_mapping(Type&& value)->decltype(detail::concept_mapping_impl<Concept, Type>() = std::forward<Type>(value))
+	auto concept_mapping(Type&& value)->decltype(detail::concept_mapping_impl<Concept, Type>::apply(std::forward<Type>(value)))
 	{
 
-		return detail::concept_mapping_impl<Concept, Type>() = std::forward<Type>(value);
+		return detail::concept_mapping_impl<Concept, Type>::apply(std::forward<Type>(value));
 	}
 	///<summary>
 	///インスタンスにコンセプトマップを適応させる 返り値tuple

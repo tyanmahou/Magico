@@ -40,9 +40,6 @@ int main()
 
 `valid_expr <Return> (exp)` checks if the `exp` can convert to `Return` type.  
 If the expression requires a void type, use `valid_expr <void> ((exp, is _ void))`.  
-  
-`associated_type <Type> ()` is used to check related types.
-This is the same for `std :: declval <Type> ()`.
 
 ### Constraint on template parameters
 
@@ -98,8 +95,8 @@ struct concept_map<Stack<std::vector<T>>>:std::vector<T>
 	}
 	//vector has empty
 
-	//Assign with operator =
-	decltype(auto) operator =(std::vector<T>& v)
+	//Assign with "apply"
+	decltype(auto) static apply(std::vector<T>& v)
 	{
 		return static_cast<concept_map&>(v);
 	}
@@ -164,7 +161,7 @@ struct Dog {};
 template<>
 struct magico::concept_map<Animal<Cat>>
 {
-	decltype(auto) operator =(Cat& c)
+	decltype(auto) static apply(Cat& c)
 	{
 		return c;
 	}

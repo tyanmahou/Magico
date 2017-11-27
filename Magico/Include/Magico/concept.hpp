@@ -124,6 +124,6 @@ template<class ...Args>\
 struct magico::concept_map<name<Args...>>\
 {\
 	template<class T>\
-	void operator =(T&& other)\
+	static void apply(T&& other)\
 	{}\
 }
