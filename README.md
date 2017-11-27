@@ -96,7 +96,7 @@ struct concept_map<Stack<std::vector<T>>>:std::vector<T>
 	//vector has empty
 
 	//Assign with "apply"
-	decltype(auto) static apply(std::vector<T>& v)
+	static decltype(auto) apply(std::vector<T>& v)
 	{
 		return static_cast<concept_map&>(v);
 	}
@@ -161,7 +161,7 @@ struct Dog {};
 template<>
 struct magico::concept_map<Animal<Cat>>
 {
-	decltype(auto) static apply(Cat& c)
+	static decltype(auto) apply(Cat& c)
 	{
 		return c;
 	}
