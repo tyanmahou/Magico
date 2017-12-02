@@ -32,6 +32,7 @@ int main()
 {
 	Test<magico::as_mapped<int>>::value;
 
+
 	return 0;
 }
 

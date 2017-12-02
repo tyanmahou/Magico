@@ -43,23 +43,17 @@ namespace magico
 	///<summary>
 	///メタ関数 論理和
 	///</summary>
-	template<class Head, class... Tail>
-	struct Or :std::conditional_t <  Head::value, std::true_type, Or < Tail... > >
-	{};
-	template<class Concpet>
-	struct Or<Concpet> :std::bool_constant<Concpet::value>
-	{};
+	template<class ... Concpets>
+	using Or = std::disjunction<Concpets...>;
 	///<summary>
 	///メタ関数 否定
 	///</summary>
-	template < class Concpet >
-	struct Not : std::bool_constant <!Concpet::value >
-	{};
+	template < class Concept >
+	using Not = std::negation<Concept>;
 	///<summary>
 	///メタ関数 論理積
 	///</summary>
-	template <class ... Args>
-	struct And :Not < Or  < Not < Args >... > >
-	{};
+	template <class ... Concpets>
+	using And = std::conjunction<Concpets...>;
 
 }//namesapce magico
