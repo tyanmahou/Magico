@@ -483,10 +483,10 @@ namespace magico {
 		{
 			template <class Type>
 			auto require(Type&& t)->decltype(
-				magico::associated_type<typename Type::rep>(),
-				magico::associated_type<typename Type::period>(),
-				magico::associated_type<typename Type::duration>(),
-				magico::associated_type<typename Type::time_point>(),
+				valid_type<typename Type::rep>(),
+				valid_type<typename Type::period>(),
+				valid_type<typename Type::duration>(),
+				valid_type<typename Type::time_point>(),
 				valid_expr<const bool&>(t.is_steady),
 				valid_expr<typename Type::time_point>(t.now())
 				);

@@ -68,7 +68,7 @@ namespace magico
 	///Type型が存在するか
 	///</summary>
 	template<class Type>
-	auto associated_type()->decltype(val<Type>());
+	auto valid_type()->decltype(val<Type>());
 
 	///<summary>
 	///式がType型で評価可能か
