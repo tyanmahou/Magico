@@ -31,7 +31,10 @@ namespace magico
 int main()
 {
 	Test<magico::as_mapped<int>>::value;
-
+	int a[3];
+	double d;
+	std::vector<int> v;
+	std::cout << magico::concepts::Range<decltype(v)>::value;
 
 	return 0;
 }

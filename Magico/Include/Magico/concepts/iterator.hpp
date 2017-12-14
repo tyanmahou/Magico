@@ -50,9 +50,10 @@ namespace magico {
 			auto require(It&& it)->decltype(
 				ex::require<It>(),
 				magico::valid_expr<bool>(it != it),
+				magico::valid_expr<typename std::iterator_traits<It>::reference>(*it),
 				magico::valid_expr<typename std::iterator_traits<It>::value_type>(*it),
 				magico::valid_expr<typename std::iterator_traits<It>::value_type>(*it++),
-				magico::valid_expr<typename std::iterator_traits<It>::reference>(*it)
+				(void)it++
 				);
 		};
 
@@ -177,8 +178,8 @@ namespace magico {
 		{
 			template<class Type>
 			auto require(Type&& range)->decltype(
-				magico::extends<Iterator>::require(std::begin(range)),
-				magico::extends<Iterator>::require(std::end(range))
+				valid_expr<Iterator>(std::begin(range)),
+				valid_expr<Iterator>(std::end(range))
 				);
 		};
 

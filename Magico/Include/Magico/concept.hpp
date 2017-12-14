@@ -65,13 +65,13 @@ namespace magico
 	};
 
 	///<summary>
-	///Type型が存在するか
+	///Type型が有効か
 	///</summary>
 	template<class Type>
 	auto valid_type()->decltype(val<Type>());
 
 	///<summary>
-	///式がType型で評価可能か
+	///式がType型に変換可能で有効か
 	///</summary>
 	///<param name= "exp">
 	///評価する式
@@ -79,12 +79,20 @@ namespace magico
 	template<class Type, class Exp>
 	auto valid_expr(Exp&& exp)->magico::require<std::is_convertible<Exp, Type>>;
 
-
 	constexpr detail::void_tester is_void;
 
 	template<class T>
 	auto valid_expr(detail::void_tester)->magico::require<std::is_void<T>>;
 
+
+	///<summary>
+	///式の型がConceptを満たし有効か
+	///</summary>
+	///<param name= "exp">
+	///評価する式
+	///</param>
+	template<template<class...>class Concept, class Exp>
+	auto valid_expr(Exp&& exp)->decltype(magico::extends<Concept>::require(std::forward<Exp>(exp)));
 
 
 }//namespace magico
