@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include"concept_map.hpp"
 #include"require.hpp"
-#include"axiom.hpp"
+
 
 //************************************************************************************************
 //
@@ -38,11 +38,6 @@ namespace magico
 	>
 	{
 		using constraint_t = Constraint;
-		template<class... AxionArgs>
-		static void axiom(AxionArgs&&... args)
-		{
-			detail::axiom_check<SubConcept<Args...>, Args...>(std::forward<AxionArgs>(args)...);
-		}
 	};
 
 	/**************************************************************

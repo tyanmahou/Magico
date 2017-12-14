@@ -138,7 +138,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Magico.hpp" />
-    <ClInclude Include="Include\Magico\axiom.hpp" />
     <ClInclude Include="Include\Magico\concept.hpp" />
     <ClInclude Include="Include\Magico\concepts\basic.hpp" />
     <ClInclude Include="Include\Magico\concepts\concurrency.hpp" />
@@ -148,8 +147,9 @@
     <ClInclude Include="Include\Magico\concepts\other.hpp" />
     <ClInclude Include="Include\Magico\concepts\random.hpp" />
     <ClInclude Include="Include\Magico\concepts\stream.hpp" />
-    <ClInclude Include="Include\Magico\concept_any.hpp" />
     <ClInclude Include="Include\Magico\concept_map.hpp" />
+    <ClInclude Include="Include\Magico\experimental\axiom.hpp" />
+    <ClInclude Include="Include\Magico\experimental\concept_any.hpp" />
     <ClInclude Include="Include\Magico\priority.hpp" />
     <ClInclude Include="Include\Magico\require.hpp" />
     <ClInclude Include="Include\Magico\utility.hpp" />

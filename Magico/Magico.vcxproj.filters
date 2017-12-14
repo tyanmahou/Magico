@@ -13,13 +13,7 @@
     <ClInclude Include="Include\Magico\utility.hpp">
       <Filter>Include\Magico</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Magico\axiom.hpp">
-      <Filter>Include\Magico</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Magico\concept.hpp">
-      <Filter>Include\Magico</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Magico\concept_any.hpp">
       <Filter>Include\Magico</Filter>
     </ClInclude>
     <ClInclude Include="Include\Magico\concept_map.hpp">
@@ -52,6 +46,12 @@
     <ClInclude Include="Include\Magico\concepts\stream.hpp">
       <Filter>Include\Magico\concepts</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Magico\experimental\axiom.hpp">
+      <Filter>Include\Magico\experimental</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Magico\experimental\concept_any.hpp">
+      <Filter>Include\Magico\experimental</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Include">
@@ -62,6 +62,9 @@
     </Filter>
     <Filter Include="Include\Magico\concepts">
       <UniqueIdentifier>{bddb3edd-5270-4c83-a7a2-ab869ff36694}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include\Magico\experimental">
+      <UniqueIdentifier>{c983ea9d-0e25-467c-baeb-779b2df0a331}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
