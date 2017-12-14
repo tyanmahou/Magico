@@ -2,8 +2,8 @@
 C++17 Concept Library
 ## About
 
-"Magico" is a library for C ++ 17 only with headers that provides type constraints as meta functions like C++11's concept.    
-It also provides many meta functions that constrain iterators, containers, etc by default.
+"Magico" is a library for C ++ 17 only with headers that provides type constraints as meta functions like C++11's concept also Concepts Lite.    
+It also provides many meta functions that constrain *iterators* , *containers* , etc by default.
 
 
 ## Example
