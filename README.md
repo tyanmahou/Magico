@@ -39,7 +39,7 @@ int main()
 ```
 
 `valid_expr <Return> (exp)` checks if the `exp` can convert to `Return` type.  
-If the expression requires a void type, use `valid_expr <void> ((exp, is _ void))`.  
+If the expression requires a void type, use `valid_expr <void> ((exp, is_void))`.  
 
 ### Constraint on template parameters
 
