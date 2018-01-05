@@ -113,10 +113,10 @@ namespace magico
 ///</summary>
 #define MAGICO_CONCEPT(name)\
 template<class ...Args>\
-struct name : magico::to_concept<name,struct __##name##_c,Args...>{};\
+struct name : magico::to_concept<name,struct name##_constraint,Args...>{};\
 template<class ...Args>\
 constexpr bool name##_v = name<Args...>::value;\
-struct __##name##_c
+struct name##_constraint
 
 
 ///<summary>

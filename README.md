@@ -178,19 +178,19 @@ int main()
 ### Concept Base Overload
 ```cpp
 template<class T>
-auto _Func(priority<0>,T& a)
+auto Func_(priority<0>,T& a)
 {
 	std::cout << "Bidirectional" << std::endl;
 }
 template<class T>
-auto _Func(priority<1>,T& a)->where<void, concepts::RandomAccessIterator<T>>
+auto Func_(priority<1>,T& a)->where<void, concepts::RandomAccessIterator<T>>
 {
 	std::cout << "RandomAccess" << std::endl;
 }
 template<class T>
 auto Func(T a)->where<void, concepts::BidirectionalIterator<T>>
 {
-	_Func(priority_v<1>, a);
+	Func_(priority_v<1>, a);
 }
 
 int main()
