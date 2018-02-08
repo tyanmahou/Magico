@@ -22,34 +22,40 @@ namespace magico
 			template<typename T>
 			friend void operator,(T &&, void_tester);
 		};
+
+		template<class Constraint, class ...Args>
+		struct to_concept_impl : is_detected<
+			detail::Conceptcheck,
+			Constraint,
+			Args...
+		>
+		{
+			using constraint_t = Constraint;
+		};
 	}
 
 	///<summary>
 	///require実装クラスをコンセプト(メタ関数)に変換する
 	///</summary>
 	template<class Constraint, class ...Args>
-	using to_concept = is_detected<
-		detail::Conceptcheck,
+	using to_concept = detail::to_concept_impl<
 		Constraint,
 		detail::as_mapped_if_t<
-		is_detected<detail::Conceptcheck, Constraint, detail::remove_mapped_t<Args>...>,
+		detail::to_concept_impl<Constraint, detail::remove_mapped_t<Args>...>,
 		Args>...
 	>;
 
-	///<summary>
-	///require実装クラスをコンセプト(メタ関数)に変換し継承 SubConceptには派生classを与える
-	///</summary>
-	template<template<class...>class SubConcept, class Constraint, class ...Args>
-	struct to_concept_ex : is_detected<
-		detail::Conceptcheck,
-		Constraint,
-		detail::as_mapped_if_t<
-		SubConcept<detail::remove_mapped_t<Args>...>,
-		Args>...
-	>
-	{
-		using constraint_t = Constraint;
-	};
+	/////<summary>
+	/////require実装クラスをコンセプト(メタ関数)に変換し継承 SubConceptには派生classを与える
+	/////</summary>
+	//template<template<class...>class SubConcept, class Constraint, class ...Args>
+	//struct to_concept_ex : detail::to_concept_impl<
+	//	Constraint,
+	//	detail::as_mapped_if_t<
+	//	SubConcept<detail::remove_mapped_t<Args>...>,
+	//	Args>...
+	//>
+	//{};
 
 	/**************************************************************
 
