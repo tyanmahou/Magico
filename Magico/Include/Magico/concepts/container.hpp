@@ -286,6 +286,7 @@ namespace magico {
 				>
 					auto require(X a, const X& b, const Hash& hf, const Pred& eq,
 						Value t, It it, std::initializer_list<Value> il, Size n)->decltype(
+							extends<AllocatorAwareContainer>::require<X>(),
 							X(), X(n), X(n, hf, eq), X(n, hf), X(it, it, n, hf, eq), X(it, it, n, hf),
 							X(it, it, n), X(it, it), X(il), X(il, n), X(il, n, hf), X(il, n, hf, eq), X(b),
 							magico::valid_expr<X&>(a = il),
