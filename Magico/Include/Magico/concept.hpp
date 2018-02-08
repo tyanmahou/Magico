@@ -24,12 +24,23 @@ namespace magico
 		};
 	}
 
+	///<summary>
+	///require実装クラスをコンセプト(メタ関数)に変換する
+	///</summary>
+	template<class Constraint, class ...Args>
+	using to_concept = is_detected<
+		detail::Conceptcheck,
+		Constraint,
+		detail::as_mapped_if_t<
+		is_detected<detail::Conceptcheck, Constraint, detail::remove_mapped_t<Args>...>,
+		Args>...
+	>;
 
 	///<summary>
 	///require実装クラスをコンセプト(メタ関数)に変換し継承 SubConceptには派生classを与える
 	///</summary>
 	template<template<class...>class SubConcept, class Constraint, class ...Args>
-	struct to_concept : is_detected<
+	struct to_concept_ex : is_detected<
 		detail::Conceptcheck,
 		Constraint,
 		detail::as_mapped_if_t<
@@ -113,7 +124,7 @@ namespace magico
 ///</summary>
 #define MAGICO_CONCEPT(name)\
 template<class ...Args>\
-struct name : magico::to_concept<name,struct name##_constraint,Args...>{};\
+using name = magico::to_concept<struct name##_constraint,Args...>;\
 template<class ...Args>\
 constexpr bool name##_v = name<Args...>::value;\
 struct name##_constraint

@@ -4,8 +4,8 @@
 #include<unordered_map>
 int main()
 {
-
-	magico::concepts::UnorderedAssociativeContainer<std::unordered_map<int, int>>::value;
+	magico::concepts::AssociativeContainer<>;
+	magico::concepts::UnorderedAssociativeContainer<std::unordered_map<int, int>>;
 	return 0;
 }
 
